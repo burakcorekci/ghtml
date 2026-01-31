@@ -15,3 +15,4 @@
 # Complete changes
 * Commit message should mention task id/name and short/concise description, ex: `005_parser_tokenizer: implemented parser tokenizer logic`
 * Commit your changes
+* Push changes to remote
