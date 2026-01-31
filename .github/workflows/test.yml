@@ -1,0 +1,61 @@
+name: test
+
+on:
+  push:
+    branches:
+      - master
+      - main
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  GLEAM_VERSION: "1.14.0"
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Beam
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: "28"
+          rebar3-version: "3"
+          # gleam-version: ${GLEAM_VERSION}
+          # elixir-version: "1"
+
+      - name: Cache Gleam binary
+        id: cache-gleam
+        uses: actions/cache@v4
+        with:
+          path: /usr/local/bin/gleam
+          key: gleam-arm-${{ env.GLEAM_VERSION }}
+
+      - name: Install Gleam
+        if: steps.cache-gleam.outputs.cache-hit != 'true'
+        run: |
+          curl -fsSL https://github.com/gleam-lang/gleam/releases/download/v${GLEAM_VERSION}/gleam-v${GLEAM_VERSION}-aarch64-unknown-linux-musl.tar.gz | tar -xz
+          sudo mv gleam /usr/local/bin/
+
+      - name: Verify Gleam
+        run: gleam --version
+
+      # - name: Setup Bun
+      #   uses: oven-sh/setup-bun@v2
+
+      - name: Cache Gleam builds
+        uses: actions/cache@v4
+        with:
+          path: build
+          key: ${{ runner.os }}-gleam-${{ hashFiles('gleam.toml', 'manifest.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-gleam-
+
+      - run: gleam deps download
+      - run: gleam test
+      - run: gleam format --check src test
