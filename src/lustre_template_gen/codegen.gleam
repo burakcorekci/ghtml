@@ -77,20 +77,31 @@ fn extract_filename(path: String) -> String {
 fn generate_imports(template: Template) -> String {
   let needs_attrs = template_has_attrs(template.body)
   let needs_events = template_has_events(template.body)
-  let needs_if = template_has_if(template.body)
+  let needs_none = template_needs_none(template.body)
+  let needs_fragment = template_needs_fragment(template.body)
   let needs_each = template_has_each(template.body)
   let needs_each_index = template_has_each_with_index(template.body)
+  let user_imports = template.imports
 
-  // Build element imports based on needs
-  let element_imports = case needs_if, needs_each {
-    True, True ->
-      "import lustre/element.{type Element, fragment, keyed, none, text}"
-    True, False -> "import lustre/element.{type Element, fragment, none, text}"
-    False, True -> "import lustre/element.{type Element, fragment, keyed, text}"
-    False, False -> "import lustre/element.{type Element, fragment, text}"
+  // Build element import items list
+  let element_items = ["type Element", "text"]
+  let element_items = case needs_each {
+    True -> list.append(element_items, ["keyed"])
+    False -> element_items
+  }
+  let element_items = case needs_none {
+    True -> list.append(element_items, ["none"])
+    False -> element_items
+  }
+  let element_items = case needs_fragment {
+    True -> list.append(element_items, ["fragment"])
+    False -> element_items
   }
 
-  let base_imports = element_imports <> "\nimport lustre/element/html"
+  let element_import =
+    "import lustre/element.{" <> string.join(element_items, ", ") <> "}"
+
+  let base_imports = element_import <> "\nimport lustre/element/html"
 
   // Add attribute/event imports
   let imports = case needs_attrs, needs_events {
@@ -101,40 +112,101 @@ fn generate_imports(template: Template) -> String {
     False, False -> base_imports
   }
 
-  // Add list import if needed for each
-  let imports = case needs_each {
+  // Add list import if needed for each and not already imported by user
+  let imports = case
+    needs_each && !has_user_import(user_imports, "gleam/list")
+  {
     True -> imports <> "\nimport gleam/list"
     False -> imports
   }
 
-  // Add int import if needed for index
-  let imports = case needs_each_index {
+  // Add int import if needed for index and not already imported by user
+  let imports = case
+    needs_each_index && !has_user_import(user_imports, "gleam/int")
+  {
     True -> imports <> "\nimport gleam/int"
     False -> imports
+  }
+
+  // Add user imports
+  let imports = case user_imports {
+    [] -> imports
+    _ -> {
+      let user_import_lines =
+        list.map(user_imports, fn(imp) { "import " <> imp })
+        |> string.join("\n")
+      imports <> "\n" <> user_import_lines
+    }
   }
 
   imports
 }
 
-/// Check if any nodes have if nodes
-fn template_has_if(nodes: List(Node)) -> Bool {
-  list.any(nodes, node_has_if)
+/// Check if template needs `none` import (if without else)
+fn template_needs_none(nodes: List(Node)) -> Bool {
+  list.any(nodes, node_needs_none)
 }
 
-/// Check if a node or its children have if nodes
-fn node_has_if(node: Node) -> Bool {
+/// Check if a node or its children need `none`
+fn node_needs_none(node: Node) -> Bool {
   case node {
     IfNode(_, then_branch, else_branch, _) ->
-      True
-      || list.any(then_branch, node_has_if)
-      || list.any(else_branch, node_has_if)
-    EachNode(_, _, _, body, _) -> list.any(body, node_has_if)
+      case else_branch {
+        [] -> True
+        _ ->
+          list.any(then_branch, node_needs_none)
+          || list.any(else_branch, node_needs_none)
+      }
+    EachNode(_, _, _, body, _) -> list.any(body, node_needs_none)
     CaseNode(_, branches, _) ->
-      list.any(branches, fn(b: CaseBranch) { list.any(b.body, node_has_if) })
-    Element(_, _, children, _) -> list.any(children, node_has_if)
-    Fragment(children, _) -> list.any(children, node_has_if)
+      list.any(branches, fn(b: CaseBranch) { list.any(b.body, node_needs_none) })
+    Element(_, _, children, _) -> list.any(children, node_needs_none)
+    Fragment(children, _) -> list.any(children, node_needs_none)
     _ -> False
   }
+}
+
+/// Check if template needs `fragment` import (multiple roots or multiple children in branches)
+fn template_needs_fragment(nodes: List(Node)) -> Bool {
+  // Multiple root nodes need fragment
+  list.length(nodes) > 1 || list.any(nodes, node_needs_fragment)
+}
+
+/// Check if a node or its children need `fragment`
+fn node_needs_fragment(node: Node) -> Bool {
+  case node {
+    IfNode(_, then_branch, else_branch, _) -> {
+      // Fragment needed if multiple children in either branch
+      let then_needs = list.length(then_branch) > 1
+      let else_needs = list.length(else_branch) > 1
+      then_needs
+      || else_needs
+      || list.any(then_branch, node_needs_fragment)
+      || list.any(else_branch, node_needs_fragment)
+    }
+    EachNode(_, _, _, body, _) -> {
+      // Fragment needed if multiple children in body
+      list.length(body) > 1 || list.any(body, node_needs_fragment)
+    }
+    CaseNode(_, branches, _) -> {
+      // Fragment needed if any branch has multiple children
+      list.any(branches, fn(b: CaseBranch) {
+        list.length(b.body) > 1 || list.any(b.body, node_needs_fragment)
+      })
+    }
+    Element(_, _, children, _) -> list.any(children, node_needs_fragment)
+    Fragment(_, _) -> True
+    _ -> False
+  }
+}
+
+/// Check if user has imported a specific module
+fn has_user_import(imports: List(String), module: String) -> Bool {
+  list.any(imports, fn(imp) {
+    string.starts_with(imp, module <> ".")
+    || string.starts_with(imp, module <> "{")
+    || imp == module
+  })
 }
 
 /// Check if any nodes have each nodes
