@@ -113,6 +113,15 @@ Transforms AST → Gleam source:
 - Tracks file modification times
 - Auto-regenerates on change, cleans up on delete
 
+### `src/e2e_helpers.gleam` - E2E Test Helpers
+Utilities for E2E testing:
+- `create_temp_dir(prefix)` - Create unique temp directory in `.test/`
+- `cleanup_temp_dir(path)` - Remove temp directory and contents
+- `copy_directory(src, dest)` - Recursive directory copy
+- `run_command(cmd, args, cwd)` - Execute shell commands
+- `gleam_build(project_dir)` - Run `gleam build` in a directory
+- Path helpers: `fixtures_dir()`, `e2e_dir()`, `project_template_dir()`, `generated_dir()`
+
 ## Template Syntax Quick Reference
 
 ```html
@@ -171,8 +180,8 @@ test/
       imports_test.gleam              # Smart import tests
   integration/                        # Pipeline tests
     pipeline_test.gleam               # End-to-end pipeline tests
-  e2e/                                # E2E tests (placeholder)
-    .gitkeep
+  e2e/                                # E2E tests
+    helpers_test.gleam                # Tests for e2e_helpers module
   fixtures/                           # Shared test fixtures (ignored by scanner)
     simple/basic.lustre               # Simple template fixture
     attributes/all_attrs.lustre       # Attributes fixture
@@ -203,6 +212,7 @@ Run tests with:
 | `gleam_crypto` | SHA-256 hashing |
 | `gleam_erlang` | Process/timer for watch mode |
 | `gleam_otp` | Actor for watch mode |
+| `shellout` | Shell command execution |
 | `gleeunit` | Testing (dev) |
 
 ## Common Patterns
