@@ -338,7 +338,8 @@ pub fn fragments_renders_items_in_paragraphs_test() {
   let items = ["Content"]
   fragments.render(items)
   |> element.to_string()
-  |> string.contains("<p>")
+  // Keyed elements have data-lustre-key attribute, so check for <p with space
+  |> string.contains("<p ")
   |> should.be_true()
 }
 

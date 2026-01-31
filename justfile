@@ -8,11 +8,12 @@ default:
 
 # === Workflows ===
 
-# Run all quality checks (build → unit → integration → format → docs)
+# Run all quality checks (build → unit → integration → e2e → format → docs)
 check:
     gleam build
     just unit
     just integration
+    just e2e
     gleam format
     gleam docs build
     @echo "✓ All checks passed"
@@ -22,6 +23,7 @@ ci:
     gleam build
     just unit
     just integration
+    just e2e
     gleam format --check src test
     gleam docs build
     @echo "✓ CI simulation passed"
@@ -121,36 +123,44 @@ integration:
     "
     echo "✓ Integration tests passed"
 
-# Run CLI smoke test (uses .test/ directory)
-integration-cli:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    echo "Running CLI integration test..."
-    TEST_DIR=".test/cli_integration"
-    rm -rf "$TEST_DIR"
-    mkdir -p "$TEST_DIR/src"
-    cat > "$TEST_DIR/gleam.toml" << 'EOF'
-    name = "test_project"
-    version = "0.1.0"
-    target = "erlang"
-    [dependencies]
-    gleam_stdlib = ">= 0.34.0"
-    EOF
-    cat > "$TEST_DIR/src/test.lustre" << 'EOF'
-    @params(name: String)
-    <div class="greeting">{name}</div>
-    EOF
-    gleam run -m lustre_template_gen -- "$TEST_DIR"
-    test -f "$TEST_DIR/src/test.gleam" || { echo "ERROR: test.gleam not generated"; exit 1; }
-    grep -q "@generated" "$TEST_DIR/src/test.gleam" || { echo "ERROR: Missing @generated"; exit 1; }
-    grep -q "pub fn render" "$TEST_DIR/src/test.gleam" || { echo "ERROR: Missing render"; exit 1; }
-    echo "✓ CLI integration test passed"
-
 # Run all tests
 test: unit integration
     @echo "✓ All tests passed"
 
 # === E2E Testing ===
+
+# Run all E2E tests (slow - build verification + SSR)
+e2e:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    echo "Running E2E tests..."
+    gleam build
+    # Find all e2e test modules and run them via EUnit
+    MODULES=$(find test/e2e -name "*_test.gleam" | sed 's|test/||' | sed 's|\.gleam$||' | sed 's|/|@|g' | tr '\n' ' ')
+    erl -pa build/dev/erlang/*/ebin -noshell -eval "
+        Modules = [list_to_atom(M) || M <- string:tokens(\"$MODULES\", \" \")],
+        case eunit:test(Modules, [verbose]) of
+            ok -> erlang:halt(0);
+            _ -> erlang:halt(1)
+        end.
+    "
+    echo "✓ E2E tests passed"
+
+# Run only build verification tests
+e2e-build:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    echo "Running build verification tests..."
+    gleam test --target erlang -- --module build_test
+    echo "✓ Build verification tests passed"
+
+# Run only SSR HTML tests
+e2e-ssr:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    echo "Running SSR tests..."
+    gleam test --target erlang -- --module ssr_test
+    echo "✓ SSR tests passed"
 
 # Regenerate E2E SSR test modules from fixtures
 e2e-regen:
