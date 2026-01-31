@@ -70,6 +70,21 @@ examples-clean:
     done
     echo "✓ All examples cleaned"
 
+# === Planning ===
+
+# Create a new epic from template (e.g., just epic my_feature)
+epic name:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [ -d ".plan/{{name}}" ]; then
+        echo "Error: Epic '.plan/{{name}}' already exists"
+        exit 1
+    fi
+    cp -r .plan/_template ".plan/{{name}}"
+    echo "✓ Created epic: .plan/{{name}}/"
+    echo "  - Edit .plan/{{name}}/PLAN.md with your epic details"
+    echo "  - Create tasks from .plan/{{name}}/tasks/000_template_task.md"
+
 # === Utilities ===
 
 # Clean build artifacts
