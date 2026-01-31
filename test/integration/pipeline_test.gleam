@@ -2,6 +2,7 @@
 //// parsing real templates, generating valid Gleam code.
 
 import gleam/int
+import gleam/io
 import gleam/list
 import gleam/string
 import gleeunit/should
@@ -419,4 +420,78 @@ pub fn event_handler_variations_test() {
   should.be_true(string.contains(code, "event.on_input(on_input)"))
   should.be_true(string.contains(code, "event.on_blur(on_input)"))
   should.be_true(string.contains(code, "event.on_click(on_click())"))
+}
+
+// === Fixture Enhancement Tests ===
+// These tests verify the enhanced fixtures parse and generate correctly
+
+pub fn fragments_fixture_test() {
+  let code = generate_from_fixture("fragments/multiple_roots.lustre")
+
+  // Should use fragment for multiple root elements
+  should.be_true(string.contains(code, "fragment("))
+
+  // Should have all three root elements
+  should.be_true(string.contains(code, "html.header("))
+  should.be_true(string.contains(code, "html.main("))
+  should.be_true(string.contains(code, "html.footer("))
+
+  // Should have each loop
+  should.be_true(string.contains(code, "keyed("))
+}
+
+pub fn custom_elements_fixture_test() {
+  let code = generate_from_fixture("custom_elements/web_components.lustre")
+
+  // Custom elements should use element() function
+  should.be_true(string.contains(code, "element(\"my-component\""))
+  should.be_true(string.contains(code, "element(\"slot-content\""))
+  should.be_true(string.contains(code, "element(\"status-indicator\""))
+
+  // Should have conditional rendering
+  should.be_true(string.contains(code, "case is_active {"))
+}
+
+pub fn edge_cases_fixture_test() {
+  let code = generate_from_fixture("edge_cases/special.lustre")
+
+  // Self-closing tags should work
+  should.be_true(string.contains(code, "html.br("))
+  should.be_true(string.contains(code, "html.input("))
+
+  // Escaped braces should become literal braces
+  should.be_true(string.contains(code, "{escaped braces}"))
+
+  // Comments should be stripped
+  should.be_false(string.contains(code, "HTML comment"))
+}
+
+pub fn all_fixtures_parse_successfully_test() {
+  // Get all fixture files
+  let assert Ok(files) = simplifile.get_files("test/fixtures")
+
+  // Filter to .lustre files
+  let lustre_files =
+    files
+    |> list.filter(fn(f) { string.ends_with(f, ".lustre") })
+
+  // Ensure we have fixtures
+  should.be_true(lustre_files != [])
+
+  // All fixtures should parse
+  lustre_files
+  |> list.each(fn(path) {
+    let assert Ok(content) = simplifile.read(path)
+    let result = parser.parse(content)
+    case result {
+      Ok(_) -> Nil
+      Error(errors) -> {
+        // Print which file failed
+        io.println("Failed to parse: " <> path)
+        errors
+        |> list.each(fn(err) { io.println(parser.format_error(err, content)) })
+        should.fail()
+      }
+    }
+  })
 }

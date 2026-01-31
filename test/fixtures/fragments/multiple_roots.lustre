@@ -1,0 +1,11 @@
+@params(
+  items: List(String),
+)
+
+<header class="header">Header Content</header>
+<main class="main">
+  {#each items as item}
+    <p>{item}</p>
+  {/each}
+</main>
+<footer class="footer">Footer Content</footer>
