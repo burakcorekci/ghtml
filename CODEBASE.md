@@ -216,8 +216,57 @@ ParseError(span: Span, message: String)
 5. Add codegen in `codegen.gleam`
 6. Add tests in `test/lustre_template_gen/codegen/control_flow_test.gleam`
 
-## Plan Documents
+## Planning Structure
 
-Detailed task specifications are in `.plan/initial_implementation/tasks/`:
-- Each task file (001-014) contains implementation steps and test cases
-- The main plan is in `.plan/initial_implementation/PLAN.md`
+The `.plan/` directory is the main planning folder for multi-session work. It organizes work into epics with tasks.
+
+### Directory Structure
+
+```
+.plan/
+├── _template/                    # Templates for creating new epics
+│   ├── PLAN.md                   # Epic plan template
+│   └── tasks/
+│       ├── README.md             # Tasks overview template
+│       └── 000_template_task.md  # Individual task template
+├── initial_implementation/       # Example completed epic
+│   ├── PLAN.md                   # High-level epic plan
+│   └── tasks/
+│       ├── README.md             # Task overview and status
+│       ├── 001_project_setup.md  # Individual task specs
+│       ├── 002_types_module.md
+│       └── ...
+└── [next_epic]/                  # Future epics follow same structure
+```
+
+### Epic Structure
+
+Each epic directory contains:
+
+1. **`PLAN.md`** - High-level plan with:
+   - Goal and background
+   - Scope (in/out)
+   - Design overview
+   - Task breakdown table
+   - Dependency graph
+   - Success criteria
+
+2. **`tasks/`** - Individual task specifications:
+   - Named with numeric prefix: `001_task_name.md`
+   - Each task is independently executable when dependencies are met
+   - Contains implementation steps, test cases, and verification checklist
+
+### Creating a New Epic
+
+1. Copy the template: `cp -r .plan/_template .plan/your_epic_name`
+2. Edit `PLAN.md` with your epic's details
+3. Create task files from `tasks/000_template_task.md`
+4. Update `tasks/README.md` with task status tracking
+
+### Task Execution Guidelines
+
+- Tasks are designed to leave the codebase in a working state
+- Each task should result in a single atomic commit
+- Follow TDD: write tests first, then implement
+- Run `just check` before marking a task complete
+- Commit message format: `epic_name: task description`
