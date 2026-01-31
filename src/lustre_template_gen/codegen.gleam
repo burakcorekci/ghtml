@@ -81,12 +81,13 @@ fn generate_imports(template: Template) -> String {
   let needs_fragment = template_needs_fragment(template.body)
   let needs_each = template_has_each(template.body)
   let needs_each_index = template_has_each_with_index(template.body)
+  let needs_element = template_has_custom_elements(template.body)
   let user_imports = template.imports
 
   // Build element import items list
   let element_items = ["type Element", "text"]
-  let element_items = case needs_each {
-    True -> list.append(element_items, ["keyed"])
+  let element_items = case needs_element {
+    True -> list.append(element_items, ["element"])
     False -> element_items
   }
   let element_items = case needs_none {
@@ -102,6 +103,12 @@ fn generate_imports(template: Template) -> String {
     "import lustre/element.{" <> string.join(element_items, ", ") <> "}"
 
   let base_imports = element_import <> "\nimport lustre/element/html"
+
+  // Add keyed import if needed for each loops
+  let base_imports = case needs_each {
+    True -> base_imports <> "\nimport lustre/element/keyed"
+    False -> base_imports
+  }
 
   // Add attribute/event imports
   let imports = case needs_attrs, needs_events {
@@ -322,6 +329,29 @@ fn is_custom_element(tag: String) -> Bool {
   string.contains(tag, "-")
 }
 
+/// Check if any nodes have custom elements
+fn template_has_custom_elements(nodes: List(Node)) -> Bool {
+  list.any(nodes, node_has_custom_elements)
+}
+
+/// Check if a node or its children have custom elements
+fn node_has_custom_elements(node: Node) -> Bool {
+  case node {
+    Element(tag, _, children, _) ->
+      is_custom_element(tag) || list.any(children, node_has_custom_elements)
+    IfNode(_, then_branch, else_branch, _) ->
+      list.any(then_branch, node_has_custom_elements)
+      || list.any(else_branch, node_has_custom_elements)
+    EachNode(_, _, _, body, _) -> list.any(body, node_has_custom_elements)
+    CaseNode(_, branches, _) ->
+      list.any(branches, fn(b: CaseBranch) {
+        list.any(b.body, node_has_custom_elements)
+      })
+    Fragment(children, _) -> list.any(children, node_has_custom_elements)
+    _ -> False
+  }
+}
+
 /// Check if a tag is a void element (no children allowed)
 fn is_void_element(tag: String) -> Bool {
   list.contains(void_elements, tag)
@@ -395,15 +425,12 @@ fn generate_element_inline(
   children: List(Node),
 ) -> String {
   let is_custom = is_custom_element(tag)
+  let is_void = is_void_element(tag)
   let attrs_code = generate_attrs(attrs, is_custom)
 
-  let children_code = case is_void_element(tag) {
-    True -> ""
-    False -> generate_children_inline(children)
-  }
-
   case is_custom {
-    True ->
+    True -> {
+      let children_code = generate_children_inline(children)
       "element(\""
       <> tag
       <> "\", "
@@ -411,8 +438,17 @@ fn generate_element_inline(
       <> ", ["
       <> children_code
       <> "])"
-    False ->
-      "html." <> tag <> "(" <> attrs_code <> ", [" <> children_code <> "])"
+    }
+    False -> {
+      case is_void {
+        // Void elements in Lustre v5 take only 1 argument (attributes)
+        True -> "html." <> tag <> "(" <> attrs_code <> ")"
+        False -> {
+          let children_code = generate_children_inline(children)
+          "html." <> tag <> "(" <> attrs_code <> ", [" <> children_code <> "])"
+        }
+      }
+    }
   }
 }
 
@@ -625,8 +661,8 @@ fn generate_each_node_inline(
 
   case index {
     None -> {
-      // No index: list.map with keyed
-      "keyed(list.map("
+      // No index: list.map with keyed.fragment
+      "keyed.fragment(list.map("
       <> collection
       <> ", fn("
       <> item
@@ -637,8 +673,8 @@ fn generate_each_node_inline(
       <> ") }))"
     }
     Some(idx) -> {
-      // With index: list.index_map with keyed
-      "keyed(list.index_map("
+      // With index: list.index_map with keyed.fragment
+      "keyed.fragment(list.index_map("
       <> collection
       <> ", fn("
       <> item

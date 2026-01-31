@@ -4,7 +4,7 @@
 
 <header class="header">Header Content</header>
 <main class="main">
-  {#each items as item}
+  {#each items as item, i}
     <p>{item}</p>
   {/each}
 </main>

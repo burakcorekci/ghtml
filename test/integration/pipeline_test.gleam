@@ -92,7 +92,7 @@ pub fn each_loop_generates_test() {
   let code = generate_from_fixture("control_flow/full.lustre")
 
   // Should use keyed and list
-  should.be_true(string.contains(code, "keyed("))
+  should.be_true(string.contains(code, "keyed.fragment("))
   should.be_true(string.contains(code, "list.index_map(items"))
 
   // Should import list
@@ -117,7 +117,7 @@ pub fn user_imports_included_test() {
   should.be_true(string.contains(code, "import gleam/int"))
   should.be_true(string.contains(
     code,
-    "import app/types.{type User, type Status, Active, Inactive}",
+    "import types.{type User, type Status, Active, Inactive, Pending}",
   ))
 }
 
@@ -244,7 +244,7 @@ pub fn full_example_from_plan_test() {
   should.be_true(string.contains(code, "Admin ->"))
   should.be_true(string.contains(code, "Member(since) ->"))
   should.be_true(string.contains(code, "case show_email {"))
-  should.be_true(string.contains(code, "keyed("))
+  should.be_true(string.contains(code, "keyed.fragment("))
 
   // Events
   should.be_true(string.contains(code, "event.on_input(on_email_change)"))
@@ -335,7 +335,7 @@ pub fn nested_control_flow_test() {
 
   // Should have both if and each constructs
   should.be_true(string.contains(code, "case show {"))
-  should.be_true(string.contains(code, "keyed("))
+  should.be_true(string.contains(code, "keyed.fragment("))
 }
 
 // === Self-closing Tags Test ===
@@ -437,7 +437,7 @@ pub fn fragments_fixture_test() {
   should.be_true(string.contains(code, "html.footer("))
 
   // Should have each loop
-  should.be_true(string.contains(code, "keyed("))
+  should.be_true(string.contains(code, "keyed.fragment("))
 }
 
 pub fn custom_elements_fixture_test() {

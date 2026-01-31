@@ -1,5 +1,5 @@
 @import(gleam/int)
-@import(app/types.{type User, type Status, Active, Inactive})
+@import(types.{type User, type Status, Active, Inactive, Pending})
 
 @params(
   user: User,
@@ -25,5 +25,7 @@
       <span class="status active">Active</span>
     {:Inactive}
       <span class="status inactive">Inactive</span>
+    {:Pending}
+      <span class="status pending">Pending</span>
   {/case}
 </article>

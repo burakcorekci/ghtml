@@ -150,7 +150,7 @@ pub fn generate_each_without_index_test() {
 
   let code = codegen.generate(template, "test.lustre", "abc123")
 
-  should.be_true(string.contains(code, "keyed("))
+  should.be_true(string.contains(code, "keyed.fragment("))
   should.be_true(string.contains(code, "list.map(items"))
   should.be_true(string.contains(code, "fn(item)"))
 }
@@ -171,7 +171,7 @@ pub fn generate_each_with_index_test() {
 
   let code = codegen.generate(template, "test.lustre", "abc123")
 
-  should.be_true(string.contains(code, "keyed("))
+  should.be_true(string.contains(code, "keyed.fragment("))
   should.be_true(string.contains(code, "list.index_map(items"))
   should.be_true(string.contains(code, "fn(item, i)"))
 }
@@ -245,9 +245,9 @@ pub fn generate_nested_each_test() {
   let code = codegen.generate(template, "test.lustre", "abc123")
 
   // Should have nested keyed/list.map
-  let keyed_count = string.split(code, "keyed(") |> list.length()
+  let keyed_count = string.split(code, "keyed.fragment(") |> list.length()
   should.be_true(keyed_count >= 3)
-  // At least 2 keyed calls
+  // At least 2 keyed.fragment calls
 }
 
 // === Case Node Tests ===
