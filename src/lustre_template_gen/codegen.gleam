@@ -82,6 +82,7 @@ fn generate_imports(template: Template) -> String {
   let needs_each = template_has_each(template.body)
   let needs_each_index = template_has_each_with_index(template.body)
   let needs_element = template_has_custom_elements(template.body)
+  let needs_html = template_has_html_elements(template.body)
   let user_imports = template.imports
 
   // Build element import items list
@@ -102,7 +103,10 @@ fn generate_imports(template: Template) -> String {
   let element_import =
     "import lustre/element.{" <> string.join(element_items, ", ") <> "}"
 
-  let base_imports = element_import <> "\nimport lustre/element/html"
+  let base_imports = case needs_html {
+    True -> element_import <> "\nimport lustre/element/html"
+    False -> element_import
+  }
 
   // Add keyed import if needed for each loops
   let base_imports = case needs_each {
@@ -348,6 +352,29 @@ fn node_has_custom_elements(node: Node) -> Bool {
         list.any(b.body, node_has_custom_elements)
       })
     Fragment(children, _) -> list.any(children, node_has_custom_elements)
+    _ -> False
+  }
+}
+
+/// Check if any nodes have standard HTML elements (non-custom)
+fn template_has_html_elements(nodes: List(Node)) -> Bool {
+  list.any(nodes, node_has_html_elements)
+}
+
+/// Check if a node or its children have standard HTML elements
+fn node_has_html_elements(node: Node) -> Bool {
+  case node {
+    Element(tag, _, children, _) ->
+      !is_custom_element(tag) || list.any(children, node_has_html_elements)
+    IfNode(_, then_branch, else_branch, _) ->
+      list.any(then_branch, node_has_html_elements)
+      || list.any(else_branch, node_has_html_elements)
+    EachNode(_, _, _, body, _) -> list.any(body, node_has_html_elements)
+    CaseNode(_, branches, _) ->
+      list.any(branches, fn(b: CaseBranch) {
+        list.any(b.body, node_has_html_elements)
+      })
+    Fragment(children, _) -> list.any(children, node_has_html_elements)
     _ -> False
   }
 }

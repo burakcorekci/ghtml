@@ -4,7 +4,6 @@
 
 import lustre/attribute
 import lustre/element.{type Element, element, none, text}
-import lustre/element/html
 
 pub fn render(content: String, is_active: Bool) -> Element(msg) {
   element("my-component", [attribute.class("custom")], [

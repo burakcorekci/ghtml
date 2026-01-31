@@ -10,7 +10,7 @@
     type="text"
     class="input"
     value={value}
-    disabled
+    disabled={is_disabled}
     @input={on_change}
   />
   <button type="submit" @click={on_click()}>

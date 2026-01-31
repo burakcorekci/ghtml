@@ -1,5 +1,5 @@
 // @generated from all_attrs.lustre
-// @hash e26ab58abaec81b9eb679694a3d1c024cbfe887862dba0295fde2e079a22c42c
+// @hash 976cc101779d78c7cb1ed75f6d637c53914039a81ad85b8fb82ab97bf71eed02
 // DO NOT EDIT - regenerate with: gleam run -m lustre_template_gen
 
 import lustre/attribute
@@ -18,7 +18,7 @@ pub fn render(
       attribute.type_("text"),
       attribute.class("input"),
       attribute.value(value),
-      attribute.disabled(True),
+      attribute.disabled(is_disabled),
       event.on_input(on_change),
     ]),
     html.button([attribute.type_("submit"), event.on_click(on_click())], [
