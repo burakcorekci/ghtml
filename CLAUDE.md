@@ -47,45 +47,7 @@ The `.plan/` directory organizes multi-session work into epics with tasks.
 3. Create task files from `tasks/000_template_task.md`
 4. Update `tasks/README.md` with task status tracking
 
-## Task Tracking
+## Executing Work
 
-When working on tasks from `.plan/<epic>/tasks/`:
-
-**Before starting a task:**
-- Update status in `.plan/<epic>/tasks/README.md` from `[ ] Pending` to `[~] In Progress`
-
-**After completing a task:**
-- Check off items in the task's verification checklist
-- Update status from `[~] In Progress` to `[x] Complete`
-- Update the completion checklist in `.plan/<epic>/PLAN.md` if one exists
-- Include tracking file updates in your commit
-
-**If blocked:**
-- Update status to `[!] Blocked` with a note explaining the blocker
-
-## Task Execution Guidelines
-
-- Tasks are designed to leave the codebase in a working state
-- Each task should result in a single atomic commit
-- Follow TDD: write tests first, then implement
-- Run `just check` before marking a task complete
-
-# Git Guidelines
-
-Commit message format:
-```
-concise description of what was done
-
-epic: epic_name
-task: task_name
-```
-
-Example:
-```
-implemented parser tokenizer logic
-
-epic: initial_implementation
-task: 005_parser_tokenizer
-```
-
-- Push changes to remote after committing
+- **Single task**: See `SUBAGENT.md` for step-by-step execution
+- **Full epic**: See `ORCHESTRATOR.md` for subagent-based execution
