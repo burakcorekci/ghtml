@@ -41,12 +41,14 @@ pub fn parse_options_default_test() {
   should.be_false(options.force)
   should.be_false(options.clean_only)
   should.be_false(options.watch)
+  should.equal(options.root, ".")
 }
 
 pub fn parse_options_force_test() {
   let options = lustre_template_gen.parse_options(["force"])
   should.be_true(options.force)
   should.be_false(options.clean_only)
+  should.equal(options.root, ".")
 }
 
 pub fn parse_options_clean_test() {
@@ -65,6 +67,19 @@ pub fn parse_options_multiple_test() {
   should.be_true(options.force)
   should.be_true(options.watch)
   should.be_false(options.clean_only)
+  should.equal(options.root, ".")
+}
+
+pub fn parse_options_with_root_test() {
+  let options = lustre_template_gen.parse_options(["./my-project"])
+  should.be_false(options.force)
+  should.equal(options.root, "./my-project")
+}
+
+pub fn parse_options_with_root_and_flags_test() {
+  let options = lustre_template_gen.parse_options(["force", "./my-project"])
+  should.be_true(options.force)
+  should.equal(options.root, "./my-project")
 }
 
 // === File Processing Tests ===

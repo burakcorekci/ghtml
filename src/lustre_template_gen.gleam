@@ -17,6 +17,7 @@ import gleam/erlang/process
 import gleam/int
 import gleam/io
 import gleam/list
+import gleam/result
 import lustre_template_gen/cache
 import lustre_template_gen/codegen
 import lustre_template_gen/parser
@@ -31,15 +32,22 @@ pub type GenerationStats {
 
 /// CLI options parsed from command-line arguments
 pub type CliOptions {
-  CliOptions(force: Bool, clean_only: Bool, watch: Bool)
+  CliOptions(force: Bool, clean_only: Bool, watch: Bool, root: String)
 }
 
 /// Parse command-line arguments into options
 pub fn parse_options(args: List(String)) -> CliOptions {
+  // Extract root directory from args (first non-flag argument, or ".")
+  let root =
+    args
+    |> list.find(fn(arg) { !list.contains(["force", "clean", "watch"], arg) })
+    |> result.unwrap(".")
+
   CliOptions(
     force: list.contains(args, "force"),
     clean_only: list.contains(args, "clean"),
     watch: list.contains(args, "watch"),
+    root: root,
   )
 }
 
@@ -48,8 +56,8 @@ pub fn main() {
   let options = parse_options(argv.load().arguments)
 
   case options.clean_only {
-    True -> run_clean(".")
-    False -> run_generate(".", options)
+    True -> run_clean(options.root)
+    False -> run_generate(options.root, options)
   }
 }
 

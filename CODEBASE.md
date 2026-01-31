@@ -64,9 +64,10 @@ src/components/user_card.lustre  →  src/components/user_card.gleam
 ## Module Guide
 
 ### `src/lustre_template_gen.gleam` - CLI Entry Point
-- Parses command-line arguments
+- Parses command-line arguments (force, clean, watch, root directory)
 - Coordinates the generation pipeline
 - Public: `main()`, `generate_all()`, `parse_options()`
+- Supports specifying a root directory: `gleam run -m lustre_template_gen -- ./my-project`
 
 ### `src/lustre_template_gen/types.gleam` - Core Types
 All shared types are defined here:
@@ -98,7 +99,7 @@ Transforms AST → Gleam source:
 - `find_lustre_files(root)` - Recursively find `.lustre` files
 - `find_orphans(root)` - Find generated files with no source
 - `cleanup_orphans(root)` - Delete orphaned generated files
-- Ignores: `build`, `.git`, `node_modules`, `_build`, `.plan`
+- Ignores: `build`, `.git`, `node_modules`, `_build`, `.plan`, `fixtures`
 
 ### `src/lustre_template_gen/cache.gleam` - Caching Logic
 - `hash_content(content) -> String` - SHA-256 hex digest
@@ -152,6 +153,11 @@ Tests mirror the source structure:
 ```
 test/
   lustre_template_gen_test.gleam      # Main test entry
+  integration_test.gleam              # End-to-end integration tests
+  fixtures/                           # Test fixtures (ignored by scanner)
+    simple/basic.lustre               # Simple template fixture
+    attributes/all_attrs.lustre       # Attributes fixture
+    control_flow/full.lustre          # Control flow fixture
   lustre_template_gen/
     types_test.gleam                  # Type tests
     cache_test.gleam                  # Cache tests

@@ -10,7 +10,9 @@ import lustre_template_gen/cache
 import simplifile
 
 /// Directories that should be ignored when scanning for templates
-const ignored_dirs = ["build", ".git", "node_modules", "_build", ".plan"]
+const ignored_dirs = [
+  "build", ".git", "node_modules", "_build", ".plan", "fixtures",
+]
 
 /// Finds all .lustre template files in the given directory tree
 pub fn find_lustre_files(root: String) -> List(String) {

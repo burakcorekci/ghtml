@@ -54,10 +54,52 @@ clean:
 test-file name:
     gleam test -- --only {{name}}
 
-# Run integration tests (TODO: implement in task 014)
+# Run integration tests
 # Creates test project, runs generator, verifies output compiles
 integration:
-    @echo "Integration tests not yet implemented (see task 014_integration_testing)"
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    echo "Running integration tests..."
+
+    # Create temporary test project
+    TEST_DIR=$(mktemp -d)
+    trap "rm -rf $TEST_DIR" EXIT
+
+    mkdir -p "$TEST_DIR/src"
+
+    # Create gleam.toml (not actually used by the generator, just for reference)
+    cat > "$TEST_DIR/gleam.toml" << 'EOF'
+    name = "test_project"
+    version = "0.1.0"
+    target = "erlang"
+    [dependencies]
+    gleam_stdlib = ">= 0.34.0"
+    EOF
+
+    # Create test template
+    cat > "$TEST_DIR/src/test.lustre" << 'EOF'
+    @params(name: String)
+    <div class="greeting">{name}</div>
+    EOF
+
+    # Run generator with root directory argument
+    echo "  Generating from template..."
+    gleam run -m lustre_template_gen -- "$TEST_DIR"
+
+    # Verify output exists
+    if [ ! -f "$TEST_DIR/src/test.gleam" ]; then
+        echo "ERROR: test.gleam was not generated"
+        exit 1
+    fi
+
+    # Verify output contains expected content
+    echo "  Verifying generated content..."
+    grep -q "@generated" "$TEST_DIR/src/test.gleam" || { echo "ERROR: Missing @generated header"; exit 1; }
+    grep -q "pub fn render" "$TEST_DIR/src/test.gleam" || { echo "ERROR: Missing render function"; exit 1; }
+    grep -q "name: String" "$TEST_DIR/src/test.gleam" || { echo "ERROR: Missing parameter"; exit 1; }
+
+    echo "  Integration tests passed!"
 
 # === Gleam Passthrough ===
 

@@ -1,0 +1,5 @@
+@params(message: String)
+
+<div class="greeting">
+  <p>{message}</p>
+</div>
