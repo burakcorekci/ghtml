@@ -38,12 +38,7 @@ pub type Token {
   IfStart(condition: String, span: Span)
   Else(span: Span)
   IfEnd(span: Span)
-  EachStart(
-    collection: String,
-    item: String,
-    index: Option(String),
-    span: Span,
-  )
+  EachStart(collection: String, item: String, index: Option(String), span: Span)
   EachEnd(span: Span)
   CaseStart(expr: String, span: Span)
   CasePattern(pattern: String, span: Span)
