@@ -3,6 +3,7 @@
 //// Recursively finds `.lustre` template files and their generated `.gleam`
 //// counterparts, excluding common build and dependency directories.
 
+import gleam/io
 import gleam/list
 import gleam/string
 import lustre_template_gen/cache
@@ -31,15 +32,27 @@ pub fn to_source_path(gleam_path: String) -> String {
   string.replace(gleam_path, ".gleam", ".lustre")
 }
 
+/// Find orphaned generated files (files with no matching .lustre source).
+/// This is a dry-run mode that returns the list of orphan paths without deleting.
+pub fn find_orphans(root: String) -> List(String) {
+  find_generated_files(root)
+  |> list.filter(is_orphaned_generated_file)
+}
+
 /// Cleanup orphaned generated files (files with no matching .lustre source).
 /// Returns the number of files deleted.
 pub fn cleanup_orphans(root: String) -> Int {
-  find_generated_files(root)
-  |> list.filter(is_orphaned_generated_file)
+  find_orphans(root)
   |> list.fold(0, fn(count, path) {
     case simplifile.delete(path) {
-      Ok(_) -> count + 1
-      Error(_) -> count
+      Ok(_) -> {
+        io.println("Removed orphan: " <> path)
+        count + 1
+      }
+      Error(_) -> {
+        io.println("Failed to remove: " <> path)
+        count
+      }
     }
   })
 }
