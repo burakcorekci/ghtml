@@ -5,6 +5,7 @@
 
 import gleam/list
 import gleam/string
+import lustre_template_gen/cache
 import simplifile
 
 /// Directories that should be ignored when scanning for templates
@@ -28,6 +29,39 @@ pub fn to_output_path(lustre_path: String) -> String {
 /// Converts a .gleam path back to its .lustre source equivalent
 pub fn to_source_path(gleam_path: String) -> String {
   string.replace(gleam_path, ".gleam", ".lustre")
+}
+
+/// Cleanup orphaned generated files (files with no matching .lustre source).
+/// Returns the number of files deleted.
+pub fn cleanup_orphans(root: String) -> Int {
+  find_generated_files(root)
+  |> list.filter(is_orphaned_generated_file)
+  |> list.fold(0, fn(count, path) {
+    case simplifile.delete(path) {
+      Ok(_) -> count + 1
+      Error(_) -> count
+    }
+  })
+}
+
+/// Check if a .gleam file is a generated orphan (has header but no source)
+fn is_orphaned_generated_file(gleam_path: String) -> Bool {
+  case simplifile.read(gleam_path) {
+    Ok(content) -> {
+      case cache.is_generated(content) {
+        True -> {
+          // Check if source exists
+          let source_path = to_source_path(gleam_path)
+          case simplifile.is_file(source_path) {
+            Ok(True) -> False
+            _ -> True
+          }
+        }
+        False -> False
+      }
+    }
+    Error(_) -> False
+  }
 }
 
 /// Recursively finds files with the given extension, skipping ignored directories
