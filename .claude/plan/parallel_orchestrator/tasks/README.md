@@ -21,7 +21,7 @@ Tasks are named with a three-digit prefix followed by a descriptive name:
 | # | Task | Status | Implements | Notes |
 |---|------|--------|------------|-------|
 | 001 | Initialize Beads | [x] Complete | REQ-001 | |
-| 001b | Spec Structure Conventions | [ ] Pending | REQ-006, REQ-007 | EARS, .specs/, justfile |
+| 001b | Spec Structure Conventions | [x] Complete | REQ-006, REQ-007 | EARS, .specs/, justfile |
 | 002 | Core Orchestrator | [ ] Pending | REQ-001,002,003 | Can parallel with 003, 004 |
 | 003 | Worker Agent | [ ] Pending | REQ-002 | Can parallel with 002, 004 |
 | 004 | Merger Agent | [ ] Pending | REQ-005 | Can parallel with 002, 003 |

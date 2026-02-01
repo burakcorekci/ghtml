@@ -94,6 +94,120 @@ examples-clean:
     done
     echo "✓ All examples cleaned"
 
+# === Spec-Driven Development ===
+
+# Create new spec folder from template
+new-spec name:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [ -d ".specs/{{name}}" ]; then
+        echo "Spec already exists: .specs/{{name}}"
+        exit 1
+    fi
+    mkdir -p ".specs/{{name}}/research"
+    cp .specs/_templates/README.md ".specs/{{name}}/"
+    cp .specs/_templates/requirements.md ".specs/{{name}}/"
+    cp .specs/_templates/design.md ".specs/{{name}}/"
+    if [[ "$(uname)" == "Darwin" ]]; then
+        sed -i '' 's/\[Feature Name\]/{{name}}/g' ".specs/{{name}}/README.md"
+    else
+        sed -i 's/\[Feature Name\]/{{name}}/g' ".specs/{{name}}/README.md"
+    fi
+    echo "Created .specs/{{name}}/"
+    echo ""
+    echo "Next steps:"
+    echo "  1. Edit .specs/{{name}}/requirements.md with EARS requirements"
+    echo "  2. Edit .specs/{{name}}/design.md with architecture"
+    echo "  3. Run: just new-epic {{name}}"
+
+# Create epic in Beads linked to spec folder
+new-epic name:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    spec_dir=".specs/{{name}}"
+    if [ ! -d "$spec_dir" ]; then
+        echo "Spec folder not found. Create it first:"
+        echo "  just new-spec {{name}}"
+        exit 1
+    fi
+    epic_id=$(bd create "Epic: {{name}}" -p 0 --label epic \
+        --meta spec_dir="$spec_dir" --json | jq -r '.id')
+    echo "Created epic: $epic_id"
+    echo "Linked to: $spec_dir"
+    echo ""
+    echo "Add tasks with:"
+    echo "  just new-task $epic_id 'Task description' REQ-001"
+
+# Create task linked to requirement
+new-task epic title req="":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    spec_dir=$(bd show {{epic}} --json | jq -r '.meta.spec_dir // empty')
+    task_id=$(bd create "{{title}}" -p 1 --label task --parent {{epic}} \
+        --meta spec_file="${spec_dir}/requirements.md" \
+        --meta implements="{{req}}" --json | jq -r '.id')
+    echo "Created task: $task_id"
+    [ -n "{{req}}" ] && echo "Implements: {{req}}"
+    echo ""
+    echo "Add details with: bd comment $task_id 'implementation steps...'"
+
+# Add research document
+new-research epic title:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    spec_dir=$(bd show {{epic}} --json | jq -r '.meta.spec_dir // empty')
+    if [ -z "$spec_dir" ]; then
+        echo "Epic has no spec_dir. Create spec first."
+        exit 1
+    fi
+    filename=$(echo "{{title}}" | tr '[:upper:] ' '[:lower:]_' | tr -cd '[:alnum:]_').md
+    filepath="$spec_dir/research/$filename"
+    today=$(date +%Y-%m-%d)
+    printf '%s\n' "# {{title}}" "" "**Date:** $today" "**Status:** In Progress" "" "## Question" "[What are we trying to find out?]" "" "## Findings" "[What did we discover?]" "" "## Recommendation" "[What do we suggest based on findings?]" "" "## Sources" "- [Links to references]" > "$filepath"
+    echo "Created: $filepath"
+    bd create "Research: {{title}}" -p 2 --label research --parent {{epic}} \
+        --meta spec_file="$filepath"
+
+# View spec with related tasks
+view-spec epic:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    spec_dir=$(bd show {{epic}} --json | jq -r '.meta.spec_dir // empty')
+    echo "# $(bd show {{epic}} --json | jq -r '.subject')"
+    echo ""
+    if [ -n "$spec_dir" ] && [ -d "$spec_dir" ]; then
+        echo "## Spec Location: $spec_dir"
+        echo ""
+        if [ -f "$spec_dir/README.md" ]; then
+            head -20 "$spec_dir/README.md"
+            echo "..."
+        fi
+    fi
+    echo ""
+    echo "## Requirements"
+    if [ -f "$spec_dir/requirements.md" ]; then
+        grep -E "^## REQ-" "$spec_dir/requirements.md" 2>/dev/null || echo "(none defined)"
+    fi
+    echo ""
+    echo "## Tasks"
+    bd list --json | jq -r --arg epic "{{epic}}" \
+        '.[] | select(.parent == $epic) | select(.labels[]? == "task") | "- [\(.status)] \(.id): \(.subject) (implements: \(.meta.implements // "n/a"))"' \
+        2>/dev/null || echo "(none)"
+    echo ""
+    echo "## Research"
+    bd list --json | jq -r --arg epic "{{epic}}" \
+        '.[] | select(.parent == $epic) | select(.labels[]? == "research") | "- [\(.status)] \(.subject)"' \
+        2>/dev/null || echo "(none)"
+
+# Find specs mentioning a topic
+find-specs topic:
+    @echo "Searching .specs/ for: {{topic}}"
+    @grep -r "{{topic}}" .specs/ --include="*.md" -l 2>/dev/null || echo "No matches found"
+
+# List all epics with their spec locations
+list-epics:
+    @bd list --json | jq -r '.[] | select(.labels[]? == "epic") | "\(.id)\t\(.meta.spec_dir // "no spec")\t\(.subject)"'
+
 # === Planning ===
 
 # Create a new epic from template (e.g., just epic my_feature)
