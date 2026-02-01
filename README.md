@@ -12,7 +12,7 @@
   <a href="https://github.com/burakcorekci/ghtml/actions/workflows/test.yml"><img src="https://github.com/burakcorekci/ghtml/actions/workflows/test.yml/badge.svg" alt="test"></a>
   <a href="https://hex.pm/packages/ghtml"><img src="https://img.shields.io/hexpm/v/ghtml" alt="Package Version"></a>
   <a href="https://hexdocs.pm/ghtml/"><img src="https://img.shields.io/badge/hex-docs-ffaff3" alt="Hex Docs"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="License"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/hexpm/l/ghtml" alt="License"></a>
 </p>
 
 <p align="center">
