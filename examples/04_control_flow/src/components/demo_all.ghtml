@@ -1,0 +1,26 @@
+@import(types.{type Item})
+
+@params(
+  items: List(Item),
+  show_count: Bool,
+  status: Result(String, String),
+)
+
+<div class="demo">
+  {#if show_count}
+    <p>Total: {int.to_string(list.length(items))}</p>
+  {/if}
+
+  <ul>
+    {#each items as item, i}
+      <li>{int.to_string(i + 1)}. {item.name}</li>
+    {/each}
+  </ul>
+
+  {#case status}
+    {:Ok(msg)}
+      <span class="success">{msg}</span>
+    {:Error(err)}
+      <span class="error">{err}</span>
+  {/case}
+</div>

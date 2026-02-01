@@ -66,7 +66,7 @@ sleep 0.2
 tmux send-keys -t hero "clear" Enter
 sleep 0.2
 
-# Go back to left pane and show template (use HTML highlighting for lustre)
+# Go back to left pane and show template (use HTML highlighting for ghtml)
 tmux select-pane -t hero:0.0
 tmux send-keys -t hero "bat -pp -l html examples/01_simple/src/components/greeting.ghtml" Enter
 sleep 1

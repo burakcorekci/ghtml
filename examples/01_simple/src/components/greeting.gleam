@@ -1,11 +1,14 @@
 // @generated from greeting.ghtml
-// @hash a17d54407872a17835ac16ddc61c6e3a72b64aacb93a6a84560d0ebf8aa5e07c
+// @hash 7e4e6544c70068bada96dd25120d671d94bf242aaf48658929f61af2943c8000
 // DO NOT EDIT - regenerate with: gleam run -m ghtml
 
+import lustre/attribute
 import lustre/element.{type Element, text}
 import lustre/element/html
-import lustre/attribute
 
 pub fn render(name: String) -> Element(msg) {
-  html.div([attribute.class("greeting")], [html.h1([], [text("Hello, "), text(name), text("!")]), html.p([], [text("Welcome to Lustre with template generation.")])])
+  html.div([attribute.class("greeting")], [
+    html.h1([], [text("Hello, "), text(name), text("!")]),
+    html.p([], [text("Welcome to ghtml templates.")]),
+  ])
 }
