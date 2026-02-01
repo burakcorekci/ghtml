@@ -1,6 +1,7 @@
 name = "lustre_template_gen"
 version = "0.1.0"
 target = "erlang"
+licences = ["MIT"]
 
 [dependencies]
 gleam_stdlib = ">= 0.44.0 and < 2.0.0"
