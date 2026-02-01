@@ -1,5 +1,5 @@
 name = "ghtml"
-version = "0.1.0"
+version = "0.1.1"
 target = "erlang"
 gleam = ">= 1.14.0"
 licences = ["MIT"]

@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.1] - 2026-02-01
+
+### Fixed
+- Fixed broken images and GIFs on HexDocs by using absolute GitHub URLs
+
 ## [0.1.0] - 2026-02-01
 
 ### Added

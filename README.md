@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/logo.png" alt="ghtml logo" width="200" />
+  <img src="https://raw.githubusercontent.com/burakcorekci/ghtml/master/assets/logo.png" alt="ghtml logo" width="200" />
 </p>
 
 <h1 align="center">ghtml</h1>
@@ -16,7 +16,7 @@
 </p>
 
 <p align="center">
-  <img src="assets/gifs/hero.gif" alt="ghtml demo" width="90%" />
+  <img src="https://raw.githubusercontent.com/burakcorekci/ghtml/master/assets/gifs/hero.gif" alt="ghtml demo" width="90%" />
 </p>
 
 ---
@@ -109,7 +109,7 @@ That's it. You're done. Go grab a coffee. ☕
 Hash-based caching means we only rebuild what changed. Run it a thousand times — if nothing changed, nothing rebuilds.
 
 <p align="center">
-  <img src="assets/gifs/features.gif" alt="Hash-based caching demo" width="90%" />
+  <img src="https://raw.githubusercontent.com/burakcorekci/ghtml/master/assets/gifs/features.gif" alt="Hash-based caching demo" width="90%" />
 </p>
 
 ### 👀 Watch Mode
@@ -117,7 +117,7 @@ Hash-based caching means we only rebuild what changed. Run it a thousand times �
 Change a file. Blink. It's regenerated. Your flow stays unbroken.
 
 <p align="center">
-  <img src="assets/gifs/watch.gif" alt="Watch mode demo" width="90%" />
+  <img src="https://raw.githubusercontent.com/burakcorekci/ghtml/master/assets/gifs/watch.gif" alt="Watch mode demo" width="90%" />
 </p>
 
 ### 🎯 Control Flow
@@ -139,7 +139,7 @@ Change a file. Blink. It's regenerated. Your flow stays unbroken.
 Delete a `.ghtml` file and we clean up the generated `.gleam` file automatically. No orphans left behind.
 
 <p align="center">
-  <img src="assets/gifs/cleanup.gif" alt="Auto cleanup demo" width="90%" />
+  <img src="https://raw.githubusercontent.com/burakcorekci/ghtml/master/assets/gifs/cleanup.gif" alt="Auto cleanup demo" width="90%" />
 </p>
 
 Outside of watch mode, you can manually remove orphaned files:
@@ -172,7 +172,7 @@ Web components work too. Tags with hyphens automatically use `element()`.
 ## Template Syntax
 
 <p align="center">
-  <img src="assets/gifs/syntax.gif" alt="Control flow syntax demo" width="90%" />
+  <img src="https://raw.githubusercontent.com/burakcorekci/ghtml/master/assets/gifs/syntax.gif" alt="Control flow syntax demo" width="90%" />
 </p>
 
 <details>
