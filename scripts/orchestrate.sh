@@ -100,24 +100,18 @@ remove_task_state() {
 
 # ============ FILTERED QUERIES ============
 get_ready_tasks() {
-    local tasks
-    tasks=$(bd ready --json 2>/dev/null || echo "[]")
     if [ -n "$EPIC_FILTER" ]; then
-        echo "$tasks" | jq -c --arg epic "$EPIC_FILTER" \
-            '[.[] | select(.parent == $epic or .id == $epic)]'
+        bd ready --parent "$EPIC_FILTER" --json 2>/dev/null || echo "[]"
     else
-        echo "$tasks"
+        bd ready --json 2>/dev/null || echo "[]"
     fi
 }
 
 get_active_tasks() {
-    local tasks
-    tasks=$(bd list --json 2>/dev/null | jq -c '[.[] | select(.status == "in_progress")]')
     if [ -n "$EPIC_FILTER" ]; then
-        echo "$tasks" | jq -c --arg epic "$EPIC_FILTER" \
-            '[.[] | select(.parent == $epic or .id == $epic)]'
+        bd list --status in_progress --parent "$EPIC_FILTER" --json 2>/dev/null || echo "[]"
     else
-        echo "$tasks"
+        bd list --status in_progress --json 2>/dev/null || echo "[]"
     fi
 }
 
