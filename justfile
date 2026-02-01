@@ -279,6 +279,12 @@ orchestrate-help:
     @echo ""
     @echo "  just worktree-clean           Remove all worktrees"
     @echo "  just worktree-remove <id>     Remove specific worktree"
+    @echo ""
+    @echo "  just test-crash-recovery      Run crash recovery tests"
+
+# Run crash recovery tests
+test-crash-recovery:
+    ./scripts/test-crash-recovery.sh
 
 # === Planning ===
 

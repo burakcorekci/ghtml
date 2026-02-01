@@ -26,7 +26,7 @@ Tasks are named with a three-digit prefix followed by a descriptive name:
 | 003 | Worker Agent | [x] Complete | REQ-002 | Can parallel with 002, 004 |
 | 004 | Merger Agent | [x] Complete | REQ-005 | Can parallel with 002, 003 |
 | 005 | Justfile Integration | [x] Complete | - | |
-| 006 | Crash Recovery Tests | [ ] Pending | REQ-003,004 | |
+| 006 | Crash Recovery Tests | [x] Complete | REQ-003,004 | |
 | 007 | Documentation | [ ] Pending | - | |
 | 008 | Migrate Existing Epics | [ ] Pending | - | |
 | 009 | Cleanup Manual Mode | [ ] Pending | - | Final task |
