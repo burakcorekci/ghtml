@@ -2,21 +2,30 @@
 
 ## Description
 
-Implement the main orchestrator script that manages parallel agent execution. The orchestrator is stateless - it reconstructs its view from Beads on each cycle, making it crash-resilient.
+WHEN parallel agent execution is needed
+THE orchestrator script SHALL manage worker agents across isolated git worktrees
+AND store all state in Beads metadata
+AND reconstruct state from Beads on each cycle for crash resilience
 
 ## Dependencies
 
-- 001_initialize_beads - Beads must be set up first
+- 001b_spec_structure_conventions - Spec structure must be established
+
+## Implements
+
+- REQ-001: Task State Query
+- REQ-002: Parallel Execution
+- REQ-003: Crash Recovery
 
 ## Success Criteria
 
-1. Script accepts `--epic` and `--max-agents` arguments
-2. Spawns worker agents up to max limit for ready tasks
-3. All state stored in Beads metadata (worktree, branch, pid, phase, pr_number)
-4. Correctly reconstructs state after restart
-5. Detects and respawns crashed agents
-6. Cleans up worktrees after task completion
-7. Exits when all tasks in scope are complete
+1. WHEN `--epic <id>` is passed THEN only tasks under that epic are processed
+2. WHEN `--max-agents N` is passed THEN at most N agents run in parallel
+3. WHILE tasks are in_progress THEN state is stored in Beads metadata (worktree, branch, pid, phase, pr_number)
+4. WHEN orchestrator restarts THEN it reconstructs state from Beads without data loss
+5. WHEN agent PID is no longer running THEN orchestrator detects and respawns or advances phase
+6. WHEN task completes THEN worktree is removed
+7. WHEN all tasks in scope are complete THEN orchestrator exits cleanly
 
 ## Implementation Steps
 

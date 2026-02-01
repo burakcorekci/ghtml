@@ -4,28 +4,32 @@
 
 This directory contains individual task specifications for the Parallel Orchestrator epic. Each task is designed to be independently executable once its dependencies are satisfied.
 
+**Key Conventions:**
+- Task descriptions use EARS notation (WHEN/WHILE...THE...SHALL)
+- Tasks link to requirements via `Implements` section
+- Success criteria are testable EARS statements
+
 ## Task Naming Convention
 
 Tasks are named with a three-digit prefix followed by a descriptive name:
 - `001_initialize_beads.md`
+- `001b_spec_structure_conventions.md`
 - `002_core_orchestrator.md`
-- etc.
-
-The numbering indicates a recommended execution order, though tasks 002-004 can be executed in parallel once 001 is complete.
 
 ## Task Status
 
-| # | Task | Status | Notes |
-|---|------|--------|-------|
-| 001 | Initialize Beads | [ ] Pending | |
-| 002 | Core Orchestrator | [ ] Pending | Can parallel with 003, 004 |
-| 003 | Worker Agent | [ ] Pending | Can parallel with 002, 004 |
-| 004 | Merger Agent | [ ] Pending | Can parallel with 002, 003 |
-| 005 | Justfile Integration | [ ] Pending | |
-| 006 | Crash Recovery Tests | [ ] Pending | |
-| 007 | Documentation | [ ] Pending | |
-| 008 | Migrate Existing Epics | [ ] Pending | |
-| 009 | Cleanup Manual Mode | [ ] Pending | Final task |
+| # | Task | Status | Implements | Notes |
+|---|------|--------|------------|-------|
+| 001 | Initialize Beads | [ ] Pending | REQ-001 | |
+| 001b | Spec Structure Conventions | [ ] Pending | REQ-006, REQ-007 | EARS, .specs/, justfile |
+| 002 | Core Orchestrator | [ ] Pending | REQ-001,002,003 | Can parallel with 003, 004 |
+| 003 | Worker Agent | [ ] Pending | REQ-002 | Can parallel with 002, 004 |
+| 004 | Merger Agent | [ ] Pending | REQ-005 | Can parallel with 002, 003 |
+| 005 | Justfile Integration | [ ] Pending | - | |
+| 006 | Crash Recovery Tests | [ ] Pending | REQ-003,004 | |
+| 007 | Documentation | [ ] Pending | - | |
+| 008 | Migrate Existing Epics | [ ] Pending | - | |
+| 009 | Cleanup Manual Mode | [ ] Pending | - | Final task |
 
 Status legend:
 - `[ ] Pending` - Not started
@@ -33,20 +37,15 @@ Status legend:
 - `[x] Complete` - Finished and verified
 - `[!] Blocked` - Waiting on external dependency
 
-## Execution Guidelines
-
-1. **Check dependencies first** - Ensure all prerequisite tasks are complete
-2. **Follow TDD** - Write tests before implementation (see CLAUDE.md)
-3. **Verify success criteria** - All criteria must be met before marking complete
-4. **Run full checks** - Use `just check` before marking complete
-5. **Commit atomically** - Each task should result in a single commit
-
 ## Parallel Execution
 
-After task 001 completes, tasks 002-004 can run in parallel:
+After task 001b completes, tasks 002-004 can run in parallel:
 
 ```
-001 ─────┬───────┬───────┐
+001
+ │
+ ▼
+001b ────┬───────┬───────┐
          │       │       │
          ▼       ▼       ▼
        002     003     004
@@ -69,9 +68,32 @@ After task 001 completes, tasks 002-004 can run in parallel:
                009
 ```
 
+## Requirements Traceability
+
+| Requirement | Tasks |
+|-------------|-------|
+| REQ-001: Task State Query | 001, 002 |
+| REQ-002: Parallel Execution | 002, 003 |
+| REQ-003: Crash Recovery | 002, 006 |
+| REQ-004: Agent Crash Detection | 006 |
+| REQ-005: PR Auto-Merge | 004 |
+| REQ-006: Spec Discovery | 001b |
+| REQ-007: State Single Source | 001b |
+
+## Execution Guidelines
+
+1. **Check dependencies first** - Ensure all prerequisite tasks are complete
+2. **Read the spec** - Check `.specs/parallel_orchestrator/` for context
+3. **Follow TDD** - Write tests before implementation
+4. **Use EARS** - Success criteria should be testable EARS statements
+5. **Verify success criteria** - All criteria must pass before marking complete
+6. **Run full checks** - Use `just check` before marking complete
+7. **Commit atomically** - Each task should result in a single commit
+
 ## Adding New Tasks
 
-1. Copy `000_template_task.md` from `../_template/tasks/`
-2. Fill in all sections
-3. Update this README with the new task
-4. Update the parent PLAN.md task table and dependency graph
+1. Copy from `../../_template/tasks/000_template_task.md`
+2. Use EARS notation for description and success criteria
+3. Add `Implements` section linking to requirements
+4. Update this README with the new task
+5. Update the parent PLAN.md task table

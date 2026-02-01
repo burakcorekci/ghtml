@@ -2,19 +2,25 @@
 
 ## Description
 
-Set up Beads in the project as the single source of truth for orchestration state. This includes installation verification, project initialization, and documenting the workflow conventions.
+WHEN the project needs machine-queryable task state for orchestration
+THE developer SHALL initialize Beads in the project
+AND configure it as the execution state store
 
 ## Dependencies
 
 - None - this is the first task.
 
+## Implements
+
+- REQ-001: Task State Query
+
 ## Success Criteria
 
-1. `bd --version` returns a valid version (0.20.1+ for hash-based IDs)
-2. `.beads/` directory exists and is git-tracked
-3. `bd list` returns empty list (no errors)
-4. `.gitignore` updated to exclude SQLite cache if needed
-5. Beads workflow documented in project
+1. WHEN `bd --version` is run THEN it returns version 0.20.1+ (hash-based IDs)
+2. WHEN `bd init` completes THEN `.beads/` directory exists and is git-tracked
+3. WHEN `bd list` is run THEN it returns empty list without errors
+4. WHEN `.gitignore` is checked THEN SQLite cache files are excluded
+5. WHEN developer reads project THEN Beads workflow is documented
 
 ## Implementation Steps
 
