@@ -108,28 +108,15 @@ That's it. You're done. Go grab a coffee. ☕
   <img src="assets/gifs/features.gif" alt="Hash-based caching demo" width="650" />
 </p>
 
-<div align="center">
-<table width="90%">
-<tr>
-<td valign="top" width="50%">
-
 ### ⚡ Blazing Fast
 
 Hash-based caching means we only rebuild what changed. Run it a thousand times — if nothing changed, nothing rebuilds.
 
-</td>
-<td valign="top" width="50%">
-
 ### 👀 Watch Mode
 
-<img src="assets/gifs/watch.gif" alt="Watch mode demo" width="100%" />
+<img src="assets/gifs/watch.gif" alt="Watch mode demo" width="500" />
 
 Change a file. Blink. It's regenerated. Your flow stays unbroken.
-
-</td>
-</tr>
-<tr>
-<td valign="top" width="50%">
 
 ### 🎯 Control Flow
 
@@ -145,9 +132,6 @@ Change a file. Blink. It's regenerated. Your flow stays unbroken.
 {/each}
 ```
 
-</td>
-<td valign="top" width="50%">
-
 ### 🧹 Auto Cleanup
 
 Delete a `.lustre` file and we clean up the generated `.gleam` file automatically. No orphans left behind.
@@ -155,11 +139,6 @@ Delete a `.lustre` file and we clean up the generated `.gleam` file automaticall
 ```sh
 gleam run -m lustre_template_gen -- clean
 ```
-
-</td>
-</tr>
-<tr>
-<td valign="top" width="50%">
 
 ### 🎨 Events
 
@@ -170,9 +149,6 @@ Event handlers? We got 'em.
 <input @input={handle_input} />
 ```
 
-</td>
-<td valign="top" width="50%">
-
 ### 🔧 Custom Elements
 
 Web components work too. Tags with hyphens automatically use `element()`.
@@ -182,11 +158,6 @@ Web components work too. Tags with hyphens automatically use `element()`.
   <slot-content />
 </my-component>
 ```
-
-</td>
-</tr>
-</table>
-</div>
 
 ---
 
