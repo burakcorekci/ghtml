@@ -16,7 +16,7 @@
 </p>
 
 <p align="center">
-  <img src="assets/gifs/hero.gif" alt="lustre_template_gen demo" width="80%" />
+  <img src="assets/gifs/hero.gif" alt="lustre_template_gen demo" width="90%" />
 </p>
 
 ---
@@ -109,16 +109,16 @@ That's it. You're done. Go grab a coffee. ☕
 Hash-based caching means we only rebuild what changed. Run it a thousand times — if nothing changed, nothing rebuilds.
 
 <p align="center">
-  <img src="assets/gifs/features.gif" alt="Hash-based caching demo" width="80%" />
+  <img src="assets/gifs/features.gif" alt="Hash-based caching demo" width="90%" />
 </p>
 
 ### 👀 Watch Mode
 
-<p align="center">
-  <img src="assets/gifs/watch.gif" alt="Watch mode demo" width="80%" />
-</p>
-
 Change a file. Blink. It's regenerated. Your flow stays unbroken.
+
+<p align="center">
+  <img src="assets/gifs/watch.gif" alt="Watch mode demo" width="90%" />
+</p>
 
 ### 🎯 Control Flow
 
@@ -139,8 +139,10 @@ Change a file. Blink. It's regenerated. Your flow stays unbroken.
 Delete a `.lustre` file and we clean up the generated `.gleam` file automatically. No orphans left behind.
 
 <p align="center">
-  <img src="assets/gifs/cleanup.gif" alt="Auto cleanup demo" width="80%" />
+  <img src="assets/gifs/cleanup.gif" alt="Auto cleanup demo" width="90%" />
 </p>
+
+Outside of watch mode, you can manually remove orphaned files:
 
 ```sh
 gleam run -m lustre_template_gen -- clean
@@ -170,7 +172,7 @@ Web components work too. Tags with hyphens automatically use `element()`.
 ## Template Syntax
 
 <p align="center">
-  <img src="assets/gifs/syntax.gif" alt="Control flow syntax demo" width="80%" />
+  <img src="assets/gifs/syntax.gif" alt="Control flow syntax demo" width="90%" />
 </p>
 
 <details>
