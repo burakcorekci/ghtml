@@ -4,7 +4,7 @@ This document provides context for agents working on this project. Read this fir
 
 ## What This Project Does
 
-**Lustre Template Generator** is a Gleam preprocessor that converts `.ghtml` template files into Gleam modules with Lustre `Element(msg)` render functions.
+**ghtml** (Gleam HTML Template Generator) is a Gleam preprocessor that converts `.ghtml` template files into Gleam modules with Lustre `Element(msg)` render functions.
 
 **Flow:** `.ghtml` file → Parser (tokenize + AST) → Codegen → `.gleam` file
 
@@ -18,13 +18,19 @@ src/components/user_card.ghtml  →  src/components/user_card.gleam
 | Task | Command |
 |------|---------|
 | Run all checks | `just check` |
-| Run all tests | `just test` |
+| Simulate CI | `just ci` |
+| Run unit+integration tests | `just test` |
 | Run unit tests | `just unit` |
 | Run integration tests | `just integration` |
+| Run E2E tests | `just e2e` |
+| Regenerate E2E modules | `just e2e-regen` |
 | Build | `just g build` |
 | Run CLI | `just run` |
 | Force regenerate | `just run-force` |
 | Watch mode | `just run-watch` |
+| Clean orphans | `just run-clean` |
+| Validate examples | `just check-examples` |
+| Regenerate GIFs | `just gifs` |
 
 ## Architecture
 
@@ -113,7 +119,7 @@ Transforms AST → Gleam source:
 - Tracks file modification times
 - Auto-regenerates on change, cleans up on delete
 
-### `src/e2e_helpers.gleam` - E2E Test Helpers
+### `test/e2e_helpers.gleam` - E2E Test Helpers
 Utilities for E2E testing:
 - `create_temp_dir(prefix)` - Create unique temp directory in `.test/`
 - `cleanup_temp_dir(path)` - Remove temp directory and contents
@@ -163,7 +169,8 @@ Utilities for E2E testing:
 Tests are organized by type (unit/integration/e2e):
 ```
 test/
-  ghtml_test.gleam      # Test entry point (gleeunit)
+  ghtml_test.gleam                    # Test entry point (gleeunit)
+  e2e_helpers.gleam                   # E2E test helper utilities
   unit/                               # Fast, isolated module tests
     scanner_test.gleam                # Scanner tests
     cli_test.gleam                    # CLI tests
@@ -180,18 +187,51 @@ test/
       imports_test.gleam              # Smart import tests
   integration/                        # Pipeline tests
     pipeline_test.gleam               # End-to-end pipeline tests
-  e2e/                                # E2E tests
+  e2e/                                # E2E tests (slow, require build)
     helpers_test.gleam                # Tests for e2e_helpers module
+    build_test.gleam                  # Build verification tests
+    generated_modules_test.gleam      # Generated module validation
+    lustre_dep_test.gleam             # Lustre dependency tests
+    project_template_test.gleam       # Project template tests
+    ssr_test.gleam                    # Server-side rendering tests
+    generated/                        # Pre-generated modules for SSR tests
+      basic.gleam, attributes.gleam, control_flow.gleam, etc.
+    project_template/                 # Minimal Gleam project for E2E tests
   fixtures/                           # Shared test fixtures (ignored by scanner)
-    simple/basic.ghtml               # Simple template fixture
-    attributes/all_attrs.ghtml       # Attributes fixture
-    control_flow/full.ghtml          # Control flow fixture
+    simple/basic.ghtml                # Simple template fixture
+    attributes/all_attrs.ghtml        # Attributes fixture
+    control_flow/full.ghtml           # Control flow fixture
+    fragments/multiple_roots.ghtml    # Fragment/multi-root fixture
+    custom_elements/web_components.ghtml  # Custom element fixture
+    edge_cases/special.ghtml          # Edge case fixture
 ```
 
 Run tests with:
 - `just unit` - Run unit tests only (fast)
 - `just integration` - Run integration tests
-- `just test` - Run all tests
+- `just test` - Run unit + integration tests
+- `just e2e` - Run E2E tests (slower, requires build)
+
+## Examples
+
+The `examples/` directory contains complete, buildable examples demonstrating ghtml features:
+
+```
+examples/
+  01_simple/         # Basic template with text interpolation
+  02_attributes/     # Static, dynamic, and boolean attributes
+  03_events/         # Event handlers (@click, @input, etc.)
+  04_control_flow/   # {#if}, {#each}, {#case} blocks
+  05_shoelace/       # Shoelace web components integration
+  06_material_web/   # Material Web components integration
+  07_tailwind/       # Tailwind CSS styling
+  08_complete/       # Full application with all features
+```
+
+Each example is a standalone Gleam project with its own `gleam.toml` and `justfile`.
+- Build all examples: `just examples`
+- Validate examples: `just check-examples` (runs during CI)
+- Clean examples: `just examples-clean`
 
 ## Key Design Decisions
 
@@ -214,6 +254,7 @@ Run tests with:
 | `gleam_otp` | Actor for watch mode |
 | `shellout` | Shell command execution |
 | `gleeunit` | Testing (dev) |
+| `lustre` | For SSR testing (dev) |
 
 ## Common Patterns
 
