@@ -187,5 +187,5 @@ Example validation failed!
 ## Files to Modify
 
 - `justfile` - Add `check-examples` recipe, update `check` recipe
-- `.plan/learning_examples/PLAN.md` - Add task 009 to table
-- `.plan/learning_examples/tasks/README.md` - Add task 009 status
+- `.claude/plan/learning_examples/PLAN.md` - Add task 009 to table
+- `.claude/plan/learning_examples/tasks/README.md` - Add task 009 status

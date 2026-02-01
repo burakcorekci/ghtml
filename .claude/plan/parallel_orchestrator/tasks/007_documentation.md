@@ -249,7 +249,7 @@ bd create "Task name" ...
 
 ## Architecture Reference
 
-See `.plan/research/task_management_alternatives.md` for design decisions.
+See `.claude/research/task_management_alternatives.md` for design decisions.
 ```
 
 ### 3. Add Script Headers

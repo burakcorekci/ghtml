@@ -13,8 +13,8 @@ The current `.plan/` folder approach works well for sequential, human-orchestrat
 3. **Hybrid approach** - `.specs/` for Grep/Glob discovery + Beads for orchestration
 
 See:
-- `.plan/research/task_management_alternatives.md`
-- `.plan/research/spec_driven_beads_integration.md`
+- `.claude/research/task_management_alternatives.md`
+- `.claude/research/spec_driven_beads_integration.md`
 
 ## Scope
 
@@ -208,8 +208,8 @@ status: open           status: in_progress              status: closed
 
 ## References
 
-- Research: `.plan/research/task_management_alternatives.md`
-- Spec integration: `.plan/research/spec_driven_beads_integration.md`
+- Research: `.claude/research/task_management_alternatives.md`
+- Spec integration: `.claude/research/spec_driven_beads_integration.md`
 - Beads: https://github.com/steveyegge/beads
 - Git worktrees: https://git-scm.com/docs/git-worktree
 - Kiro: https://kiro.dev/docs/specs/

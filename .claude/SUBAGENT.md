@@ -2,16 +2,16 @@
 
 Step-by-step instructions for executing a single task from an epic in **manual mode**.
 
-> **Note:** This is for sequential, human-orchestrated work. For parallel automated execution with multiple agents, see `docs/orchestration.md`.
+> **Note:** This is for sequential, human-orchestrated work. For parallel automated execution with multiple agents, see `.claude/docs/orchestration.md`.
 
 ## Before Starting
 
-1. Read `CODEBASE.md` for architecture context
-2. Read your assigned task file at `.plan/<epic>/tasks/<NNN>_<name>.md`
+1. Read `.claude/CODEBASE.md` for architecture context
+2. Read your assigned task file at `.claude/plan/<epic>/tasks/<NNN>_<name>.md`
 
 ## Execution Steps
 
-1. **Update status** in `.plan/<epic>/tasks/README.md`: `[ ] Pending` → `[~] In Progress`
+1. **Update status** in `.claude/plan/<epic>/tasks/README.md`: `[ ] Pending` → `[~] In Progress`
 
 2. **Implement with TDD**:
    - Write failing tests first
@@ -26,6 +26,7 @@ Step-by-step instructions for executing a single task from an epic in **manual m
 4. **Update tracking**:
    - Status in README.md: `[~] In Progress` → `[x] Complete`
    - Completion checklist in PLAN.md if one exists
+   - Update `.claude/CODEBASE.md` if task added new modules, changed architecture, or introduced new patterns
 
 5. **Commit and push**:
    ```
@@ -57,10 +58,10 @@ Step-by-step instructions for executing a single task from an epic in **manual m
 
 | Aspect | Manual (this doc) | Automated |
 |--------|-------------------|-----------|
-| Status tracking | `.plan/` README.md | Beads |
+| Status tracking | `.claude/plan/` README.md | Beads |
 | Orchestration | Human | Script |
 | Parallelism | No | Yes |
 | PR workflow | Optional | Built-in |
 | Best for | Single tasks, learning | Multiple independent tasks |
 
-To switch to automated mode, see `docs/orchestration.md`.
+To switch to automated mode, see `.claude/docs/orchestration.md`.

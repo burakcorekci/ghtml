@@ -100,14 +100,14 @@ examples-clean:
 epic name:
     #!/usr/bin/env bash
     set -euo pipefail
-    if [ -d ".plan/{{name}}" ]; then
-        echo "Error: Epic '.plan/{{name}}' already exists"
+    if [ -d ".claude/plan/{{name}}" ]; then
+        echo "Error: Epic '.claude/plan/{{name}}' already exists"
         exit 1
     fi
-    cp -r .plan/_template ".plan/{{name}}"
-    echo "✓ Created epic: .plan/{{name}}/"
-    echo "  - Edit .plan/{{name}}/PLAN.md with your epic details"
-    echo "  - Create tasks from .plan/{{name}}/tasks/000_template_task.md"
+    cp -r .claude/plan/_template ".claude/plan/{{name}}"
+    echo "✓ Created epic: .claude/plan/{{name}}/"
+    echo "  - Edit .claude/plan/{{name}}/PLAN.md with your epic details"
+    echo "  - Create tasks from .claude/plan/{{name}}/tasks/000_template_task.md"
 
 # === Testing ===
 
@@ -241,6 +241,34 @@ e2e-regen:
     echo "Generated SSR test modules:"
     ls -la test/e2e/generated/*.gleam
     echo "✓ SSR test modules regenerated"
+
+# === GIF Recording ===
+
+# Regenerate all README GIFs (requires: brew install asciinema agg tmux bat ffmpeg)
+gifs:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    echo "Regenerating all GIFs..."
+    for script in assets/gif-record/record-*.sh; do
+        name=$(basename "$script" .sh | sed 's/record-//')
+        echo "  Recording: $name"
+        bash "$script"
+    done
+    echo "✓ All GIFs regenerated in assets/gifs/"
+
+# Record a single GIF (e.g., just gif hero)
+gif name:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    script="assets/gif-record/record-{{name}}.sh"
+    if [ ! -f "$script" ]; then
+        echo "Error: Script '$script' not found"
+        echo "Available: $(ls assets/gif-record/record-*.sh | xargs -n1 basename | sed 's/record-//' | sed 's/.sh//' | tr '\n' ' ')"
+        exit 1
+    fi
+    echo "Recording: {{name}}"
+    bash "$script"
+    echo "✓ Created assets/gifs/{{name}}.gif"
 
 # === Utilities ===
 

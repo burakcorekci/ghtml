@@ -101,7 +101,7 @@ Transforms AST → Gleam source:
 - `find_lustre_files(root)` - Recursively find `.lustre` files
 - `find_orphans(root)` - Find generated files with no source
 - `cleanup_orphans(root)` - Delete orphaned generated files
-- Ignores: `build`, `.git`, `node_modules`, `_build`, `.plan`, `fixtures`
+- Ignores: `build`, `.git`, `node_modules`, `_build`, `.claude`, `fixtures`
 
 ### `src/lustre_template_gen/cache.gleam` - Caching Logic
 - `hash_content(content) -> String` - SHA-256 hex digest

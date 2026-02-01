@@ -8,7 +8,7 @@ argument-hint: [epic-name]
 # Orchestrate Epic: $ARGUMENTS
 
 ## Current Task Status
-!`cat .plan/$ARGUMENTS/tasks/README.md 2>/dev/null || echo "Epic '$ARGUMENTS' not found in .plan/"`
+!`cat .claude/plan/$ARGUMENTS/tasks/README.md 2>/dev/null || echo "Epic '$ARGUMENTS' not found in .claude/plan/"`
 
 ## Algorithm
 
@@ -17,7 +17,7 @@ argument-hint: [epic-name]
 1. Find first `[ ] Pending` or `[~] In Progress` task from status above
 2. For each task ONE AT A TIME:
    - Update status to `[~] In Progress`
-   - Spawn ONE subagent with: "Read SUBAGENT.md and execute task at .plan/$ARGUMENTS/tasks/<task_file>.md"
+   - Spawn ONE subagent with: "Read .claude/SUBAGENT.md and execute task at .claude/plan/$ARGUMENTS/tasks/<task_file>.md"
    - **Wait for completion before proceeding**
    - On success: run `just check`, update to `[x] Complete`, push
    - On failure: retry once with error context, then mark `[!] Blocked` and stop
@@ -28,8 +28,8 @@ argument-hint: [epic-name]
 
 Pass to subagent:
 - Epic name: `$ARGUMENTS`
-- Task path: `.plan/$ARGUMENTS/tasks/<NNN>_<name>.md`
-- Instruction: "Read SUBAGENT.md and execute this task"
+- Task path: `.claude/plan/$ARGUMENTS/tasks/<NNN>_<name>.md`
+- Instruction: "Read .claude/SUBAGENT.md and execute this task"
 
 ## Error Handling
 

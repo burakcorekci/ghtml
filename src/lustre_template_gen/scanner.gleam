@@ -11,7 +11,8 @@ import simplifile
 
 /// Directories that should be ignored when scanning for templates
 const ignored_dirs = [
-  "build", ".git", "node_modules", "_build", ".plan", "fixtures", "examples",
+  "build", ".git", "node_modules", "_build", ".claude", "fixtures", "examples",
+  "generated",
 ]
 
 /// Finds all .lustre template files in the given directory tree

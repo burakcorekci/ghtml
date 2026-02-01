@@ -1,6 +1,6 @@
 # Parallel Orchestration Guide
 
-> **Status:** This guide will be fully populated when the `parallel_orchestrator` epic is implemented. See `.plan/parallel_orchestrator/PLAN.md` for the implementation plan.
+> **Status:** This guide will be fully populated when the `parallel_orchestrator` epic is implemented. See `.claude/plan/parallel_orchestrator/PLAN.md` for the implementation plan.
 
 ## Overview
 
@@ -60,16 +60,16 @@ All orchestration state lives in Beads metadata:
 | `just worker <id>` | Spawn single worker |
 | `just merger` | Process PRs |
 | `just worktree-clean` | Clean up worktrees |
-| `just migrate-to-beads` | Migrate .plan/ tasks to Beads |
+| `just migrate-to-beads` | Migrate .claude/plan/ tasks to Beads |
 
 ## Implementation Plan
 
-See `.plan/parallel_orchestrator/` for full implementation details:
+See `.claude/plan/parallel_orchestrator/` for full implementation details:
 - `PLAN.md` - Epic overview and design
 - `tasks/` - Individual task specifications
 
 ## Related Documentation
 
 - `CLAUDE.md` - Entry point, execution mode selection
-- `SUBAGENT.md` - Manual mode instructions
-- `.plan/research/task_management_alternatives.md` - Research report
+- `.claude/SUBAGENT.md` - Manual mode instructions
+- `.claude/research/task_management_alternatives.md` - Research report

@@ -1,6 +1,6 @@
 # Codebase Context
 
-Read `CODEBASE.md` for architecture overview, module guide, and key patterns before implementing any task. Update `CODEBASE.md` after completing implementations that add new modules, change architecture, or introduce new patterns.
+Read `.claude/CODEBASE.md` for architecture overview, module guide, and key patterns before implementing any task. Update `.claude/CODEBASE.md` after completing implementations that add new modules, change architecture, or introduce new patterns.
 
 # Development Workflow
 
@@ -14,18 +14,22 @@ Read `CODEBASE.md` for architecture overview, module guide, and key patterns bef
    - Includes documentation comments
 
 ## Commands
-See the Quick Reference table in `CODEBASE.md` for all commands. Key ones:
+See the Quick Reference table in `.claude/CODEBASE.md` for all commands. Key ones:
 - `just check` - Run all quality checks before committing
 - `just ci` - Simulate CI pipeline before pushing
 
+## GIF Recording
+
+Regenerate README demos with `just gifs`. See `assets/gif-record/README.md` for prerequisites and details.
+
 # Epic-Based Work
 
-The `.plan/` directory contains detailed specifications for multi-session work organized into epics with tasks.
+The `.claude/plan/` directory contains detailed specifications for multi-session work organized into epics with tasks.
 
 ## Directory Structure
 
 ```
-.plan/
+.claude/plan/
 ├── _template/                    # Templates for creating new epics
 │   ├── PLAN.md                   # Epic plan template
 │   └── tasks/
@@ -41,7 +45,7 @@ The `.plan/` directory contains detailed specifications for multi-session work o
 ## Creating a New Epic
 
 1. Run: `just epic your_epic_name`
-2. Edit `.plan/your_epic_name/PLAN.md` with your epic's details
+2. Edit `.claude/plan/your_epic_name/PLAN.md` with your epic's details
 3. Create task files from `tasks/000_template_task.md`
 4. Update `tasks/README.md` with task status tracking
 
@@ -52,9 +56,9 @@ Choose the appropriate mode based on your workflow:
 ## Manual Mode (Sequential)
 
 For human-orchestrated, step-by-step task execution:
-- Status tracked in `.plan/<epic>/tasks/README.md` (markdown checkboxes)
+- Status tracked in `.claude/plan/<epic>/tasks/README.md` (markdown checkboxes)
 - Single task at a time
-- See: `SUBAGENT.md` for detailed instructions
+- See: `.claude/SUBAGENT.md` for detailed instructions
 
 ```bash
 # View task, implement, update README status manually
@@ -65,7 +69,7 @@ For human-orchestrated, step-by-step task execution:
 For script-orchestrated, parallel agent execution:
 - Status tracked in Beads (machine-queryable)
 - Multiple agents work concurrently
-- See: `docs/orchestration.md` for setup and usage
+- See: `.claude/docs/orchestration.md` for setup and usage
 
 ```bash
 # Initialize beads (first time)

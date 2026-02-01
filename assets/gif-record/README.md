@@ -12,13 +12,28 @@ brew install asciinema agg tmux bat ffmpeg
 
 ## Quick Start
 
-Run any recording script from the project root:
+Use just commands from the project root:
+
+```sh
+# Regenerate all GIFs
+just gifs
+
+# Record a single GIF
+just gif hero
+just gif features
+just gif syntax
+just gif watch
+just gif cleanup
+```
+
+Or run scripts directly:
 
 ```sh
 bash assets/gif-record/record-hero.sh
 bash assets/gif-record/record-features.sh
 bash assets/gif-record/record-syntax.sh
 bash assets/gif-record/record-watch.sh
+bash assets/gif-record/record-cleanup.sh
 ```
 
 ## Recording Approach
