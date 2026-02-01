@@ -138,6 +138,10 @@ Change a file. Blink. It's regenerated. Your flow stays unbroken.
 
 Delete a `.lustre` file and we clean up the generated `.gleam` file automatically. No orphans left behind.
 
+<p align="center">
+  <img src="assets/gifs/cleanup.gif" alt="Auto cleanup demo" width="80%" />
+</p>
+
 ```sh
 gleam run -m lustre_template_gen -- clean
 ```
