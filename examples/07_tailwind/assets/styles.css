@@ -1,0 +1,6 @@
+/* Minimal custom styles - Tailwind handles most styling */
+/* This file exists for any custom CSS that can't be done with Tailwind utilities */
+
+#app {
+  min-height: 100vh;
+}

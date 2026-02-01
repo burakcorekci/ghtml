@@ -66,8 +66,8 @@ pub fn all_attributes_generate_test() {
   // Dynamic attribute
   should.be_true(string.contains(code, "attribute.value(value)"))
 
-  // Boolean attribute
-  should.be_true(string.contains(code, "attribute.disabled(True)"))
+  // Boolean attribute with dynamic value
+  should.be_true(string.contains(code, "attribute.disabled(is_disabled)"))
 
   // Event handlers
   should.be_true(string.contains(code, "event.on_input(on_change)"))

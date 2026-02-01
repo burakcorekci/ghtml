@@ -1,0 +1,30 @@
+# Events Example with Template Generation
+
+# Path to the lustre_template_gen project
+gen := "../../"
+
+default:
+    @just --list
+
+# Generate .gleam files from .lustre templates
+codegen:
+    cd {{gen}} && gleam run -m lustre_template_gen -- "{{justfile_directory()}}"
+
+# Generate templates in watch mode
+codegen-watch:
+    cd {{gen}} && gleam run -m lustre_template_gen -- watch "{{justfile_directory()}}"
+
+# Build the project (runs codegen first)
+build:
+    just codegen
+    gleam build
+
+# Start dev server with hot reload
+dev:
+    just codegen
+    gleam run -m lustre/dev start
+
+# Clean generated files and build artifacts
+clean:
+    cd {{gen}} && gleam run -m lustre_template_gen -- clean "{{justfile_directory()}}"
+    rm -rf build

@@ -1,0 +1,16 @@
+@params(
+  label: String,
+  value: String,
+  hint: String,
+)
+
+<div class="field">
+  <label class="label">{label}</label>
+  <input
+    type="text"
+    class="input"
+    value={value}
+    placeholder={hint}
+    required
+  />
+</div>

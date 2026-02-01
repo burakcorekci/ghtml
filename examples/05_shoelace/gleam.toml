@@ -1,0 +1,20 @@
+name = "example_05_shoelace"
+version = "0.1.0"
+target = "javascript"
+
+[dependencies]
+lustre = "~> 5.0"
+gleam_stdlib = "~> 0.68"
+
+[dev-dependencies]
+lustre_dev_tools = "~> 2.0"
+
+[tools.lustre.html]
+title = "Shoelace Example"
+scripts = [
+  { type = "module", src = "https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.19.0/cdn/shoelace-autoloader.js" }
+]
+stylesheets = [
+  { href = "https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.19.0/cdn/themes/light.css" },
+  { href = "/styles.css" }
+]

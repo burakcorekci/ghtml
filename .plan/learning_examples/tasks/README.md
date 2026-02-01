@@ -22,14 +22,14 @@ Tasks are named with a three-digit prefix:
 | # | Task | Status | Notes |
 |---|------|--------|-------|
 | 001 | Rename simple example | [x] Complete | |
-| 002 | Create attributes example | [ ] Pending | Depends on 001 |
-| 003 | Create events example | [ ] Pending | Depends on 001 |
-| 004 | Create control flow example | [ ] Pending | Depends on 001 |
-| 005 | Create Shoelace example | [ ] Pending | Depends on 001 |
-| 006 | Create Material Web example | [ ] Pending | Depends on 001 |
-| 007 | Create Tailwind example | [ ] Pending | Depends on 001 |
-| 008 | Create complete example | [ ] Pending | Depends on 002-007 |
-| 009 | Add CI validation | [ ] Pending | Depends on 001-008 |
+| 002 | Create attributes example | [x] Complete | Depends on 001 |
+| 003 | Create events example | [x] Complete | Depends on 001 |
+| 004 | Create control flow example | [x] Complete | Depends on 001 |
+| 005 | Create Shoelace example | [x] Complete | Depends on 001 |
+| 006 | Create Material Web example | [x] Complete | Depends on 001 |
+| 007 | Create Tailwind example | [x] Complete | Depends on 001 |
+| 008 | Create complete example | [x] Complete | Depends on 002-007 |
+| 009 | Add CI validation | [x] Complete | Depends on 001-008 |
 
 Status legend:
 - `[ ] Pending` - Not started

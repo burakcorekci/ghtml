@@ -1,0 +1,11 @@
+@params(
+  value: String,
+  label: String,
+  on_input: fn(String) -> msg,
+)
+
+<md-outlined-text-field
+  value={value}
+  label={label}
+  @input={on_input}
+/>

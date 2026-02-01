@@ -1,0 +1,9 @@
+@params(
+  label: String,
+  is_checked: Bool,
+)
+
+<label class="checkbox">
+  <input type="checkbox" checked={is_checked} />
+  <span>{label}</span>
+</label>

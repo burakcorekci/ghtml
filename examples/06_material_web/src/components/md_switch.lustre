@@ -1,0 +1,10 @@
+@params(
+  is_on: Bool,
+  on_change: fn() -> msg,
+)
+
+{#if is_on}
+  <md-switch selected @click={on_change()} />
+{:else}
+  <md-switch @click={on_change()} />
+{/if}

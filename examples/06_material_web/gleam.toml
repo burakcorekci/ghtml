@@ -1,0 +1,19 @@
+name = "example_06_material_web"
+version = "0.1.0"
+target = "javascript"
+
+[dependencies]
+lustre = "~> 5.0"
+gleam_stdlib = "~> 0.68"
+
+[dev-dependencies]
+lustre_dev_tools = "~> 2.0"
+
+[tools.lustre.html]
+title = "Material Web Example"
+scripts = [
+  { type = "module", src = "https://esm.run/@material/web/all.js" }
+]
+stylesheets = [
+  { href = "/styles.css" }
+]

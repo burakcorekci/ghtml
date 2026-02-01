@@ -1,0 +1,11 @@
+@params(
+  label: String,
+  on_click: fn() -> msg,
+)
+
+<button
+  class="px-4 py-2 rounded-md font-medium bg-gray-200 text-gray-800 hover:bg-gray-300 focus:ring-gray-500 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2"
+  @click={on_click()}
+>
+  {label}
+</button>

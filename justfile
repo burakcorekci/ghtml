@@ -8,12 +8,13 @@ default:
 
 # === Workflows ===
 
-# Run all quality checks (build → unit → integration → e2e → format → docs)
+# Run all quality checks (build → unit → integration → e2e → examples → format → docs)
 check:
     gleam build
     just unit
     just integration
     just e2e
+    just check-examples
     gleam format
     gleam docs build
     @echo "✓ All checks passed"
@@ -24,6 +25,7 @@ ci:
     just unit
     just integration
     just e2e
+    just check-examples
     gleam format --check src test
     gleam docs build
     @echo "✓ CI simulation passed"
@@ -47,6 +49,26 @@ run-clean:
     gleam run -m lustre_template_gen -- clean
 
 # === Examples ===
+
+# Validate all examples build successfully (used by check/ci)
+check-examples:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    echo "Validating examples..."
+    # First, generate .gleam files from .lustre templates
+    gleam run -m lustre_template_gen -- examples
+    # Then build each example
+    for dir in examples/*/; do
+        if [ -f "$dir/gleam.toml" ]; then
+            name=$(basename "$dir")
+            echo "  Building examples/$name..."
+            (cd "$dir" && gleam deps download && gleam build) || {
+                echo "✗ Example failed: examples/$name"
+                exit 1
+            }
+        fi
+    done
+    echo "✓ All examples build successfully"
 
 # Build all examples (runs codegen and gleam build for each)
 examples:

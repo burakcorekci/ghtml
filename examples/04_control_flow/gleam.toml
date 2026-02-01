@@ -1,0 +1,14 @@
+name = "example_04_control_flow"
+version = "0.1.0"
+target = "javascript"
+
+[dependencies]
+lustre = "~> 5.0"
+gleam_stdlib = "~> 0.68"
+
+[dev-dependencies]
+lustre_dev_tools = "~> 2.0"
+
+[tools.lustre.html]
+title = "Control Flow Example"
+stylesheets = [{ href = "/styles.css" }]

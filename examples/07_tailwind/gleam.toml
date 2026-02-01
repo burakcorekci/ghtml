@@ -1,0 +1,19 @@
+name = "example_07_tailwind"
+version = "0.1.0"
+target = "javascript"
+
+[dependencies]
+lustre = "~> 5.0"
+gleam_stdlib = "~> 0.68"
+
+[dev-dependencies]
+lustre_dev_tools = "~> 2.0"
+
+[tools.lustre.html]
+title = "Tailwind Example"
+scripts = [
+  { src = "https://cdn.tailwindcss.com" }
+]
+stylesheets = [
+  { href = "/styles.css" }
+]
