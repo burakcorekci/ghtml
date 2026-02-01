@@ -20,7 +20,7 @@ See the Quick Reference table in `CODEBASE.md` for all commands. Key ones:
 
 # Epic-Based Work
 
-The `.plan/` directory organizes multi-session work into epics with tasks.
+The `.plan/` directory contains detailed specifications for multi-session work organized into epics with tasks.
 
 ## Directory Structure
 
@@ -31,13 +31,11 @@ The `.plan/` directory organizes multi-session work into epics with tasks.
 │   └── tasks/
 │       ├── README.md             # Tasks overview template
 │       └── 000_template_task.md  # Individual task template
-├── initial_implementation/       # Example completed epic
+├── <epic_name>/                  # Each epic has its own folder
 │   ├── PLAN.md                   # High-level epic plan
 │   └── tasks/
 │       ├── README.md             # Task overview and status
-│       ├── 001_project_setup.md  # Individual task specs
-│       └── ...
-└── [next_epic]/                  # Future epics follow same structure
+│       └── NNN_task_name.md      # Individual task specs
 ```
 
 ## Creating a New Epic
@@ -47,7 +45,42 @@ The `.plan/` directory organizes multi-session work into epics with tasks.
 3. Create task files from `tasks/000_template_task.md`
 4. Update `tasks/README.md` with task status tracking
 
-## Executing Work
+# Execution Modes
 
-- **Single task**: See `SUBAGENT.md` for step-by-step execution
-- **Full epic**: Use `/orchestrate <epic_name>` skill
+Choose the appropriate mode based on your workflow:
+
+## Manual Mode (Sequential)
+
+For human-orchestrated, step-by-step task execution:
+- Status tracked in `.plan/<epic>/tasks/README.md` (markdown checkboxes)
+- Single task at a time
+- See: `SUBAGENT.md` for detailed instructions
+
+```bash
+# View task, implement, update README status manually
+```
+
+## Automated Mode (Parallel)
+
+For script-orchestrated, parallel agent execution:
+- Status tracked in Beads (machine-queryable)
+- Multiple agents work concurrently
+- See: `docs/orchestration.md` for setup and usage
+
+```bash
+# Initialize beads (first time)
+bd init
+
+# Run parallel orchestration
+just orchestrate --epic <epic_id>
+```
+
+## When to Use Which
+
+| Scenario | Mode |
+|----------|------|
+| Learning/exploring the codebase | Manual |
+| Single focused task | Manual |
+| Multiple independent tasks | Automated |
+| Want PR review workflow | Automated |
+| CI/CD integration | Automated |

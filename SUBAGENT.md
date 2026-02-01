@@ -1,6 +1,8 @@
-# Task Execution
+# Manual Task Execution
 
-Step-by-step instructions for executing a single task from an epic.
+Step-by-step instructions for executing a single task from an epic in **manual mode**.
+
+> **Note:** This is for sequential, human-orchestrated work. For parallel automated execution with multiple agents, see `docs/orchestration.md`.
 
 ## Before Starting
 
@@ -50,3 +52,15 @@ Step-by-step instructions for executing a single task from an epic.
 - Include error output
 - Do not commit partial work
 - Mark status as `[!] Blocked: <reason>`
+
+## Comparison with Automated Mode
+
+| Aspect | Manual (this doc) | Automated |
+|--------|-------------------|-----------|
+| Status tracking | `.plan/` README.md | Beads |
+| Orchestration | Human | Script |
+| Parallelism | No | Yes |
+| PR workflow | Optional | Built-in |
+| Best for | Single tasks, learning | Multiple independent tasks |
+
+To switch to automated mode, see `docs/orchestration.md`.
