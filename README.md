@@ -108,16 +108,16 @@ That's it. You're done. Go grab a coffee. ☕
   <img src="assets/gifs/features.gif" alt="Hash-based caching demo" width="650" />
 </p>
 
-<table>
+<table width="100%">
 <tr>
-<td valign="top">
+<td valign="top" width="50%">
 
 ### ⚡ Blazing Fast
 
 Hash-based caching means we only rebuild what changed. Run it a thousand times — if nothing changed, nothing rebuilds.
 
 </td>
-<td valign="top">
+<td valign="top" width="50%">
 
 ### 👀 Watch Mode
 
@@ -128,7 +128,7 @@ Change a file. Blink. It's regenerated. Your flow stays unbroken.
 </td>
 </tr>
 <tr>
-<td valign="top">
+<td valign="top" width="50%">
 
 ### 🎯 Control Flow
 
@@ -145,7 +145,7 @@ Change a file. Blink. It's regenerated. Your flow stays unbroken.
 ```
 
 </td>
-<td valign="top">
+<td valign="top" width="50%">
 
 ### 🧹 Auto Cleanup
 
@@ -158,7 +158,7 @@ gleam run -m lustre_template_gen -- clean
 </td>
 </tr>
 <tr>
-<td valign="top">
+<td valign="top" width="50%">
 
 ### 🎨 Events
 
@@ -170,7 +170,7 @@ Event handlers? We got 'em.
 ```
 
 </td>
-<td valign="top">
+<td valign="top" width="50%">
 
 ### 🔧 Custom Elements
 
