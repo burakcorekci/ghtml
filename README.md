@@ -12,7 +12,7 @@
   <a href="https://github.com/burakcorekci/lustre_template_gen/actions/workflows/test.yml"><img src="https://github.com/burakcorekci/lustre_template_gen/actions/workflows/test.yml/badge.svg" alt="test"></a>
   <a href="https://hex.pm/packages/lustre_template_gen"><img src="https://img.shields.io/hexpm/v/lustre_template_gen" alt="Package Version"></a>
   <a href="https://hexdocs.pm/lustre_template_gen/"><img src="https://img.shields.io/badge/hex-docs-ffaff3" alt="Hex Docs"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/hexpm/l/lustre_template_gen" alt="License"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="License"></a>
 </p>
 
 <p align="center">
