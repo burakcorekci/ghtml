@@ -1,6 +1,6 @@
 // @generated from button_secondary.lustre
 // @hash b1b13da86d82c32ed82ca1a50f6e4203a97e274888ea7554cef005ff40bd948f
-// DO NOT EDIT - regenerate with: gleam run -m lustre_template_gen
+// DO NOT EDIT - regenerate with: gleam run -m ghtml
 
 import lustre/element.{type Element, text}
 import lustre/element/html

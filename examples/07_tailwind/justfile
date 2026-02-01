@@ -1,6 +1,6 @@
 # Tailwind Example with Template Generation
 
-# Path to the lustre_template_gen project
+# Path to the ghtml project
 gen := "../../"
 
 default:
@@ -8,11 +8,11 @@ default:
 
 # Generate .gleam files from .lustre templates
 codegen:
-    cd {{gen}} && gleam run -m lustre_template_gen -- "{{justfile_directory()}}"
+    cd {{gen}} && gleam run -m ghtml -- "{{justfile_directory()}}"
 
 # Generate templates in watch mode
 codegen-watch:
-    cd {{gen}} && gleam run -m lustre_template_gen -- watch "{{justfile_directory()}}"
+    cd {{gen}} && gleam run -m ghtml -- watch "{{justfile_directory()}}"
 
 # Build the project (runs codegen first)
 build:
@@ -26,5 +26,5 @@ dev:
 
 # Clean generated files and build artifacts
 clean:
-    cd {{gen}} && gleam run -m lustre_template_gen -- clean "{{justfile_directory()}}"
+    cd {{gen}} && gleam run -m ghtml -- clean "{{justfile_directory()}}"
     rm -rf build

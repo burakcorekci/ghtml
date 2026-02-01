@@ -1,6 +1,6 @@
 // @generated from sidebar.lustre
 // @hash 4e67b028be3523ccf80b5768d8593405283c09015fde6be1bea67cdb3a2e6413
-// DO NOT EDIT - regenerate with: gleam run -m lustre_template_gen
+// DO NOT EDIT - regenerate with: gleam run -m ghtml
 
 import lustre/element.{type Element, text}
 import lustre/element/html

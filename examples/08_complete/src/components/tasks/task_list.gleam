@@ -1,6 +1,6 @@
 // @generated from task_list.lustre
 // @hash ab81b996046fc8f85342091215f7e1b3df721c487ffb854220e7629adcb02a43
-// DO NOT EDIT - regenerate with: gleam run -m lustre_template_gen
+// DO NOT EDIT - regenerate with: gleam run -m ghtml
 
 import lustre/element.{type Element, text}
 import lustre/element/html

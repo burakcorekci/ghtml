@@ -1,6 +1,6 @@
 // @generated from confirm_dialog.lustre
 // @hash 98c5edae67cfc4071f8941f8305b2a921af5e3ac573f4ae10f79edb039c3c916
-// DO NOT EDIT - regenerate with: gleam run -m lustre_template_gen
+// DO NOT EDIT - regenerate with: gleam run -m ghtml
 
 import lustre/element.{type Element, text, element}
 import lustre/element/html

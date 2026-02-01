@@ -1,6 +1,6 @@
 // @generated from counter.lustre
 // @hash 9884f45a2438d895ae5b962a78117bc425b9100bdbb5c968b3811fe314bcb2ae
-// DO NOT EDIT - regenerate with: gleam run -m lustre_template_gen
+// DO NOT EDIT - regenerate with: gleam run -m ghtml
 
 import lustre/element.{type Element, text}
 import lustre/element/html

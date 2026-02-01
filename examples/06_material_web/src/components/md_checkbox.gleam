@@ -1,6 +1,6 @@
 // @generated from md_checkbox.lustre
 // @hash 1b69b58744855c81198d4e10be6b68d51eec2d68e0b258f58f24742630f5a6fa
-// DO NOT EDIT - regenerate with: gleam run -m lustre_template_gen
+// DO NOT EDIT - regenerate with: gleam run -m ghtml
 
 import lustre/element.{type Element, element}
 import lustre/attribute

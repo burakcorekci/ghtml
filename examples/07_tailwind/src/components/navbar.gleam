@@ -1,6 +1,6 @@
 // @generated from navbar.lustre
 // @hash 095442d0816adbc385883b52a17da0b2113e697fbe5769bf4e170c980a597d24
-// DO NOT EDIT - regenerate with: gleam run -m lustre_template_gen
+// DO NOT EDIT - regenerate with: gleam run -m ghtml
 
 import lustre/element.{type Element, text}
 import lustre/element/html

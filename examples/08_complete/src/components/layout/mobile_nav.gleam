@@ -1,6 +1,6 @@
 // @generated from mobile_nav.lustre
 // @hash 8201ee9b47668e50772f79972a20c4b086ae5bd9fbc814f3b7674faf71943209
-// DO NOT EDIT - regenerate with: gleam run -m lustre_template_gen
+// DO NOT EDIT - regenerate with: gleam run -m ghtml
 
 import lustre/element.{type Element, text, fragment}
 import lustre/element/html

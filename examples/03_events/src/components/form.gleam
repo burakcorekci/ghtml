@@ -1,6 +1,6 @@
 // @generated from form.lustre
 // @hash f48d1d710b41aaa86f43b5d85995f5ad9656293dfd2cb9b044b9bd31dd481fca
-// DO NOT EDIT - regenerate with: gleam run -m lustre_template_gen
+// DO NOT EDIT - regenerate with: gleam run -m ghtml
 
 import lustre/element.{type Element, text}
 import lustre/element/html

@@ -1,6 +1,6 @@
 // @generated from if_without_else.lustre
 // @hash d448d362a24f775a44cb5e9effe5cfc5e1123d739430c3b2e3ab777a991a91a3
-// DO NOT EDIT - regenerate with: gleam run -m lustre_template_gen
+// DO NOT EDIT - regenerate with: gleam run -m ghtml
 
 import lustre/element.{type Element, text, none}
 import lustre/element/html

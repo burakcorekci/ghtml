@@ -1,6 +1,6 @@
 // @generated from card.lustre
 // @hash 95bb459b7e1444e9bab0eb6bcbe63f78356df7474503e0fee159fbe5ef7fe6fa
-// DO NOT EDIT - regenerate with: gleam run -m lustre_template_gen
+// DO NOT EDIT - regenerate with: gleam run -m ghtml
 
 import lustre/element.{type Element, text}
 import lustre/element/html

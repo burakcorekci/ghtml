@@ -1,6 +1,6 @@
 // @generated from todo_item.lustre
 // @hash dbef3cd10667b9f5c4007daa8fa5858ad16868dfa40415c4d01245fb6e41281c
-// DO NOT EDIT - regenerate with: gleam run -m lustre_template_gen
+// DO NOT EDIT - regenerate with: gleam run -m ghtml
 
 import lustre/element.{type Element, text}
 import lustre/element/html

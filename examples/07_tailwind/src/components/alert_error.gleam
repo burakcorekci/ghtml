@@ -1,6 +1,6 @@
 // @generated from alert_error.lustre
 // @hash baadaffd75fd56554e44d6f72c9a472546a5d770a2eeef14bd1dd231228932ac
-// DO NOT EDIT - regenerate with: gleam run -m lustre_template_gen
+// DO NOT EDIT - regenerate with: gleam run -m ghtml
 
 import lustre/element.{type Element, text}
 import lustre/element/html

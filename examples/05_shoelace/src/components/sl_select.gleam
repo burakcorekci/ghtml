@@ -1,6 +1,6 @@
 // @generated from sl_select.lustre
 // @hash ad87be08572d6a008643339b5b729a0df06c7e8c819ffc753c97cd960e8dac65
-// DO NOT EDIT - regenerate with: gleam run -m lustre_template_gen
+// DO NOT EDIT - regenerate with: gleam run -m ghtml
 
 import lustre/element.{type Element, text, element}
 import lustre/element/keyed

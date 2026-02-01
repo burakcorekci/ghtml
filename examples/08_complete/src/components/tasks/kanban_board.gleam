@@ -1,6 +1,6 @@
 // @generated from kanban_board.lustre
 // @hash fd1673604725c2624d9396c3ce2c7d2985278e0dbeee3b54dfbc65859c68f71b
-// DO NOT EDIT - regenerate with: gleam run -m lustre_template_gen
+// DO NOT EDIT - regenerate with: gleam run -m ghtml
 
 import lustre/element.{type Element, text, none}
 import lustre/element/html

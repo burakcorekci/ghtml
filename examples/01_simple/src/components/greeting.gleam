@@ -1,6 +1,6 @@
 // @generated from greeting.lustre
 // @hash a17d54407872a17835ac16ddc61c6e3a72b64aacb93a6a84560d0ebf8aa5e07c
-// DO NOT EDIT - regenerate with: gleam run -m lustre_template_gen
+// DO NOT EDIT - regenerate with: gleam run -m ghtml
 
 import lustre/element.{type Element, text}
 import lustre/element/html

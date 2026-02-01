@@ -1,6 +1,6 @@
 // @generated from toast.lustre
 // @hash a3430aa0da501a1ca2851b35f74553eabb5ef81f3fb332fb87df2691ec0caa6c
-// DO NOT EDIT - regenerate with: gleam run -m lustre_template_gen
+// DO NOT EDIT - regenerate with: gleam run -m ghtml
 
 import lustre/element.{type Element, text, none}
 import lustre/element/html

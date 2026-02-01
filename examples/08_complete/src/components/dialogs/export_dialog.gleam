@@ -1,6 +1,6 @@
 // @generated from export_dialog.lustre
 // @hash 27410fc7416c23f7ac1c28081d67b36afe2df39bccbc9f32b0b100953daac89f
-// DO NOT EDIT - regenerate with: gleam run -m lustre_template_gen
+// DO NOT EDIT - regenerate with: gleam run -m ghtml
 
 import lustre/element.{type Element, text, element}
 import lustre/element/html
