@@ -198,3 +198,4 @@ echo "Done! Created assets/gifs/myrecording.gif"
 | record-features.sh | features.gif | Hash-based caching: run twice, second is instant |
 | record-syntax.sh | syntax.gif | All control flow patterns ({#if}, {#each}, {#case}) |
 | record-watch.sh | watch.gif | Watch mode with live file editing |
+| record-cleanup.sh | cleanup.gif | Auto cleanup: delete .lustre, .gleam auto-removed |
