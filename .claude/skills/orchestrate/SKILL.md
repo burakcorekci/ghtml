@@ -1,35 +1,36 @@
 ---
 name: orchestrate
-description: Execute an epic to completion via subagents
+description: Execute tasks from Beads via subagents
 disable-model-invocation: true
-argument-hint: [epic-name]
+argument-hint: [epic-label or task-id]
 ---
 
-# Orchestrate Epic: $ARGUMENTS
+# Orchestrate: $ARGUMENTS
 
 ## Current Task Status
-!`cat .claude/plan/$ARGUMENTS/tasks/README.md 2>/dev/null || echo "Epic '$ARGUMENTS' not found in .claude/plan/"`
+!`bd ready 2>/dev/null || echo "Beads not initialized. Run 'bd init' first."`
 
 ## Algorithm
 
 **CRITICAL: Execute ONE task at a time. NEVER spawn parallel subagents.**
 
-1. Find first `[ ] Pending` or `[~] In Progress` task from status above
+1. Find first ready task from Beads:
+   - If `$ARGUMENTS` provided: filter by epic label or specific task ID
+   - Otherwise: use `bd ready` to get highest priority unblocked task
 2. For each task ONE AT A TIME:
-   - Update status to `[~] In Progress`
-   - Spawn ONE subagent with: "Read .claude/SUBAGENT.md and execute task at .claude/plan/$ARGUMENTS/tasks/<task_file>.md"
+   - Claim: `bd update <id> --status in_progress`
+   - Spawn ONE subagent with the task context from `bd show <id>`
    - **Wait for completion before proceeding**
-   - On success: run `just check`, update to `[x] Complete`, push
-   - On failure: retry once with error context, then mark `[!] Blocked` and stop
+   - On success: run `just check`, close task, push
+   - On failure: retry once with error context, then stop
    - **Only after task completes, move to the next task**
-3. When no pending tasks remain, report epic complete
+3. When no ready tasks remain, report complete
 
 ## Subagent Spawn
 
 Pass to subagent:
-- Epic name: `$ARGUMENTS`
-- Task path: `.claude/plan/$ARGUMENTS/tasks/<NNN>_<name>.md`
-- Instruction: "Read .claude/SUBAGENT.md and execute this task"
+- Task ID and full description from `bd show <id>`
+- Instruction: Follow TDD workflow from CLAUDE.md
 
 ## Error Handling
 
@@ -37,8 +38,24 @@ Pass to subagent:
 |----------|--------|
 | Subagent reports failure | Retry once with error context |
 | `just check` fails after success | Retry once with check output |
-| Retry fails | Mark `[!] Blocked: <error>`, stop orchestration |
+| Retry fails | Leave task in_progress, stop orchestration |
 
 ## Recovery
 
-Re-run `/orchestrate $ARGUMENTS`. Resumes from first incomplete task.
+Re-run `/orchestrate`. Resumes from first ready or in_progress task.
+
+## Commands
+
+```bash
+# View ready tasks
+bd ready
+
+# View specific epic tasks
+bd list --json | jq '.[] | select(.labels[]? | contains("$ARGUMENTS"))'
+
+# Claim a task
+bd update <id> --status in_progress
+
+# Complete a task
+bd close <id>
+```

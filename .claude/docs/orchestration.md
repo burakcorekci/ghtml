@@ -286,5 +286,4 @@ just worktree-clean
 
 - `CLAUDE.md` - Entry point, execution mode selection
 - `.claude/CODEBASE.md` - Architecture and module guide
-- `.claude/SUBAGENT.md` - Manual mode instructions
-- `.claude/plan/parallel_orchestrator/` - Implementation plan and tasks
+- `.claude/specs/parallel_orchestrator/` - Specifications and research

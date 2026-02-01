@@ -72,14 +72,12 @@ bd dep add <task-id> <blocker-id>
 ## Detailed Specifications
 
 For complex features requiring detailed specs, use `.claude/specs/`:
-- `just new-spec <name>` - Create spec folder with templates
 - Specs contain requirements.md, design.md, research/
-
-The `.claude/plan/` directory contains legacy epic/task specifications that can be migrated to Beads using `just migrate-to-beads`.
+- See `.claude/specs/CONVENTIONS.md` for EARS notation
 
 # Execution Modes
 
-## Automated Mode (Recommended)
+## Automated Mode (Parallel Agents)
 
 For parallel agent execution with PR workflow:
 - Status tracked in Beads
@@ -93,12 +91,18 @@ just orchestrate --epic <id>      # Run parallel agents
 just merger                       # Process PRs
 ```
 
-## Manual Mode (Sequential)
+## Manual Mode (Single Task)
 
 For human-orchestrated, step-by-step execution:
-- Status tracked via markdown checkboxes
-- Single task at a time
-- See: `.claude/SUBAGENT.md`
+
+```bash
+bd ready                          # Find available task
+bd show <id>                      # View task details
+bd update <id> --status in_progress  # Claim it
+# ... implement ...
+just check                        # Verify quality
+bd close <id>                     # Mark complete
+```
 
 ## When to Use Which
 
@@ -109,3 +113,29 @@ For human-orchestrated, step-by-step execution:
 | Multiple independent tasks | Automated |
 | Want PR review workflow | Automated |
 | CI/CD integration | Automated |
+
+# Session Completion
+
+**When ending a work session**, complete ALL steps below. Work is NOT complete until `git push` succeeds.
+
+## Checklist
+
+1. **File issues for remaining work** - Create Beads issues for anything that needs follow-up
+2. **Run quality gates** (if code changed) - `just check`
+3. **Update issue status** - Close finished work, update in-progress items
+4. **PUSH TO REMOTE** - This is MANDATORY:
+   ```bash
+   git pull --rebase
+   bd sync
+   git push
+   git status  # MUST show "up to date with origin"
+   ```
+5. **Clean up** - Clear stashes, prune remote branches
+6. **Verify** - All changes committed AND pushed
+
+## Critical Rules
+
+- Work is NOT complete until `git push` succeeds
+- NEVER stop before pushing - that leaves work stranded locally
+- NEVER say "ready to push when you are" - YOU must push
+- If push fails, resolve and retry until it succeeds
