@@ -16,7 +16,7 @@
 </p>
 
 <p align="center">
-  <img src="assets/gifs/hero.gif" alt="lustre_template_gen demo" width="700" />
+  <img src="assets/gifs/hero.gif" alt="lustre_template_gen demo" width="80%" />
 </p>
 
 ---
@@ -105,7 +105,7 @@ That's it. You're done. Go grab a coffee. ☕
 ## Features
 
 <p align="center">
-  <img src="assets/gifs/features.gif" alt="Hash-based caching demo" width="650" />
+  <img src="assets/gifs/features.gif" alt="Hash-based caching demo" width="80%" />
 </p>
 
 ### ⚡ Blazing Fast
@@ -114,7 +114,9 @@ Hash-based caching means we only rebuild what changed. Run it a thousand times �
 
 ### 👀 Watch Mode
 
-<img src="assets/gifs/watch.gif" alt="Watch mode demo" width="500" />
+<p align="center">
+  <img src="assets/gifs/watch.gif" alt="Watch mode demo" width="80%" />
+</p>
 
 Change a file. Blink. It's regenerated. Your flow stays unbroken.
 
@@ -164,7 +166,7 @@ Web components work too. Tags with hyphens automatically use `element()`.
 ## Template Syntax
 
 <p align="center">
-  <img src="assets/gifs/syntax.gif" alt="Control flow syntax demo" width="700" />
+  <img src="assets/gifs/syntax.gif" alt="Control flow syntax demo" width="80%" />
 </p>
 
 <details>
