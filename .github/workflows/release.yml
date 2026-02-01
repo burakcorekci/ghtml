@@ -1,0 +1,62 @@
+name: release
+
+on:
+  push:
+    tags: ["v*"]
+
+jobs:
+  publish:
+    runs-on: ubuntu-24.04-arm
+    permissions:
+      contents: write
+
+    env:
+      GLEAM_VERSION: "1.14.0"
+      JUST_VERSION: "1.46.0"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup just
+        uses: extractions/setup-just@v2
+        with:
+          just-version: ${{ env.JUST_VERSION }}
+
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: "28"
+          rebar3-version: "3"
+
+      - name: Cache Gleam binary
+        id: cache-gleam
+        uses: actions/cache@v4
+        with:
+          path: /usr/local/bin/gleam
+          key: gleam-arm-${{ env.GLEAM_VERSION }}
+
+      - name: Install Gleam
+        if: steps.cache-gleam.outputs.cache-hit != 'true'
+        run: |
+          curl -fsSL https://github.com/gleam-lang/gleam/releases/download/v${GLEAM_VERSION}/gleam-v${GLEAM_VERSION}-aarch64-unknown-linux-musl.tar.gz | tar -xz
+          sudo mv gleam /usr/local/bin/
+
+      - name: Check version matches tag
+        run: |
+          version="v$(grep -m 1 'version' gleam.toml | sed -E 's/version *= *"([0-9.]+)"/\1/')"
+          if [ "$version" != "${{ github.ref_name }}" ]; then
+            echo "Tag '${{ github.ref_name }}' doesn't match gleam.toml version '$version'"
+            exit 1
+          fi
+
+      - name: Run CI checks
+        run: gleam deps download && just ci
+
+      - name: Publish to Hex
+        run: gleam publish -y
+        env:
+          HEXPM_API_KEY: ${{ secrets.HEXPM_API_KEY }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true

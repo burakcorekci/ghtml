@@ -1,7 +1,18 @@
 name = "ghtml"
 version = "0.1.0"
 target = "erlang"
+gleam = ">= 1.14.0"
 licences = ["MIT"]
+
+description = "HTML templates → type-safe Gleam modules. Write familiar markup instead of nested function calls. No more bracket-counting nightmares."
+
+repository = { type = "github", user = "burakcorekci", repo = "ghtml" }
+
+links = [
+  { title = "Documentation", href = "https://hexdocs.pm/ghtml/" },
+]
+
+internal_modules = ["ghtml/cache", "ghtml/scanner", "ghtml/watcher"]
 
 [dependencies]
 gleam_stdlib = ">= 0.44.0 and < 2.0.0"
