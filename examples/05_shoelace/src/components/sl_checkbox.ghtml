@@ -1,0 +1,17 @@
+@import(gleam/dynamic/decode)
+
+@params(
+  label: String,
+  is_checked: Bool,
+  on_change: decode.Decoder(msg),
+)
+
+{#if is_checked}
+  <sl-checkbox checked @sl-change={on_change}>
+    {label}
+  </sl-checkbox>
+{:else}
+  <sl-checkbox @sl-change={on_change}>
+    {label}
+  </sl-checkbox>
+{/if}

@@ -1,11 +1,11 @@
+import ghtml/scanner
+import ghtml/watcher
 import gleam/dict
 import gleam/erlang/process
 import gleam/list
 import gleam/option.{None}
 import gleam/string
 import gleeunit/should
-import lustre_template_gen/scanner
-import lustre_template_gen/watcher
 import simplifile
 
 // Helper to create test directory structure
@@ -26,7 +26,7 @@ pub fn get_mtime_test() {
   let test_dir = ".test/watcher_mtime_1"
   setup_test_dir(test_dir)
 
-  let path = test_dir <> "/src/test.lustre"
+  let path = test_dir <> "/src/test.ghtml"
   let _ = simplifile.write(path, "<div></div>")
 
   // Should get a valid mtime
@@ -42,7 +42,7 @@ pub fn get_mtime_test() {
 
 pub fn get_mtime_nonexistent_test() {
   // Should return Error for nonexistent file
-  let result = watcher.get_mtime(".test/nonexistent_file_xyz.lustre")
+  let result = watcher.get_mtime(".test/nonexistent_file_xyz.ghtml")
   should.be_error(result)
 }
 
@@ -51,8 +51,8 @@ pub fn get_all_mtimes_test() {
   setup_test_dir(test_dir)
 
   // Create files
-  let _ = simplifile.write(test_dir <> "/src/a.lustre", "<div></div>")
-  let _ = simplifile.write(test_dir <> "/src/b.lustre", "<span></span>")
+  let _ = simplifile.write(test_dir <> "/src/a.ghtml", "<div></div>")
+  let _ = simplifile.write(test_dir <> "/src/b.ghtml", "<span></span>")
 
   // Get mtimes
   let mtimes = watcher.get_all_mtimes(test_dir)
@@ -67,7 +67,7 @@ pub fn get_all_mtimes_empty_dir_test() {
   let test_dir = ".test/watcher_mtimes_2"
   setup_test_dir(test_dir)
 
-  // No .lustre files
+  // No .ghtml files
   let mtimes = watcher.get_all_mtimes(test_dir)
 
   // Should be empty
@@ -89,15 +89,15 @@ pub fn detect_new_file_test() {
     )
 
   // Create a new file
-  let _ = simplifile.write(test_dir <> "/src/new.lustre", "<div></div>")
+  let _ = simplifile.write(test_dir <> "/src/new.ghtml", "<div></div>")
 
   // Check for changes would detect new file
-  let current_files = scanner.find_lustre_files(test_dir)
+  let current_files = scanner.find_ghtml_files(test_dir)
   should.equal(list.length(current_files), 1)
 
   // The file would not be in old mtimes
   should.equal(
-    dict.get(state.file_mtimes, test_dir <> "/src/new.lustre"),
+    dict.get(state.file_mtimes, test_dir <> "/src/new.ghtml"),
     Error(Nil),
   )
 
@@ -109,7 +109,7 @@ pub fn detect_modified_file_test() {
   setup_test_dir(test_dir)
 
   // Create initial file
-  let path = test_dir <> "/src/test.lustre"
+  let path = test_dir <> "/src/test.ghtml"
   let _ = simplifile.write(path, "<div></div>")
 
   // Get initial mtime
@@ -133,18 +133,18 @@ pub fn detect_deleted_file_test() {
   setup_test_dir(test_dir)
 
   // Create file
-  let path = test_dir <> "/src/temp.lustre"
+  let path = test_dir <> "/src/temp.ghtml"
   let _ = simplifile.write(path, "<div></div>")
 
   // Get initial state
-  let initial_files = scanner.find_lustre_files(test_dir)
+  let initial_files = scanner.find_ghtml_files(test_dir)
   should.equal(list.length(initial_files), 1)
 
   // Delete file
   let _ = simplifile.delete(path)
 
   // Current files should be empty
-  let current_files = scanner.find_lustre_files(test_dir)
+  let current_files = scanner.find_ghtml_files(test_dir)
   should.equal(list.length(current_files), 0)
 
   cleanup_test_dir(test_dir)
@@ -155,7 +155,7 @@ pub fn process_single_file_test() {
   setup_test_dir(test_dir)
 
   // Create source file
-  let source = test_dir <> "/src/component.lustre"
+  let source = test_dir <> "/src/component.ghtml"
   let output = test_dir <> "/src/component.gleam"
   let _ = simplifile.write(source, "@params(name: String)\n\n<div>{name}</div>")
 
@@ -177,7 +177,7 @@ pub fn process_single_file_parse_error_test() {
   setup_test_dir(test_dir)
 
   // Create source file with invalid content
-  let source = test_dir <> "/src/invalid.lustre"
+  let source = test_dir <> "/src/invalid.ghtml"
   let output = test_dir <> "/src/invalid.gleam"
   let _ = simplifile.write(source, "<div><unclosed>")
 
@@ -196,14 +196,14 @@ pub fn watcher_state_update_test() {
   setup_test_dir(test_dir)
 
   // Create initial file
-  let _ = simplifile.write(test_dir <> "/src/a.lustre", "<div></div>")
+  let _ = simplifile.write(test_dir <> "/src/a.ghtml", "<div></div>")
 
   // Initial state
   let initial_mtimes = watcher.get_all_mtimes(test_dir)
   should.equal(dict.size(initial_mtimes), 1)
 
   // Add another file
-  let _ = simplifile.write(test_dir <> "/src/b.lustre", "<span></span>")
+  let _ = simplifile.write(test_dir <> "/src/b.ghtml", "<span></span>")
 
   // Updated mtimes should have 2 entries
   let updated_mtimes = watcher.get_all_mtimes(test_dir)
@@ -220,7 +220,7 @@ pub fn watcher_starts_without_error_test() {
   setup_test_dir(test_dir)
 
   // Create a file
-  let _ = simplifile.write(test_dir <> "/src/test.lustre", "<div></div>")
+  let _ = simplifile.write(test_dir <> "/src/test.ghtml", "<div></div>")
 
   // Start watcher
   let subject = watcher.start_watching(test_dir)
@@ -248,7 +248,7 @@ pub fn watcher_detects_new_file_test() {
   process.sleep(100)
 
   // Create a NEW file after watcher started
-  let source = test_dir <> "/src/test.lustre"
+  let source = test_dir <> "/src/test.ghtml"
   let output = test_dir <> "/src/test.gleam"
   let _ = simplifile.write(source, "<div>initial</div>")
 

@@ -1,0 +1,11 @@
+@params(
+  content: String,
+  is_active: Bool,
+)
+
+<my-component class="custom">
+  <slot-content>{content}</slot-content>
+  {#if is_active}
+    <status-indicator active></status-indicator>
+  {/if}
+</my-component>

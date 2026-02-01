@@ -1,0 +1,8 @@
+@params(
+  label: String,
+  on_click: fn() -> msg,
+)
+
+<md-filled-button @click={on_click()}>
+  {label}
+</md-filled-button>

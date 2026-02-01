@@ -1,14 +1,14 @@
 //// Integration tests that verify the entire pipeline works end-to-end:
 //// parsing real templates, generating valid Gleam code.
 
+import ghtml/cache
+import ghtml/codegen
+import ghtml/parser
 import gleam/int
 import gleam/io
 import gleam/list
 import gleam/string
 import gleeunit/should
-import lustre_template_gen/cache
-import lustre_template_gen/codegen
-import lustre_template_gen/parser
 import simplifile
 
 // === Helper Functions ===
@@ -29,7 +29,7 @@ fn generate_from_fixture(name: String) -> String {
 // === Simple Template Tests ===
 
 pub fn basic_template_generates_test() {
-  let code = generate_from_fixture("simple/basic.lustre")
+  let code = generate_from_fixture("simple/basic.ghtml")
 
   // Verify structure
   should.be_true(string.contains(code, "// @generated from"))
@@ -41,7 +41,7 @@ pub fn basic_template_generates_test() {
 }
 
 pub fn basic_template_imports_test() {
-  let code = generate_from_fixture("simple/basic.lustre")
+  let code = generate_from_fixture("simple/basic.ghtml")
 
   // Verify required imports
   should.be_true(string.contains(code, "import lustre/element"))
@@ -56,7 +56,7 @@ pub fn basic_template_imports_test() {
 // === Attribute Tests ===
 
 pub fn all_attributes_generate_test() {
-  let code = generate_from_fixture("attributes/all_attrs.lustre")
+  let code = generate_from_fixture("attributes/all_attrs.ghtml")
 
   // Static attributes
   should.be_true(string.contains(code, "attribute.type_(\"text\")"))
@@ -80,7 +80,7 @@ pub fn all_attributes_generate_test() {
 // === Control Flow Tests ===
 
 pub fn if_else_generates_test() {
-  let code = generate_from_fixture("control_flow/full.lustre")
+  let code = generate_from_fixture("control_flow/full.ghtml")
 
   // Should generate case expression for if
   should.be_true(string.contains(code, "case user.is_admin {"))
@@ -89,7 +89,7 @@ pub fn if_else_generates_test() {
 }
 
 pub fn each_loop_generates_test() {
-  let code = generate_from_fixture("control_flow/full.lustre")
+  let code = generate_from_fixture("control_flow/full.ghtml")
 
   // Should use keyed and list
   should.be_true(string.contains(code, "keyed.fragment("))
@@ -100,7 +100,7 @@ pub fn each_loop_generates_test() {
 }
 
 pub fn case_match_generates_test() {
-  let code = generate_from_fixture("control_flow/full.lustre")
+  let code = generate_from_fixture("control_flow/full.ghtml")
 
   // Should generate case expression
   should.be_true(string.contains(code, "case status {"))
@@ -111,7 +111,7 @@ pub fn case_match_generates_test() {
 // === User Import Tests ===
 
 pub fn user_imports_included_test() {
-  let code = generate_from_fixture("control_flow/full.lustre")
+  let code = generate_from_fixture("control_flow/full.ghtml")
 
   // User imports should be present
   should.be_true(string.contains(code, "import gleam/int"))
@@ -205,10 +205,10 @@ pub fn full_example_from_plan_test() {
 
   let hash = cache.hash_content(content)
   let assert Ok(template) = parser.parse(content)
-  let code = codegen.generate(template, "user_card.lustre", hash)
+  let code = codegen.generate(template, "user_card.ghtml", hash)
 
   // Verify all major features
-  should.be_true(string.contains(code, "// @generated from user_card.lustre"))
+  should.be_true(string.contains(code, "// @generated from user_card.ghtml"))
   should.be_true(string.contains(code, "pub fn render("))
 
   // Params
@@ -265,7 +265,7 @@ pub fn large_template_performance_test() {
   // Should parse and generate quickly
   let hash = cache.hash_content(content)
   let assert Ok(template) = parser.parse(content)
-  let _code = codegen.generate(template, "large.lustre", hash)
+  let _code = codegen.generate(template, "large.ghtml", hash)
 
   // If we get here without timeout, performance is acceptable
   should.be_true(True)
@@ -274,10 +274,10 @@ pub fn large_template_performance_test() {
 // === Hash Verification Test ===
 
 pub fn generated_code_has_correct_hash_test() {
-  let content = read_fixture("simple/basic.lustre")
+  let content = read_fixture("simple/basic.ghtml")
   let hash = cache.hash_content(content)
   let assert Ok(template) = parser.parse(content)
-  let code = codegen.generate(template, "basic.lustre", hash)
+  let code = codegen.generate(template, "basic.ghtml", hash)
 
   // Verify the hash in the generated code matches the source hash
   let assert Ok(extracted_hash) = cache.extract_hash(code)
@@ -295,7 +295,7 @@ pub fn multiple_roots_uses_fragment_test() {
 
   let hash = cache.hash_content(content)
   let assert Ok(template) = parser.parse(content)
-  let code = codegen.generate(template, "multi.lustre", hash)
+  let code = codegen.generate(template, "multi.ghtml", hash)
 
   // Multiple root elements should use fragment
   should.be_true(string.contains(code, "fragment("))
@@ -311,7 +311,7 @@ pub fn empty_params_test() {
 
   let hash = cache.hash_content(content)
   let assert Ok(template) = parser.parse(content)
-  let code = codegen.generate(template, "empty.lustre", hash)
+  let code = codegen.generate(template, "empty.ghtml", hash)
 
   // Should generate valid function with no parameters
   should.be_true(string.contains(code, "pub fn render() -> Element(msg)"))
@@ -331,7 +331,7 @@ pub fn nested_control_flow_test() {
 
   let hash = cache.hash_content(content)
   let assert Ok(template) = parser.parse(content)
-  let code = codegen.generate(template, "nested.lustre", hash)
+  let code = codegen.generate(template, "nested.ghtml", hash)
 
   // Should have both if and each constructs
   should.be_true(string.contains(code, "case show {"))
@@ -352,7 +352,7 @@ pub fn self_closing_tags_test() {
 
   let hash = cache.hash_content(content)
   let assert Ok(template) = parser.parse(content)
-  let code = codegen.generate(template, "self_closing.lustre", hash)
+  let code = codegen.generate(template, "self_closing.ghtml", hash)
 
   // Should generate valid code for self-closing tags
   should.be_true(string.contains(code, "html.br("))
@@ -373,7 +373,7 @@ pub fn html_comments_ignored_test() {
 
   let hash = cache.hash_content(content)
   let assert Ok(template) = parser.parse(content)
-  let code = codegen.generate(template, "comments.lustre", hash)
+  let code = codegen.generate(template, "comments.ghtml", hash)
 
   // Comment content should not appear in generated code
   should.be_false(string.contains(code, "This comment should be ignored"))
@@ -390,7 +390,7 @@ pub fn escaped_braces_test() {
 
   let hash = cache.hash_content(content)
   let assert Ok(template) = parser.parse(content)
-  let code = codegen.generate(template, "escaped.lustre", hash)
+  let code = codegen.generate(template, "escaped.ghtml", hash)
 
   // Escaped braces should become literal braces in output
   should.be_true(string.contains(code, "{braces}"))
@@ -413,7 +413,7 @@ pub fn event_handler_variations_test() {
 
   let hash = cache.hash_content(content)
   let assert Ok(template) = parser.parse(content)
-  let code = codegen.generate(template, "events.lustre", hash)
+  let code = codegen.generate(template, "events.ghtml", hash)
 
   // Various event handlers should be generated correctly
   should.be_true(string.contains(code, "event.on_submit(on_submit())"))
@@ -426,7 +426,7 @@ pub fn event_handler_variations_test() {
 // These tests verify the enhanced fixtures parse and generate correctly
 
 pub fn fragments_fixture_test() {
-  let code = generate_from_fixture("fragments/multiple_roots.lustre")
+  let code = generate_from_fixture("fragments/multiple_roots.ghtml")
 
   // Should use fragment for multiple root elements
   should.be_true(string.contains(code, "fragment("))
@@ -441,7 +441,7 @@ pub fn fragments_fixture_test() {
 }
 
 pub fn custom_elements_fixture_test() {
-  let code = generate_from_fixture("custom_elements/web_components.lustre")
+  let code = generate_from_fixture("custom_elements/web_components.ghtml")
 
   // Custom elements should use element() function
   should.be_true(string.contains(code, "element(\"my-component\""))
@@ -453,7 +453,7 @@ pub fn custom_elements_fixture_test() {
 }
 
 pub fn edge_cases_fixture_test() {
-  let code = generate_from_fixture("edge_cases/special.lustre")
+  let code = generate_from_fixture("edge_cases/special.ghtml")
 
   // Self-closing tags should work
   should.be_true(string.contains(code, "html.br("))
@@ -470,10 +470,10 @@ pub fn all_fixtures_parse_successfully_test() {
   // Get all fixture files
   let assert Ok(files) = simplifile.get_files("test/fixtures")
 
-  // Filter to .lustre files
+  // Filter to .ghtml files
   let lustre_files =
     files
-    |> list.filter(fn(f) { string.ends_with(f, ".lustre") })
+    |> list.filter(fn(f) { string.ends_with(f, ".ghtml") })
 
   // Ensure we have fixtures
   should.be_true(lustre_files != [])

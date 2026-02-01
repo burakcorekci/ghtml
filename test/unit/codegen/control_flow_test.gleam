@@ -1,12 +1,12 @@
+import ghtml/codegen
+import ghtml/types.{
+  type Span, CaseBranch, CaseNode, EachNode, Element, ExprNode, IfNode, Position,
+  Span, Template, TextNode,
+}
 import gleam/list
 import gleam/option.{None, Some}
 import gleam/string
 import gleeunit/should
-import lustre_template_gen/codegen
-import lustre_template_gen/types.{
-  type Span, CaseBranch, CaseNode, EachNode, Element, ExprNode, IfNode, Position,
-  Span, Template, TextNode,
-}
 
 fn test_span() -> Span {
   Span(start: Position(1, 1), end: Position(1, 1))
@@ -25,7 +25,7 @@ pub fn generate_if_true_only_test() {
       ),
     ])
 
-  let code = codegen.generate(template, "test.lustre", "abc123")
+  let code = codegen.generate(template, "test.ghtml", "abc123")
 
   should.be_true(string.contains(code, "case show {"))
   should.be_true(string.contains(code, "True ->"))
@@ -43,7 +43,7 @@ pub fn generate_if_else_test() {
       ),
     ])
 
-  let code = codegen.generate(template, "test.lustre", "abc123")
+  let code = codegen.generate(template, "test.ghtml", "abc123")
 
   should.be_true(string.contains(code, "case active {"))
   should.be_true(string.contains(code, "True ->"))
@@ -65,7 +65,7 @@ pub fn generate_if_with_element_test() {
       ),
     ])
 
-  let code = codegen.generate(template, "test.lustre", "abc123")
+  let code = codegen.generate(template, "test.ghtml", "abc123")
 
   should.be_true(string.contains(code, "html.div("))
 }
@@ -81,7 +81,7 @@ pub fn generate_if_with_complex_condition_test() {
       ),
     ])
 
-  let code = codegen.generate(template, "test.lustre", "abc123")
+  let code = codegen.generate(template, "test.ghtml", "abc123")
 
   should.be_true(string.contains(code, "case user.is_admin && count > 0 {"))
 }
@@ -100,7 +100,7 @@ pub fn generate_if_multiple_children_test() {
       ),
     ])
 
-  let code = codegen.generate(template, "test.lustre", "abc123")
+  let code = codegen.generate(template, "test.ghtml", "abc123")
 
   // Multiple children should use fragment
   should.be_true(string.contains(code, "fragment("))
@@ -124,7 +124,7 @@ pub fn generate_nested_if_test() {
       ),
     ])
 
-  let code = codegen.generate(template, "test.lustre", "abc123")
+  let code = codegen.generate(template, "test.ghtml", "abc123")
 
   // Should have nested case expressions
   let case_count = string.split(code, "case ") |> list.length()
@@ -148,7 +148,7 @@ pub fn generate_each_without_index_test() {
       ),
     ])
 
-  let code = codegen.generate(template, "test.lustre", "abc123")
+  let code = codegen.generate(template, "test.ghtml", "abc123")
 
   should.be_true(string.contains(code, "keyed.fragment("))
   should.be_true(string.contains(code, "list.map(items"))
@@ -169,7 +169,7 @@ pub fn generate_each_with_index_test() {
       ),
     ])
 
-  let code = codegen.generate(template, "test.lustre", "abc123")
+  let code = codegen.generate(template, "test.ghtml", "abc123")
 
   should.be_true(string.contains(code, "keyed.fragment("))
   should.be_true(string.contains(code, "list.index_map(items"))
@@ -208,7 +208,7 @@ pub fn generate_each_with_complex_body_test() {
       ),
     ])
 
-  let code = codegen.generate(template, "test.lustre", "abc123")
+  let code = codegen.generate(template, "test.ghtml", "abc123")
 
   should.be_true(string.contains(code, "html.div("))
   should.be_true(string.contains(code, "html.h2("))
@@ -242,7 +242,7 @@ pub fn generate_nested_each_test() {
       ),
     ])
 
-  let code = codegen.generate(template, "test.lustre", "abc123")
+  let code = codegen.generate(template, "test.ghtml", "abc123")
 
   // Should have nested keyed/list.map
   let keyed_count = string.split(code, "keyed.fragment(") |> list.length()
@@ -265,7 +265,7 @@ pub fn generate_case_two_branches_test() {
       ),
     ])
 
-  let code = codegen.generate(template, "test.lustre", "abc123")
+  let code = codegen.generate(template, "test.ghtml", "abc123")
 
   should.be_true(string.contains(code, "case result {"))
   should.be_true(string.contains(code, "Ok(value) ->"))
@@ -285,7 +285,7 @@ pub fn generate_case_with_wildcard_test() {
       ),
     ])
 
-  let code = codegen.generate(template, "test.lustre", "abc123")
+  let code = codegen.generate(template, "test.ghtml", "abc123")
 
   should.be_true(string.contains(code, "_ ->"))
 }
@@ -308,7 +308,7 @@ pub fn generate_case_with_complex_patterns_test() {
       ),
     ])
 
-  let code = codegen.generate(template, "test.lustre", "abc123")
+  let code = codegen.generate(template, "test.ghtml", "abc123")
 
   should.be_true(string.contains(code, "Admin ->"))
   should.be_true(string.contains(code, "Member(since) ->"))
@@ -327,7 +327,7 @@ pub fn generate_case_with_tuple_pattern_test() {
       ),
     ])
 
-  let code = codegen.generate(template, "test.lustre", "abc123")
+  let code = codegen.generate(template, "test.ghtml", "abc123")
 
   should.be_true(string.contains(code, "#(a, b) ->"))
 }
@@ -353,7 +353,7 @@ pub fn generate_case_with_element_body_test() {
       ),
     ])
 
-  let code = codegen.generate(template, "test.lustre", "abc123")
+  let code = codegen.generate(template, "test.ghtml", "abc123")
 
   should.be_true(string.contains(code, "html.div("))
   should.be_true(string.contains(code, "html.span("))
@@ -380,7 +380,7 @@ pub fn generate_if_inside_each_test() {
       ),
     ])
 
-  let code = codegen.generate(template, "test.lustre", "abc123")
+  let code = codegen.generate(template, "test.ghtml", "abc123")
 
   should.be_true(string.contains(code, "list.map("))
   should.be_true(string.contains(code, "case item.visible {"))
@@ -410,7 +410,7 @@ pub fn generate_case_inside_element_test() {
       ),
     ])
 
-  let code = codegen.generate(template, "test.lustre", "abc123")
+  let code = codegen.generate(template, "test.ghtml", "abc123")
 
   should.be_true(string.contains(code, "html.div("))
   should.be_true(string.contains(code, "case status {"))
@@ -426,7 +426,7 @@ pub fn generate_fragment_test() {
       Element("p", [], [], test_span()),
     ])
 
-  let code = codegen.generate(template, "test.lustre", "abc123")
+  let code = codegen.generate(template, "test.ghtml", "abc123")
 
   should.be_true(string.contains(code, "fragment("))
 }

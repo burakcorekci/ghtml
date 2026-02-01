@@ -1,10 +1,10 @@
+import ghtml/codegen
+import ghtml/types.{
+  type Span, Element, ExprNode, Position, Span, Template, TextNode,
+}
 import gleam/list
 import gleam/string
 import gleeunit/should
-import lustre_template_gen/codegen
-import lustre_template_gen/types.{
-  type Span, Element, ExprNode, Position, Span, Template, TextNode,
-}
 
 fn test_span() -> Span {
   Span(start: Position(1, 1), end: Position(1, 1))
@@ -18,7 +18,7 @@ pub fn generate_standard_element_test() {
       Element("div", [], [], test_span()),
     ])
 
-  let code = codegen.generate(template, "test.lustre", "abc123")
+  let code = codegen.generate(template, "test.ghtml", "abc123")
 
   should.be_true(string.contains(code, "html.div([], [])"))
 }
@@ -29,7 +29,7 @@ pub fn generate_custom_element_test() {
       Element("sl-button", [], [], test_span()),
     ])
 
-  let code = codegen.generate(template, "test.lustre", "abc123")
+  let code = codegen.generate(template, "test.ghtml", "abc123")
 
   should.be_true(string.contains(code, "element(\"sl-button\""))
 }
@@ -40,7 +40,7 @@ pub fn generate_void_element_test() {
       Element("br", [], [], test_span()),
     ])
 
-  let code = codegen.generate(template, "test.lustre", "abc123")
+  let code = codegen.generate(template, "test.ghtml", "abc123")
 
   should.be_true(string.contains(code, "html.br("))
 }
@@ -51,7 +51,7 @@ pub fn generate_nested_elements_test() {
       Element("div", [], [Element("span", [], [], test_span())], test_span()),
     ])
 
-  let code = codegen.generate(template, "test.lustre", "abc123")
+  let code = codegen.generate(template, "test.ghtml", "abc123")
 
   should.be_true(string.contains(code, "html.div("))
   should.be_true(string.contains(code, "html.span("))
@@ -65,7 +65,7 @@ pub fn generate_text_node_test() {
       Element("div", [], [TextNode("Hello, World!", test_span())], test_span()),
     ])
 
-  let code = codegen.generate(template, "test.lustre", "abc123")
+  let code = codegen.generate(template, "test.ghtml", "abc123")
 
   should.be_true(string.contains(code, "text(\"Hello, World!\")"))
 }
@@ -76,7 +76,7 @@ pub fn generate_text_with_escapes_test() {
       Element("div", [], [TextNode("Line 1\nLine 2", test_span())], test_span()),
     ])
 
-  let code = codegen.generate(template, "test.lustre", "abc123")
+  let code = codegen.generate(template, "test.ghtml", "abc123")
 
   should.be_true(string.contains(code, "\\n"))
 }
@@ -87,7 +87,7 @@ pub fn generate_text_with_quotes_test() {
       Element("div", [], [TextNode("Say \"Hello\"", test_span())], test_span()),
     ])
 
-  let code = codegen.generate(template, "test.lustre", "abc123")
+  let code = codegen.generate(template, "test.ghtml", "abc123")
 
   should.be_true(string.contains(code, "\\\"Hello\\\""))
 }
@@ -103,7 +103,7 @@ pub fn generate_whitespace_normalization_test() {
       ),
     ])
 
-  let code = codegen.generate(template, "test.lustre", "abc123")
+  let code = codegen.generate(template, "test.ghtml", "abc123")
 
   // Whitespace should be collapsed in text content
   // The original "multiple   spaces" should become "multiple spaces"
@@ -120,7 +120,7 @@ pub fn generate_expr_node_test() {
       Element("div", [], [ExprNode("user.name", test_span())], test_span()),
     ])
 
-  let code = codegen.generate(template, "test.lustre", "abc123")
+  let code = codegen.generate(template, "test.ghtml", "abc123")
 
   should.be_true(string.contains(code, "text(user.name)"))
 }
@@ -136,7 +136,7 @@ pub fn generate_complex_expr_test() {
       ),
     ])
 
-  let code = codegen.generate(template, "test.lustre", "abc123")
+  let code = codegen.generate(template, "test.ghtml", "abc123")
 
   should.be_true(string.contains(code, "text(int.to_string(count))"))
 }
@@ -151,7 +151,7 @@ pub fn generate_function_signature_test() {
       body: [Element("div", [], [], test_span())],
     )
 
-  let code = codegen.generate(template, "test.lustre", "abc123")
+  let code = codegen.generate(template, "test.ghtml", "abc123")
 
   should.be_true(string.contains(code, "pub fn render("))
   should.be_true(string.contains(code, "name: String"))
@@ -167,7 +167,7 @@ pub fn generate_complex_param_types_test() {
       body: [Element("div", [], [], test_span())],
     )
 
-  let code = codegen.generate(template, "test.lustre", "abc123")
+  let code = codegen.generate(template, "test.ghtml", "abc123")
 
   should.be_true(string.contains(code, "items: List(Item)"))
   should.be_true(string.contains(code, "handler: fn(String) -> msg"))
@@ -178,9 +178,9 @@ pub fn generate_complex_param_types_test() {
 pub fn generate_header_test() {
   let template = Template(imports: [], params: [], body: [])
 
-  let code = codegen.generate(template, "src/components/card.lustre", "abc123")
+  let code = codegen.generate(template, "src/components/card.ghtml", "abc123")
 
-  should.be_true(string.contains(code, "// @generated from card.lustre"))
+  should.be_true(string.contains(code, "// @generated from card.ghtml"))
   should.be_true(string.contains(code, "// @hash abc123"))
   should.be_true(string.contains(code, "DO NOT EDIT"))
 }
@@ -194,7 +194,7 @@ pub fn generate_multiple_roots_fragment_test() {
       Element("span", [], [], test_span()),
     ])
 
-  let code = codegen.generate(template, "test.lustre", "abc123")
+  let code = codegen.generate(template, "test.ghtml", "abc123")
 
   // Multiple roots should use fragment
   should.be_true(string.contains(code, "fragment("))
@@ -211,7 +211,7 @@ pub fn generate_proper_indentation_test() {
       Element("p", [], [], test_span()),
     ])
 
-  let code = codegen.generate(template, "test.lustre", "abc123")
+  let code = codegen.generate(template, "test.ghtml", "abc123")
 
   // Multiple roots use fragment with proper indentation
   let lines = string.split(code, "\n")
@@ -232,7 +232,7 @@ pub fn void_element_ignores_children_test() {
       ),
     ])
 
-  let code = codegen.generate(template, "test.lustre", "abc123")
+  let code = codegen.generate(template, "test.ghtml", "abc123")
 
   // Void elements shouldn't have children in output
   should.be_false(string.contains(code, "should be ignored"))
@@ -254,7 +254,7 @@ pub fn whitespace_only_text_skipped_test() {
       ),
     ])
 
-  let code = codegen.generate(template, "test.lustre", "abc123")
+  let code = codegen.generate(template, "test.ghtml", "abc123")
 
   // Whitespace-only text nodes should be skipped
   // We should see the span but not a text node with whitespace
@@ -266,7 +266,7 @@ pub fn whitespace_only_text_skipped_test() {
 pub fn generate_empty_body_test() {
   let template = Template(imports: [], params: [], body: [])
 
-  let code = codegen.generate(template, "test.lustre", "abc123")
+  let code = codegen.generate(template, "test.ghtml", "abc123")
 
   // Empty body should generate a valid function with fragment
   should.be_true(string.contains(code, "pub fn render("))
@@ -281,7 +281,7 @@ pub fn generate_imports_test() {
       Element("div", [], [], test_span()),
     ])
 
-  let code = codegen.generate(template, "test.lustre", "abc123")
+  let code = codegen.generate(template, "test.ghtml", "abc123")
 
   // Should have Lustre imports
   should.be_true(string.contains(code, "import lustre/element"))
@@ -297,7 +297,7 @@ pub fn generate_format_compliant_params_test() {
       body: [Element("div", [], [], test_span())],
     )
 
-  let code = codegen.generate(template, "test.lustre", "abc123")
+  let code = codegen.generate(template, "test.ghtml", "abc123")
 
   // Parameters should be on single line without trailing comma
   should.be_true(string.contains(code, "name: String, count: Int) ->"))
@@ -309,7 +309,7 @@ pub fn generate_format_compliant_single_child_test() {
       Element("div", [], [TextNode("hello", test_span())], test_span()),
     ])
 
-  let code = codegen.generate(template, "test.lustre", "abc123")
+  let code = codegen.generate(template, "test.ghtml", "abc123")
 
   // Single child should be inline
   should.be_true(string.contains(code, "html.div([], [text(\"hello\")])"))
@@ -326,7 +326,7 @@ pub fn generate_format_compliant_nested_test() {
       ),
     ])
 
-  let code = codegen.generate(template, "test.lustre", "abc123")
+  let code = codegen.generate(template, "test.ghtml", "abc123")
 
   // Nested elements should be properly formatted
   should.be_true(string.contains(
@@ -341,7 +341,7 @@ pub fn generate_trailing_newline_test() {
       Element("div", [], [], test_span()),
     ])
 
-  let code = codegen.generate(template, "test.lustre", "abc123")
+  let code = codegen.generate(template, "test.ghtml", "abc123")
 
   // Generated code should end with a newline (gleam format requirement)
   should.be_true(string.ends_with(code, "\n"))

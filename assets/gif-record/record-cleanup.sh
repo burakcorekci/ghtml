@@ -1,5 +1,5 @@
 #!/bin/bash
-# Record cleanup GIF: Auto cleanup demo - delete .lustre file, .gleam file auto-removed
+# Record cleanup GIF: Auto cleanup demo - delete .ghtml file, .gleam file auto-removed
 
 set -e
 cd "$(dirname "$0")/../.."
@@ -14,13 +14,13 @@ SESSION=cleanup
 mkdir -p assets/tmp assets/gifs
 
 # Store original content for restoration
-TEMPLATE_FILE="examples/01_simple/src/components/greeting.lustre"
+TEMPLATE_FILE="examples/01_simple/src/components/greeting.ghtml"
 GENERATED_FILE="examples/01_simple/src/components/greeting.gleam"
 ORIGINAL_CONTENT=$(cat "$TEMPLATE_FILE")
 
 # Ensure both files exist at start
 echo "$ORIGINAL_CONTENT" > "$TEMPLATE_FILE"
-(cd examples/01_simple && gleam run -m lustre_template_gen 2>/dev/null) || true
+(cd examples/01_simple && gleam run -m ghtml 2>/dev/null) || true
 
 tmux kill-session -t $SESSION 2>/dev/null || true
 
@@ -55,7 +55,7 @@ RECORD_PID=$!
 sleep 3
 
 # Left pane: Start watch mode
-tmux send-keys -t $SESSION:0.0 "gleam run -m lustre_template_gen -- watch examples/01_simple"
+tmux send-keys -t $SESSION:0.0 "gleam run -m ghtml -- watch examples/01_simple"
 sleep 0.5
 tmux send-keys -t $SESSION:0.0 Enter
 sleep 4
@@ -64,8 +64,8 @@ sleep 4
 tmux send-keys -t $SESSION:0.1 "ls examples/01_simple/src/components/" Enter
 sleep 2
 
-# Right pane: Delete the .lustre file
-tmux send-keys -t $SESSION:0.1 "rm examples/01_simple/src/components/greeting.lustre"
+# Right pane: Delete the .ghtml file
+tmux send-keys -t $SESSION:0.1 "rm examples/01_simple/src/components/greeting.ghtml"
 sleep 0.5
 tmux send-keys -t $SESSION:0.1 Enter
 sleep 3
@@ -81,7 +81,7 @@ tmux kill-session -t $SESSION 2>/dev/null || true
 
 # Restore original files
 echo "$ORIGINAL_CONTENT" > "$TEMPLATE_FILE"
-(cd examples/01_simple && gleam run -m lustre_template_gen 2>/dev/null) || true
+(cd examples/01_simple && gleam run -m ghtml 2>/dev/null) || true
 
 # Trim last 4 lines (termination artifacts) from cast file
 LINES=$(wc -l < assets/tmp/cleanup.cast)

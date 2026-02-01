@@ -1,12 +1,12 @@
+import ghtml/parser
+import ghtml/types.{
+  CaseNode, EachNode, Element, ExprNode, IfNode, ParseError, Position, Span,
+  TextNode,
+}
 import gleam/list
 import gleam/option.{None, Some}
 import gleam/string
 import gleeunit/should
-import lustre_template_gen/parser
-import lustre_template_gen/types.{
-  CaseNode, EachNode, Element, ExprNode, IfNode, ParseError, Position, Span,
-  TextNode,
-}
 
 // === Basic Element Tests ===
 

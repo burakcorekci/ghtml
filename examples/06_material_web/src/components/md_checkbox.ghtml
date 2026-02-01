@@ -1,0 +1,10 @@
+@params(
+  is_checked: Bool,
+  on_change: fn() -> msg,
+)
+
+{#if is_checked}
+  <md-checkbox checked @click={on_change()} />
+{:else}
+  <md-checkbox @click={on_change()} />
+{/if}

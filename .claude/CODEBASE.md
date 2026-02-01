@@ -4,13 +4,13 @@ This document provides context for agents working on this project. Read this fir
 
 ## What This Project Does
 
-**Lustre Template Generator** is a Gleam preprocessor that converts `.lustre` template files into Gleam modules with Lustre `Element(msg)` render functions.
+**Lustre Template Generator** is a Gleam preprocessor that converts `.ghtml` template files into Gleam modules with Lustre `Element(msg)` render functions.
 
-**Flow:** `.lustre` file → Parser (tokenize + AST) → Codegen → `.gleam` file
+**Flow:** `.ghtml` file → Parser (tokenize + AST) → Codegen → `.gleam` file
 
 **Example:**
 ```
-src/components/user_card.lustre  →  src/components/user_card.gleam
+src/components/user_card.ghtml  →  src/components/user_card.gleam
 ```
 
 ## Quick Reference
@@ -31,7 +31,7 @@ src/components/user_card.lustre  →  src/components/user_card.gleam
 ```
                     ┌──────────────────────────────────────────────────────────┐
                     │                    CLI Entry Point                        │
-                    │              lustre_template_gen.gleam                    │
+                    │              ghtml.gleam                    │
                     │  - Parses CLI args (force, clean, watch)                  │
                     │  - Orchestrates scanning → generation → cleanup           │
                     └───────────────────────┬──────────────────────────────────┘
@@ -41,7 +41,7 @@ src/components/user_card.lustre  →  src/components/user_card.gleam
         ▼                                   ▼                                   ▼
 ┌───────────────────┐            ┌──────────────────────┐            ┌───────────────────┐
 │     scanner       │            │       parser         │            │      watcher      │
-│  - Find .lustre   │            │  - tokenize()        │            │  - OTP actor      │
+│  - Find .ghtml   │            │  - tokenize()        │            │  - OTP actor      │
 │  - Find .gleam    │            │  - build_ast()       │            │  - Poll every 1s  │
 │  - Find orphans   │            │  - parse() = both    │            │  - Track mtimes   │
 └───────────────────┘            └──────────┬───────────┘            └───────────────────┘
@@ -65,13 +65,13 @@ src/components/user_card.lustre  →  src/components/user_card.gleam
 
 ## Module Guide
 
-### `src/lustre_template_gen.gleam` - CLI Entry Point
+### `src/ghtml.gleam` - CLI Entry Point
 - Parses command-line arguments (force, clean, watch, root directory)
 - Coordinates the generation pipeline
 - Public: `main()`, `generate_all()`, `parse_options()`
-- Supports specifying a root directory: `gleam run -m lustre_template_gen -- ./my-project`
+- Supports specifying a root directory: `gleam run -m ghtml -- ./my-project`
 
-### `src/lustre_template_gen/types.gleam` - Core Types
+### `src/ghtml/types.gleam` - Core Types
 All shared types are defined here:
 - **Position/Span** - Source locations for error reporting
 - **Token** - Lexer output (Import, Params, HtmlOpen, IfStart, etc.)
@@ -79,7 +79,7 @@ All shared types are defined here:
 - **Node** - AST nodes (Element, TextNode, ExprNode, IfNode, EachNode, CaseNode, Fragment)
 - **Template** - Final parsed result with imports, params, and body nodes
 
-### `src/lustre_template_gen/parser.gleam` - Parser
+### `src/ghtml/parser.gleam` - Parser
 Two-phase parsing:
 1. `tokenize(input) -> Result(List(Token), List(ParseError))` - Lexical analysis
 2. `build_ast(tokens) -> Result(List(Node), List(ParseError))` - Tree construction
@@ -90,25 +90,25 @@ Key concepts:
 - Handles brace balancing for expressions like `{fn({a: 1})}`
 - Supports `{{` and `}}` escape sequences for literal braces
 
-### `src/lustre_template_gen/codegen.gleam` - Code Generator
+### `src/ghtml/codegen.gleam` - Code Generator
 Transforms AST → Gleam source:
 - `generate(template, source_path, hash) -> String`
 - Smart imports: only includes `gleam/list` if `{#each}` is used, etc.
 - Handles attribute mapping (class→attribute.class, @click→event.on_click)
 - Custom elements (tags with `-`) use `element("tag-name", ...)` instead of `html.tag()`
 
-### `src/lustre_template_gen/scanner.gleam` - File Discovery
-- `find_lustre_files(root)` - Recursively find `.lustre` files
+### `src/ghtml/scanner.gleam` - File Discovery
+- `find_lustre_files(root)` - Recursively find `.ghtml` files
 - `find_orphans(root)` - Find generated files with no source
 - `cleanup_orphans(root)` - Delete orphaned generated files
 - Ignores: `build`, `.git`, `node_modules`, `_build`, `.claude`, `fixtures`
 
-### `src/lustre_template_gen/cache.gleam` - Caching Logic
+### `src/ghtml/cache.gleam` - Caching Logic
 - `hash_content(content) -> String` - SHA-256 hex digest
 - `needs_regeneration(source, output) -> Bool` - Compare hashes
 - `is_generated(content) -> Bool` - Check for `// @generated` header
 
-### `src/lustre_template_gen/watcher.gleam` - Watch Mode
+### `src/ghtml/watcher.gleam` - Watch Mode
 - OTP actor that polls for file changes every second
 - Tracks file modification times
 - Auto-regenerates on change, cleans up on delete
@@ -163,7 +163,7 @@ Utilities for E2E testing:
 Tests are organized by type (unit/integration/e2e):
 ```
 test/
-  lustre_template_gen_test.gleam      # Test entry point (gleeunit)
+  ghtml_test.gleam      # Test entry point (gleeunit)
   unit/                               # Fast, isolated module tests
     scanner_test.gleam                # Scanner tests
     cli_test.gleam                    # CLI tests
@@ -183,9 +183,9 @@ test/
   e2e/                                # E2E tests
     helpers_test.gleam                # Tests for e2e_helpers module
   fixtures/                           # Shared test fixtures (ignored by scanner)
-    simple/basic.lustre               # Simple template fixture
-    attributes/all_attrs.lustre       # Attributes fixture
-    control_flow/full.lustre          # Control flow fixture
+    simple/basic.ghtml               # Simple template fixture
+    attributes/all_attrs.ghtml       # Attributes fixture
+    control_flow/full.ghtml          # Control flow fixture
 ```
 
 Run tests with:

@@ -1,0 +1,14 @@
+@params(
+  query: String,
+  on_change: fn(String) -> msg,
+)
+
+<div class="search">
+  <input
+    type="search"
+    class="input"
+    value={query}
+    placeholder="Search..."
+    @input={on_change}
+  />
+</div>

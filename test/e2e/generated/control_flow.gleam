@@ -1,6 +1,6 @@
-// @generated from full.lustre
+// @generated from full.ghtml
 // @hash a42bb361efde13b6c904f974200e66415b79dbf4767af620895fe247916318f0
-// DO NOT EDIT - regenerate with: gleam run -m lustre_template_gen
+// DO NOT EDIT - regenerate with: gleam run -m ghtml
 
 import e2e/generated/types.{type Status, type User, Active, Inactive, Pending}
 import gleam/int

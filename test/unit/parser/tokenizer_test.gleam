@@ -1,12 +1,12 @@
-import gleam/list
-import gleam/option.{None, Some}
-import gleeunit/should
-import lustre_template_gen/parser
-import lustre_template_gen/types.{
+import ghtml/parser
+import ghtml/types.{
   BooleanAttr, CaseEnd, CasePattern, CaseStart, DynamicAttr, EachStart, Else,
   EventAttr, Expr, HtmlClose, HtmlOpen, IfEnd, IfStart, Import, Params,
   StaticAttr, Text,
 }
+import gleam/list
+import gleam/option.{None, Some}
+import gleeunit/should
 
 // === Import Directive Tests ===
 

@@ -1,7 +1,7 @@
+import ghtml/cache
 import gleam/list
 import gleam/string
 import gleeunit/should
-import lustre_template_gen/cache
 import simplifile
 
 pub fn hash_content_consistency_test() {
@@ -57,7 +57,7 @@ pub fn hash_content_empty_string_test() {
 
 pub fn extract_hash_valid_test() {
   let content =
-    "// @generated from test.lustre
+    "// @generated from test.ghtml
 // @hash abc123def456
 // DO NOT EDIT
 
@@ -69,7 +69,7 @@ pub fn render() { }
 
 pub fn extract_hash_with_extra_whitespace_test() {
   let content =
-    "// @generated from test.lustre
+    "// @generated from test.ghtml
 // @hash   abc123def456
 // DO NOT EDIT
 "
@@ -88,7 +88,7 @@ pub fn render() { }
 
 pub fn extract_hash_no_hash_line_test() {
   let content =
-    "// @generated from test.lustre
+    "// @generated from test.ghtml
 // DO NOT EDIT
 pub fn render() { }
 "
@@ -97,16 +97,16 @@ pub fn render() { }
 }
 
 pub fn generate_header_test() {
-  let header = cache.generate_header("test.lustre", "abc123")
+  let header = cache.generate_header("test.ghtml", "abc123")
 
-  should.be_true(string.contains(header, "// @generated from test.lustre"))
+  should.be_true(string.contains(header, "// @generated from test.ghtml"))
   should.be_true(string.contains(header, "// @hash abc123"))
   should.be_true(string.contains(header, "DO NOT EDIT"))
 }
 
 pub fn is_generated_true_test() {
   let content =
-    "// @generated from test.lustre
+    "// @generated from test.ghtml
 // @hash abc123
 pub fn render() { }
 "
@@ -124,7 +124,7 @@ pub fn main() { }
 pub fn needs_regeneration_no_output_test() {
   let test_dir = ".test/cache_test_1"
   let _ = simplifile.create_directory_all(test_dir)
-  let source = test_dir <> "/test.lustre"
+  let source = test_dir <> "/test.ghtml"
   let output = test_dir <> "/test.gleam"
 
   let _ = simplifile.write(source, "<div>Hello</div>")
@@ -139,7 +139,7 @@ pub fn needs_regeneration_no_output_test() {
 pub fn needs_regeneration_matching_hash_test() {
   let test_dir = ".test/cache_test_2"
   let _ = simplifile.create_directory_all(test_dir)
-  let source = test_dir <> "/test.lustre"
+  let source = test_dir <> "/test.ghtml"
   let output = test_dir <> "/test.gleam"
 
   let source_content = "<div>Hello</div>"
@@ -148,7 +148,7 @@ pub fn needs_regeneration_matching_hash_test() {
   let _ =
     simplifile.write(
       output,
-      "// @generated from test.lustre\n// @hash " <> hash <> "\n",
+      "// @generated from test.ghtml\n// @hash " <> hash <> "\n",
     )
 
   let result = cache.needs_regeneration(source, output)
@@ -161,14 +161,14 @@ pub fn needs_regeneration_matching_hash_test() {
 pub fn needs_regeneration_different_hash_test() {
   let test_dir = ".test/cache_test_3"
   let _ = simplifile.create_directory_all(test_dir)
-  let source = test_dir <> "/test.lustre"
+  let source = test_dir <> "/test.ghtml"
   let output = test_dir <> "/test.gleam"
 
   let _ = simplifile.write(source, "<div>Hello</div>")
   let _ =
     simplifile.write(
       output,
-      "// @generated from test.lustre\n// @hash oldhash123\n",
+      "// @generated from test.ghtml\n// @hash oldhash123\n",
     )
 
   let result = cache.needs_regeneration(source, output)
@@ -181,7 +181,7 @@ pub fn needs_regeneration_different_hash_test() {
 pub fn needs_regeneration_no_source_test() {
   let result =
     cache.needs_regeneration(
-      ".test/nonexistent.lustre",
+      ".test/nonexistent.ghtml",
       ".test/nonexistent.gleam",
     )
   should.be_false(result)
@@ -191,7 +191,7 @@ pub fn needs_regeneration_no_source_test() {
 pub fn needs_regeneration_invalid_output_header_test() {
   let test_dir = ".test/cache_test_4"
   let _ = simplifile.create_directory_all(test_dir)
-  let source = test_dir <> "/test.lustre"
+  let source = test_dir <> "/test.ghtml"
   let output = test_dir <> "/test.gleam"
 
   let _ = simplifile.write(source, "<div>Hello</div>")

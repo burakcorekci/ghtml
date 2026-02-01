@@ -1,4 +1,4 @@
-# Contributing to lustre_template_gen
+# Contributing to ghtml
 
 Thanks for your interest in contributing! Here's everything you need to get started.
 
@@ -6,8 +6,8 @@ Thanks for your interest in contributing! Here's everything you need to get star
 
 ```bash
 # Clone and enter the repo
-git clone https://github.com/burakcorekci/lustre_template_gen
-cd lustre_template_gen
+git clone https://github.com/burakcorekci/ghtml
+cd ghtml
 
 # Install dependencies
 gleam deps download
@@ -51,12 +51,12 @@ We use [just](https://github.com/casey/just) as our command runner. Run `just` t
 
 ```
 src/
-├── lustre_template_gen.gleam     # CLI entry point
-└── lustre_template_gen/
+├── ghtml.gleam     # CLI entry point
+└── ghtml/
     ├── types.gleam               # All shared types (Token, Node, Template, etc.)
     ├── parser.gleam              # Tokenizer + AST builder
     ├── codegen.gleam             # AST → Gleam code generation
-    ├── scanner.gleam             # File discovery (.lustre files, orphans)
+    ├── scanner.gleam             # File discovery (.ghtml files, orphans)
     ├── cache.gleam               # Hash-based caching logic
     └── watcher.gleam             # Watch mode (OTP actor)
 
@@ -71,7 +71,7 @@ test/
 ## Architecture
 
 ```
-.lustre file → Scanner → Parser → Codegen → .gleam file
+.ghtml file → Scanner → Parser → Codegen → .gleam file
                            │
                     ┌──────┴──────┐
                     │             │

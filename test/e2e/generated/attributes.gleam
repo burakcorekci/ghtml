@@ -1,6 +1,6 @@
-// @generated from all_attrs.lustre
+// @generated from all_attrs.ghtml
 // @hash 976cc101779d78c7cb1ed75f6d637c53914039a81ad85b8fb82ab97bf71eed02
-// DO NOT EDIT - regenerate with: gleam run -m lustre_template_gen
+// DO NOT EDIT - regenerate with: gleam run -m ghtml
 
 import lustre/attribute
 import lustre/element.{type Element, text}

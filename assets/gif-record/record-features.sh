@@ -38,13 +38,13 @@ RECORD_PID=$!
 sleep 3
 
 # 1. First run - generates all files
-tmux send-keys -t $SESSION "gleam run -m lustre_template_gen -- examples/04_control_flow"
+tmux send-keys -t $SESSION "gleam run -m ghtml -- examples/04_control_flow"
 sleep 1
 tmux send-keys -t $SESSION Enter
 sleep 5
 
 # 2. Second run - all cached (instant)
-tmux send-keys -t $SESSION "gleam run -m lustre_template_gen -- examples/04_control_flow"
+tmux send-keys -t $SESSION "gleam run -m ghtml -- examples/04_control_flow"
 sleep 1
 tmux send-keys -t $SESSION Enter
 sleep 5

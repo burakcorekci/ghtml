@@ -1,11 +1,11 @@
-import gleam/list
-import gleam/option.{None, Some}
-import gleeunit/should
-import lustre_template_gen/types.{
+import ghtml/types.{
   BooleanAttr, CaseBranch, CaseNode, DynamicAttr, EachNode, Element, EventAttr,
   ExprNode, Fragment, IfNode, ParseError, Position, Span, StaticAttr, Template,
   TextNode, point_span, start_position,
 }
+import gleam/list
+import gleam/option.{None, Some}
+import gleeunit/should
 
 pub fn position_creation_test() {
   let pos = Position(line: 1, column: 5)

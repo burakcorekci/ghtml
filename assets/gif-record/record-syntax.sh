@@ -14,7 +14,7 @@ SESSION=syntax
 mkdir -p assets/tmp assets/gifs
 
 # Ensure generated file exists and is formatted
-gleam run -m lustre_template_gen -- examples/04_control_flow > /dev/null 2>&1
+gleam run -m ghtml -- examples/04_control_flow > /dev/null 2>&1
 gleam format examples/04_control_flow/src/components/demo_all.gleam > /dev/null 2>&1
 
 tmux kill-session -t $SESSION 2>/dev/null || true
@@ -41,7 +41,7 @@ tmux send-keys -t $SESSION:0.1 "clear" Enter
 sleep 0.3
 
 # Run both bat commands BEFORE recording - content will be on screen
-tmux send-keys -t $SESSION:0.0 "bat -pp -l html examples/04_control_flow/src/components/demo_all.lustre" Enter
+tmux send-keys -t $SESSION:0.0 "bat -pp -l html examples/04_control_flow/src/components/demo_all.ghtml" Enter
 sleep 1
 tmux send-keys -t $SESSION:0.1 "bat -pp -l rust examples/04_control_flow/src/components/demo_all.gleam" Enter
 sleep 1

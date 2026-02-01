@@ -1,22 +1,22 @@
 <p align="center">
-  <img src="assets/logo.png" alt="lustre_template_gen logo" width="200" />
+  <img src="assets/logo.png" alt="ghtml logo" width="200" />
 </p>
 
-<h1 align="center">lustre_template_gen</h1>
+<h1 align="center">ghtml</h1>
 
 <p align="center">
   <strong>Write HTML templates. Get type-safe Gleam. Like magic.</strong> ✨
 </p>
 
 <p align="center">
-  <a href="https://github.com/burakcorekci/lustre_template_gen/actions/workflows/test.yml"><img src="https://github.com/burakcorekci/lustre_template_gen/actions/workflows/test.yml/badge.svg" alt="test"></a>
-  <a href="https://hex.pm/packages/lustre_template_gen"><img src="https://img.shields.io/hexpm/v/lustre_template_gen" alt="Package Version"></a>
-  <a href="https://hexdocs.pm/lustre_template_gen/"><img src="https://img.shields.io/badge/hex-docs-ffaff3" alt="Hex Docs"></a>
+  <a href="https://github.com/burakcorekci/ghtml/actions/workflows/test.yml"><img src="https://github.com/burakcorekci/ghtml/actions/workflows/test.yml/badge.svg" alt="test"></a>
+  <a href="https://hex.pm/packages/ghtml"><img src="https://img.shields.io/hexpm/v/ghtml" alt="Package Version"></a>
+  <a href="https://hexdocs.pm/ghtml/"><img src="https://img.shields.io/badge/hex-docs-ffaff3" alt="Hex Docs"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="License"></a>
 </p>
 
 <p align="center">
-  <img src="assets/gifs/hero.gif" alt="lustre_template_gen demo" width="90%" />
+  <img src="assets/gifs/hero.gif" alt="ghtml demo" width="90%" />
 </p>
 
 ---
@@ -58,7 +58,7 @@ Write this instead:
 </div>
 ```
 
-Run `gleam run -m lustre_template_gen` and boom — you get a perfectly formatted, type-safe Gleam module. 🎉
+Run `gleam run -m ghtml` and boom — you get a perfectly formatted, type-safe Gleam module. 🎉
 
 ---
 
@@ -67,12 +67,12 @@ Run `gleam run -m lustre_template_gen` and boom — you get a perfectly formatte
 **1. Install**
 
 ```sh
-gleam add lustre_template_gen@1
+gleam add ghtml@1
 ```
 
 **2. Create a template**
 
-Create `src/components/greeting.lustre`:
+Create `src/components/greeting.ghtml`:
 
 ```html
 @params(name: String)
@@ -85,7 +85,7 @@ Create `src/components/greeting.lustre`:
 **3. Generate**
 
 ```sh
-gleam run -m lustre_template_gen
+gleam run -m ghtml
 ```
 
 **4. Use it**
@@ -136,7 +136,7 @@ Change a file. Blink. It's regenerated. Your flow stays unbroken.
 
 ### 🧹 Auto Cleanup
 
-Delete a `.lustre` file and we clean up the generated `.gleam` file automatically. No orphans left behind.
+Delete a `.ghtml` file and we clean up the generated `.gleam` file automatically. No orphans left behind.
 
 <p align="center">
   <img src="assets/gifs/cleanup.gif" alt="Auto cleanup demo" width="90%" />
@@ -145,7 +145,7 @@ Delete a `.lustre` file and we clean up the generated `.gleam` file automaticall
 Outside of watch mode, you can manually remove orphaned files:
 
 ```sh
-gleam run -m lustre_template_gen -- clean
+gleam run -m ghtml -- clean
 ```
 
 ### 🎨 Events
@@ -256,7 +256,7 @@ Web components work too. Tags with hyphens automatically use `element()`.
 
 ## Example
 
-**Input:** `src/components/user_card.lustre`
+**Input:** `src/components/user_card.ghtml`
 
 ```html
 @import(gleam/int)
@@ -271,9 +271,9 @@ Web components work too. Tags with hyphens automatically use `element()`.
 **Output:** `src/components/user_card.gleam`
 
 ```gleam
-// @generated from user_card.lustre
+// @generated from user_card.ghtml
 // @hash abc123...
-// DO NOT EDIT - regenerate with: gleam run -m lustre_template_gen
+// DO NOT EDIT - regenerate with: gleam run -m ghtml
 
 import gleam/int
 import lustre/attribute
@@ -294,16 +294,16 @@ pub fn render(name: String, count: Int) -> Element(msg) {
 
 | Command | What it does |
 |---------|--------------|
-| `gleam run -m lustre_template_gen` | Generate all (skips unchanged) |
-| `gleam run -m lustre_template_gen -- force` | Force regenerate everything |
-| `gleam run -m lustre_template_gen -- watch` | Watch mode |
-| `gleam run -m lustre_template_gen -- clean` | Remove orphans only |
+| `gleam run -m ghtml` | Generate all (skips unchanged) |
+| `gleam run -m ghtml -- force` | Force regenerate everything |
+| `gleam run -m ghtml -- watch` | Watch mode |
+| `gleam run -m ghtml -- clean` | Remove orphans only |
 
 ---
 
 ## Documentation
 
-- 📖 [**Full Documentation**](https://hexdocs.pm/lustre_template_gen/) — API reference and guides
+- 📖 [**Full Documentation**](https://hexdocs.pm/ghtml/) — API reference and guides
 - 🤝 [**Contributing**](CONTRIBUTING.md) — Development setup and guidelines
 - 📁 [**Examples**](examples/) — Working example projects
 

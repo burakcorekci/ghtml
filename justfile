@@ -1,4 +1,4 @@
-# Lustre Template Generator - Development Commands
+# ghtml - Gleam HTML Template Generator - Development Commands
 # Run `just` to see available commands
 # Any unknown command falls through to gleam: `just add package` → `gleam add package`
 
@@ -34,19 +34,19 @@ ci:
 
 # Run the CLI (default mode)
 run:
-    gleam run -m lustre_template_gen
+    gleam run -m ghtml
 
 # Run with force regeneration
 run-force:
-    gleam run -m lustre_template_gen -- force
+    gleam run -m ghtml -- force
 
 # Run in watch mode
 run-watch:
-    gleam run -m lustre_template_gen -- watch
+    gleam run -m ghtml -- watch
 
 # Run orphan cleanup only
 run-clean:
-    gleam run -m lustre_template_gen -- clean
+    gleam run -m ghtml -- clean
 
 # === Examples ===
 
@@ -55,8 +55,8 @@ check-examples:
     #!/usr/bin/env bash
     set -euo pipefail
     echo "Validating examples..."
-    # First, generate .gleam files from .lustre templates
-    gleam run -m lustre_template_gen -- examples
+    # First, generate .gleam files from .ghtml templates
+    gleam run -m ghtml -- examples
     # Then build each example
     for dir in examples/*/; do
         if [ -f "$dir/gleam.toml" ]; then
@@ -197,18 +197,18 @@ e2e-regen:
 
     # Generate each fixture using the template generator
     # The output goes to test/e2e/generated/ with proper module names
-    for fixture in test/fixtures/simple/basic.lustre \
-                   test/fixtures/attributes/all_attrs.lustre \
-                   test/fixtures/control_flow/full.lustre \
-                   test/fixtures/fragments/multiple_roots.lustre \
-                   test/fixtures/custom_elements/web_components.lustre \
-                   test/fixtures/edge_cases/special.lustre; do
+    for fixture in test/fixtures/simple/basic.ghtml \
+                   test/fixtures/attributes/all_attrs.ghtml \
+                   test/fixtures/control_flow/full.ghtml \
+                   test/fixtures/fragments/multiple_roots.ghtml \
+                   test/fixtures/custom_elements/web_components.ghtml \
+                   test/fixtures/edge_cases/special.ghtml; do
         echo "  Processing: $fixture"
         # The generator outputs alongside source, so we need to process after
     done
 
-    # Run generator on fixtures dir (creates .gleam files alongside .lustre)
-    gleam run -m lustre_template_gen -- test/fixtures
+    # Run generator on fixtures dir (creates .gleam files alongside .ghtml)
+    gleam run -m ghtml -- test/fixtures
 
     # Copy to e2e/generated with appropriate names
     mkdir -p test/e2e/generated

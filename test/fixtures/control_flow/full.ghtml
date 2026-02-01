@@ -1,0 +1,31 @@
+@import(gleam/int)
+@import(types.{type User, type Status, Active, Inactive, Pending})
+
+@params(
+  user: User,
+  items: List(String),
+  status: Status,
+)
+
+<article class="user-card">
+  {#if user.is_admin}
+    <span class="badge">Admin</span>
+  {:else}
+    <span class="badge">User</span>
+  {/if}
+
+  <ul>
+    {#each items as item, i}
+      <li>{int.to_string(i)}: {item}</li>
+    {/each}
+  </ul>
+
+  {#case status}
+    {:Active}
+      <span class="status active">Active</span>
+    {:Inactive}
+      <span class="status inactive">Inactive</span>
+    {:Pending}
+      <span class="status pending">Pending</span>
+  {/case}
+</article>

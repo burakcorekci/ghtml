@@ -44,7 +44,7 @@ RECORD_PID=$!
 sleep 3
 
 # 2. Generate the files (recorded) - type command with visible pause before Enter
-tmux send-keys -t hero "gleam run -m lustre_template_gen -- examples/01_simple"
+tmux send-keys -t hero "gleam run -m ghtml -- examples/01_simple"
 sleep 1
 tmux send-keys -t hero Enter
 
@@ -68,7 +68,7 @@ sleep 0.2
 
 # Go back to left pane and show template (use HTML highlighting for lustre)
 tmux select-pane -t hero:0.0
-tmux send-keys -t hero "bat -pp -l html examples/01_simple/src/components/greeting.lustre" Enter
+tmux send-keys -t hero "bat -pp -l html examples/01_simple/src/components/greeting.ghtml" Enter
 sleep 1
 
 # Go to right pane and show generated (use Rust highlighting for gleam - similar syntax)

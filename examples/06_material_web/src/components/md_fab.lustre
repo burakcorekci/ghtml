@@ -1,8 +1,0 @@
-@params(
-  icon: String,
-  on_click: fn() -> msg,
-)
-
-<md-fab @click={on_click()}>
-  <md-icon slot="icon">{icon}</md-icon>
-</md-fab>

@@ -1,9 +1,0 @@
-@params(
-  label: String,
-  variant: String,
-  on_click: fn() -> msg,
-)
-
-<sl-button variant={variant} @click={on_click()}>
-  {label}
-</sl-button>

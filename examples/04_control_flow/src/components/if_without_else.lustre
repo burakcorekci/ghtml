@@ -1,7 +1,0 @@
-@params(show_warning: Bool, message: String)
-
-<div class="notification">
-  {#if show_warning}
-    <p class="warning">{message}</p>
-  {/if}
-</div>

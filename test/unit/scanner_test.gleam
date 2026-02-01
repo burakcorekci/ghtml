@@ -1,7 +1,7 @@
+import ghtml/scanner
 import gleam/list
 import gleam/string
 import gleeunit/should
-import lustre_template_gen/scanner
 import simplifile
 
 // Helper to create test directory structure
@@ -12,16 +12,16 @@ fn setup_test_dir(base: String) {
   let _ = simplifile.create_directory_all(base <> "/.git")
   let _ = simplifile.create_directory_all(base <> "/node_modules/pkg")
 
-  // Create .lustre files
-  let _ = simplifile.write(base <> "/src/app.lustre", "")
-  let _ = simplifile.write(base <> "/src/components/button.lustre", "")
-  let _ = simplifile.write(base <> "/src/components/card.lustre", "")
-  let _ = simplifile.write(base <> "/src/pages/home.lustre", "")
+  // Create .ghtml files
+  let _ = simplifile.write(base <> "/src/app.ghtml", "")
+  let _ = simplifile.write(base <> "/src/components/button.ghtml", "")
+  let _ = simplifile.write(base <> "/src/components/card.ghtml", "")
+  let _ = simplifile.write(base <> "/src/pages/home.ghtml", "")
 
   // Create files in ignored directories (should not be found)
-  let _ = simplifile.write(base <> "/build/cached.lustre", "")
-  let _ = simplifile.write(base <> "/.git/hooks.lustre", "")
-  let _ = simplifile.write(base <> "/node_modules/pkg/template.lustre", "")
+  let _ = simplifile.write(base <> "/build/cached.ghtml", "")
+  let _ = simplifile.write(base <> "/.git/hooks.ghtml", "")
+  let _ = simplifile.write(base <> "/node_modules/pkg/template.ghtml", "")
 
   // Create .gleam files
   let _ = simplifile.write(base <> "/src/main.gleam", "")
@@ -34,20 +34,20 @@ fn cleanup_test_dir(base: String) {
   Nil
 }
 
-pub fn find_lustre_files_test() {
+pub fn find_ghtml_files_test() {
   let test_dir = ".test/scanner_test_1"
   let _ = setup_test_dir(test_dir)
 
-  let files = scanner.find_lustre_files(test_dir)
+  let files = scanner.find_ghtml_files(test_dir)
 
-  // Should find exactly 4 .lustre files
+  // Should find exactly 4 .ghtml files
   should.equal(list.length(files), 4)
 
   // Should contain expected files
-  should.be_true(list.any(files, fn(f) { string.contains(f, "app.lustre") }))
-  should.be_true(list.any(files, fn(f) { string.contains(f, "button.lustre") }))
-  should.be_true(list.any(files, fn(f) { string.contains(f, "card.lustre") }))
-  should.be_true(list.any(files, fn(f) { string.contains(f, "home.lustre") }))
+  should.be_true(list.any(files, fn(f) { string.contains(f, "app.ghtml") }))
+  should.be_true(list.any(files, fn(f) { string.contains(f, "button.ghtml") }))
+  should.be_true(list.any(files, fn(f) { string.contains(f, "card.ghtml") }))
+  should.be_true(list.any(files, fn(f) { string.contains(f, "home.ghtml") }))
 
   // Should NOT contain ignored directory files
   should.be_false(list.any(files, fn(f) { string.contains(f, "build/") }))
@@ -59,35 +59,35 @@ pub fn find_lustre_files_test() {
   cleanup_test_dir(test_dir)
 }
 
-pub fn find_lustre_files_empty_dir_test() {
+pub fn find_ghtml_files_empty_dir_test() {
   let test_dir = ".test/scanner_test_2"
   let _ = simplifile.create_directory_all(test_dir)
 
-  let files = scanner.find_lustre_files(test_dir)
+  let files = scanner.find_ghtml_files(test_dir)
   should.equal(files, [])
 
   cleanup_test_dir(test_dir)
 }
 
-pub fn find_lustre_files_nonexistent_dir_test() {
-  let files = scanner.find_lustre_files(".test/nonexistent_dir_xyz")
+pub fn find_ghtml_files_nonexistent_dir_test() {
+  let files = scanner.find_ghtml_files(".test/nonexistent_dir_xyz")
   should.equal(files, [])
 }
 
 pub fn to_output_path_test() {
-  should.equal(scanner.to_output_path("src/app.lustre"), "src/app.gleam")
+  should.equal(scanner.to_output_path("src/app.ghtml"), "src/app.gleam")
   should.equal(
-    scanner.to_output_path("src/components/button.lustre"),
+    scanner.to_output_path("src/components/button.ghtml"),
     "src/components/button.gleam",
   )
-  should.equal(scanner.to_output_path("./test.lustre"), "./test.gleam")
+  should.equal(scanner.to_output_path("./test.ghtml"), "./test.gleam")
 }
 
 pub fn to_source_path_test() {
-  should.equal(scanner.to_source_path("src/app.gleam"), "src/app.lustre")
+  should.equal(scanner.to_source_path("src/app.gleam"), "src/app.ghtml")
   should.equal(
     scanner.to_source_path("src/components/button.gleam"),
-    "src/components/button.lustre",
+    "src/components/button.ghtml",
   )
 }
 
@@ -101,14 +101,14 @@ pub fn find_generated_files_test() {
   should.be_true(list.any(files, fn(f) { string.contains(f, "main.gleam") }))
   should.be_true(list.any(files, fn(f) { string.contains(f, "button.gleam") }))
 
-  // Should NOT find .lustre files
-  should.be_false(list.any(files, fn(f) { string.contains(f, ".lustre") }))
+  // Should NOT find .ghtml files
+  should.be_false(list.any(files, fn(f) { string.contains(f, ".ghtml") }))
 
   cleanup_test_dir(test_dir)
 }
 
 pub fn path_conversion_roundtrip_test() {
-  let original = "src/components/my_component.lustre"
+  let original = "src/components/my_component.ghtml"
   let gleam_path = scanner.to_output_path(original)
   let back = scanner.to_source_path(gleam_path)
   should.equal(back, original)
@@ -137,7 +137,7 @@ pub fn cleanup_removes_orphan_test() {
   let _ = simplifile.create_directory_all(test_dir <> "/src")
 
   // Create a generated file WITHOUT a source
-  create_generated_file(test_dir <> "/src/orphan.gleam", "orphan.lustre")
+  create_generated_file(test_dir <> "/src/orphan.gleam", "orphan.ghtml")
 
   // Verify file exists
   let assert Ok(True) = simplifile.is_file(test_dir <> "/src/orphan.gleam")
@@ -159,10 +159,10 @@ pub fn cleanup_keeps_file_with_source_test() {
   let _ = simplifile.create_directory_all(test_dir <> "/src")
 
   // Create source file
-  let _ = simplifile.write(test_dir <> "/src/component.lustre", "<div></div>")
+  let _ = simplifile.write(test_dir <> "/src/component.ghtml", "<div></div>")
 
   // Create generated file WITH a source
-  create_generated_file(test_dir <> "/src/component.gleam", "component.lustre")
+  create_generated_file(test_dir <> "/src/component.gleam", "component.ghtml")
 
   // Run cleanup
   let removed = scanner.cleanup_orphans(test_dir)
@@ -202,7 +202,7 @@ pub fn cleanup_nested_directories_test() {
   // Create orphan in nested directory
   create_generated_file(
     test_dir <> "/src/components/nested/orphan.gleam",
-    "orphan.lustre",
+    "orphan.ghtml",
   )
 
   // Run cleanup
@@ -219,11 +219,11 @@ pub fn cleanup_multiple_orphans_test() {
   let _ = simplifile.create_directory_all(test_dir <> "/src/components")
 
   // Create multiple orphans
-  create_generated_file(test_dir <> "/src/orphan1.gleam", "orphan1.lustre")
-  create_generated_file(test_dir <> "/src/orphan2.gleam", "orphan2.lustre")
+  create_generated_file(test_dir <> "/src/orphan1.gleam", "orphan1.ghtml")
+  create_generated_file(test_dir <> "/src/orphan2.gleam", "orphan2.ghtml")
   create_generated_file(
     test_dir <> "/src/components/orphan3.gleam",
-    "orphan3.lustre",
+    "orphan3.ghtml",
   )
 
   // Run cleanup
@@ -240,11 +240,11 @@ pub fn cleanup_mixed_files_test() {
   let _ = simplifile.create_directory_all(test_dir <> "/src")
 
   // Create source with generated output (should keep)
-  let _ = simplifile.write(test_dir <> "/src/valid.lustre", "<div></div>")
-  create_generated_file(test_dir <> "/src/valid.gleam", "valid.lustre")
+  let _ = simplifile.write(test_dir <> "/src/valid.ghtml", "<div></div>")
+  create_generated_file(test_dir <> "/src/valid.gleam", "valid.ghtml")
 
   // Create orphan (should remove)
-  create_generated_file(test_dir <> "/src/orphan.gleam", "orphan.lustre")
+  create_generated_file(test_dir <> "/src/orphan.gleam", "orphan.ghtml")
 
   // Create hand-written file (should keep)
   create_handwritten_file(test_dir <> "/src/utils.gleam")
@@ -281,11 +281,11 @@ pub fn find_orphans_test() {
   let _ = simplifile.create_directory_all(test_dir <> "/src")
 
   // Create orphan
-  create_generated_file(test_dir <> "/src/orphan.gleam", "orphan.lustre")
+  create_generated_file(test_dir <> "/src/orphan.gleam", "orphan.ghtml")
 
   // Create valid pair
-  let _ = simplifile.write(test_dir <> "/src/valid.lustre", "<div></div>")
-  create_generated_file(test_dir <> "/src/valid.gleam", "valid.lustre")
+  let _ = simplifile.write(test_dir <> "/src/valid.ghtml", "<div></div>")
+  create_generated_file(test_dir <> "/src/valid.gleam", "valid.ghtml")
 
   // Find orphans (without deleting)
   let orphans = scanner.find_orphans(test_dir)
@@ -311,14 +311,14 @@ pub fn is_generated_detection_test() {
   let _ =
     simplifile.write(
       test_dir <> "/src/gen1.gleam",
-      "// @generated from test.lustre\n\npub fn render() {}\n",
+      "// @generated from test.ghtml\n\npub fn render() {}\n",
     )
 
   // File with @generated but not at start
   let _ =
     simplifile.write(
       test_dir <> "/src/gen2.gleam",
-      "// Some comment\n// @generated from test.lustre\n\npub fn render() {}\n",
+      "// Some comment\n// @generated from test.ghtml\n\npub fn render() {}\n",
     )
 
   // Run cleanup

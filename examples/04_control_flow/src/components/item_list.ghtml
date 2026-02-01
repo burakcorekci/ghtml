@@ -1,0 +1,13 @@
+@import(gleam/int)
+@import(types.{type Item})
+
+@params(items: List(Item))
+
+<ul class="item-list">
+  {#each items as item, index}
+    <li class="item">
+      <span class="index">{int.to_string(index)}.</span>
+      <span class="name">{item.name}</span>
+    </li>
+  {/each}
+</ul>

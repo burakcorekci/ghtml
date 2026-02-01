@@ -1,4 +1,4 @@
-name = "lustre_template_gen"
+name = "ghtml"
 version = "0.1.0"
 target = "erlang"
 licences = ["MIT"]

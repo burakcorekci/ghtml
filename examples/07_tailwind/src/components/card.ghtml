@@ -1,0 +1,13 @@
+@params(
+  title: String,
+  body: String,
+  image_url: String,
+)
+
+<div class="max-w-sm rounded-lg overflow-hidden shadow-lg bg-white">
+  <img class="w-full h-48 object-cover" src={image_url} alt="" />
+  <div class="px-6 py-4">
+    <h3 class="font-bold text-xl mb-2 text-gray-800">{title}</h3>
+    <p class="text-gray-600 text-base">{body}</p>
+  </div>
+</div>

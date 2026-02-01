@@ -1,9 +1,0 @@
-@params(is_admin: Bool)
-
-<span class="badge">
-  {#if is_admin}
-    <span class="admin">Admin</span>
-  {:else}
-    <span class="member">Member</span>
-  {/if}
-</span>

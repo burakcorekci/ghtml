@@ -1,0 +1,39 @@
+@import(model.{type ToastType, Success, Error, Warning, Info})
+
+@params(
+  message: String,
+  toast_type: ToastType,
+  is_visible: Bool,
+  on_dismiss: fn() -> msg,
+)
+
+{#if is_visible}
+  <div class="fixed bottom-4 right-4 z-50 animate-slide-up">
+    {#case toast_type}
+      {:Success}
+        <div class="bg-green-100 text-green-800 rounded-lg px-4 py-3 flex items-center gap-3 shadow-lg">
+          <span>Success</span>
+          <span>{message}</span>
+          <button class="ml-4 text-green-600 hover:text-green-800" @click={on_dismiss()}>x</button>
+        </div>
+      {:Error}
+        <div class="bg-red-100 text-red-800 rounded-lg px-4 py-3 flex items-center gap-3 shadow-lg">
+          <span>Error</span>
+          <span>{message}</span>
+          <button class="ml-4 text-red-600 hover:text-red-800" @click={on_dismiss()}>x</button>
+        </div>
+      {:Warning}
+        <div class="bg-yellow-100 text-yellow-800 rounded-lg px-4 py-3 flex items-center gap-3 shadow-lg">
+          <span>Warning</span>
+          <span>{message}</span>
+          <button class="ml-4 text-yellow-600 hover:text-yellow-800" @click={on_dismiss()}>x</button>
+        </div>
+      {:Info}
+        <div class="bg-blue-100 text-blue-800 rounded-lg px-4 py-3 flex items-center gap-3 shadow-lg">
+          <span>Info</span>
+          <span>{message}</span>
+          <button class="ml-4 text-blue-600 hover:text-blue-800" @click={on_dismiss()}>x</button>
+        </div>
+    {/case}
+  </div>
+{/if}

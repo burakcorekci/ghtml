@@ -1,6 +1,6 @@
 //// Build verification tests for generated Gleam code.
 ////
-//// These tests verify that code generated from `.lustre` template fixtures
+//// These tests verify that code generated from `.ghtml` template fixtures
 //// actually compiles in a real Lustre project. Each test:
 //// 1. Creates a temp directory
 //// 2. Copies the project template
@@ -9,14 +9,14 @@
 //// 5. Cleans up the temp directory
 
 import e2e_helpers
+import ghtml/cache
+import ghtml/codegen
+import ghtml/parser
 import gleam/io
 import gleam/list
 import gleam/result
 import gleam/string
 import gleeunit/should
-import lustre_template_gen/cache
-import lustre_template_gen/codegen
-import lustre_template_gen/parser
 import simplifile
 
 // === Helper Functions ===
@@ -27,7 +27,7 @@ fn get_filename(path: String) -> String {
   |> string.split("/")
   |> list.last()
   |> result.unwrap("unknown")
-  |> string.replace(".lustre", "")
+  |> string.replace(".ghtml", "")
 }
 
 /// Helper to test a single fixture compiles
@@ -43,7 +43,7 @@ fn test_fixture_compiles(fixture_rel_path: String) {
 
   // Generate from fixture
   let fixture_path =
-    e2e_helpers.fixtures_dir() <> "/" <> fixture_rel_path <> ".lustre"
+    e2e_helpers.fixtures_dir() <> "/" <> fixture_rel_path <> ".ghtml"
   let assert Ok(content) = simplifile.read(fixture_path)
   let assert Ok(template) = parser.parse(content)
 
@@ -89,10 +89,10 @@ pub fn all_fixtures_compile_test() {
   let assert Ok(Nil) =
     e2e_helpers.copy_directory(e2e_helpers.project_template_dir(), project_dir)
 
-  // Get all .lustre fixtures
+  // Get all .ghtml fixtures
   let assert Ok(fixtures) = simplifile.get_files(e2e_helpers.fixtures_dir())
   let lustre_files =
-    list.filter(fixtures, fn(f) { string.ends_with(f, ".lustre") })
+    list.filter(fixtures, fn(f) { string.ends_with(f, ".ghtml") })
 
   // Generate each fixture
   list.each(lustre_files, fn(fixture_path) {

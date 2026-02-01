@@ -1,8 +1,0 @@
-@params(
-  label: String,
-  on_click: fn() -> msg,
-)
-
-<md-outlined-button @click={on_click()}>
-  {label}
-</md-outlined-button>

@@ -14,7 +14,7 @@ SESSION=watch
 mkdir -p assets/tmp assets/gifs
 
 # Store original content for restoration
-TEMPLATE_FILE="examples/01_simple/src/components/greeting.lustre"
+TEMPLATE_FILE="examples/01_simple/src/components/greeting.ghtml"
 ORIGINAL_CONTENT=$(cat "$TEMPLATE_FILE")
 
 # Clean generated file and ensure original content
@@ -54,7 +54,7 @@ RECORD_PID=$!
 sleep 3
 
 # Left pane: Start watch mode
-tmux send-keys -t $SESSION:0.0 "gleam run -m lustre_template_gen -- watch examples/01_simple"
+tmux send-keys -t $SESSION:0.0 "gleam run -m ghtml -- watch examples/01_simple"
 sleep 0.5
 tmux send-keys -t $SESSION:0.0 Enter
 sleep 4

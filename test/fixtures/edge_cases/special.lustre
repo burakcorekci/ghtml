@@ -1,8 +1,0 @@
-@params()
-
-<div>
-  <!-- HTML comment should be stripped -->
-  <br/>
-  <input type="text"/>
-  <span>Text with {{escaped braces}}</span>
-</div>
