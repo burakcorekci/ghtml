@@ -211,16 +211,23 @@ spawn_agent() {
         # Update phase to working
         bd update "$task_id" --remove-label "phase:spawned" --add-label "phase:working" 2>/dev/null || true
 
-        # Run agent - output goes only to log file
-        # --dangerously-skip-permissions: no prompts
-        # --print: outputs transcript (buffered until completion, but that's ok for logs)
-        claude --dangerously-skip-permissions --print "$prompt" >> "$log_file" 2>&1
+        # Run agent with real-time output to log file
+        # - script: creates PTY so claude streams output (not buffered)
+        # - script writes to log_file, we discard script's own stdout
+        # - --dangerously-skip-permissions: no interactive prompts
+        if [[ "$(uname)" == "Darwin" ]]; then
+            # macOS: script -q file command...
+            script -q "$log_file" claude --dangerously-skip-permissions "$prompt" >/dev/null 2>&1
+        else
+            # Linux: script -q -c "command" file
+            script -q -c "claude --dangerously-skip-permissions \"$prompt\"" "$log_file" >/dev/null 2>&1
+        fi
 
         # Mark completion when claude exits
         echo "completed" > "$status_file"
         echo "---" >> "$log_file"
         echo "=== Agent finished at $(date -Iseconds) ===" >> "$log_file"
-    ) </dev/null >/dev/null 2>&1 &
+    ) </dev/null &
 
     local pid=$!
     set_task_state "$task_id" "pid" "$pid"
