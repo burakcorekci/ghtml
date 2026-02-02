@@ -277,6 +277,10 @@ worktree-remove task_id:
     git worktree remove "../worktrees/{{task_id}}" --force 2>/dev/null || true
     git branch -d "agent/{{task_id}}" 2>/dev/null || true
 
+# List agent processes with PIDs
+agent-ps:
+    ./scripts/orchestrate.sh ps
+
 # List all agent logs
 agent-logs:
     ./scripts/orchestrate.sh logs
@@ -303,6 +307,7 @@ orchestrate-help:
     @echo "  just merger                   Run merger to process PRs"
     @echo "  just merger --dry-run         Preview merger actions"
     @echo ""
+    @echo "  just agent-ps                 List agent PIDs and status"
     @echo "  just agent-logs               List all agent logs"
     @echo "  just agent-log <task-id>      Show full log for an agent"
     @echo "  just agent-tail <task-id>     Follow agent log in real-time"

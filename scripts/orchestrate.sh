@@ -34,6 +34,7 @@ Usage: $(basename "$0") [OPTIONS] [COMMAND]
 
 Commands:
   (none)                Run the orchestrator
+  ps                    List agent processes with PIDs
   logs                  List all agent logs
   log TASK_ID           Show full log for a task
   tail TASK_ID [N]      Follow log output (last N lines, default 50)
@@ -66,7 +67,7 @@ while [[ $# -gt 0 ]]; do
         -m|--max-agents) MAX_AGENTS="$2"; shift 2 ;;
         -d|--dry-run) DRY_RUN=true; shift ;;
         -h|--help) usage ;;
-        logs|log|tail)
+        ps|logs|log|tail)
             COMMAND="$1"
             shift
             COMMAND_ARGS=("$@")
@@ -425,10 +426,36 @@ list_agent_logs() {
     done
 }
 
+list_agent_pids() {
+    echo "=== Agent Processes ==="
+    if [ ! -f "$STATE_FILE" ]; then
+        echo "(no state file)"
+        return 0
+    fi
+
+    printf "%-12s  %-8s  %-10s  %s\n" "TASK" "PID" "STATUS" "WORKTREE"
+    printf "%-12s  %-8s  %-10s  %s\n" "----" "---" "------" "--------"
+
+    jq -r 'to_entries[] | "\(.key)\t\(.value.pid // "-")\t\(.value.phase // "unknown")\t\(.value.worktree // "-")"' "$STATE_FILE" 2>/dev/null | \
+    while IFS=$'\t' read -r task pid phase worktree; do
+        # Check if PID is still running
+        local running="dead"
+        if [ -n "$pid" ] && [ "$pid" != "-" ] && kill -0 "$pid" 2>/dev/null; then
+            running="alive"
+        fi
+        printf "%-12s  %-8s  %-10s  %s\n" "$task" "${pid:--} ($running)" "$phase" "$worktree"
+    done
+}
+
 # ============ COMMAND HANDLING ============
 # Handle log commands (now that functions are defined)
 handle_command() {
     case "$COMMAND" in
+        ps)
+            init_state
+            list_agent_pids
+            exit 0
+            ;;
         logs)
             init_state
             list_agent_logs
