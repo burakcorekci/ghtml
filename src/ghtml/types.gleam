@@ -87,6 +87,23 @@ pub type Template {
   )
 }
 
+/// Code generation target.
+///
+/// Determines what type of Gleam code is generated from templates.
+/// The target affects:
+/// - Import statements (lustre/* vs gleam/string_tree)
+/// - Function return types (Element(msg) vs StringTree vs String)
+/// - How control flow is rendered (keyed() vs list.map())
+pub type Target {
+  /// Lustre Element target (default).
+  /// Generates code that produces `Element(msg)` values.
+  /// Full support for event handlers, SSR via element.to_string().
+  Lustre
+  // Future targets:
+  // StringTree - Efficient server-side HTML generation
+  // String - Simple string concatenation
+}
+
 /// Create a position at line 1, column 1
 pub fn start_position() -> Position {
   Position(line: 1, column: 1)

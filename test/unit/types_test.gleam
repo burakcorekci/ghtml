@@ -1,7 +1,7 @@
 import ghtml/types.{
-  BooleanAttr, CaseBranch, CaseNode, DynamicAttr, EachNode, Element, EventAttr,
-  ExprNode, Fragment, IfNode, ParseError, Position, Span, StaticAttr, Template,
-  TextNode, point_span, start_position,
+  type Target, BooleanAttr, CaseBranch, CaseNode, DynamicAttr, EachNode, Element,
+  EventAttr, ExprNode, Fragment, IfNode, Lustre, ParseError, Position, Span,
+  StaticAttr, Template, TextNode, point_span, start_position,
 }
 import gleam/list
 import gleam/option.{None, Some}
@@ -264,4 +264,10 @@ pub fn point_span_test() {
   let span = point_span(pos)
   should.equal(span.start, pos)
   should.equal(span.end, pos)
+}
+
+pub fn target_type_exists_test() {
+  // Verify the Target type can be constructed
+  let target: Target = Lustre
+  should.equal(target, Lustre)
 }
