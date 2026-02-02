@@ -212,21 +212,21 @@ spawn_agent() {
         fi
 
         # Capture output using script command for pseudo-TTY (enables real-time output)
-        # NOTE: We use claude WITHOUT --print so output streams in real-time
-        # The script command creates a PTY so claude behaves interactively
+        # NOTE: We use --dangerously-skip-permissions for autonomous agent operation
+        # The script command creates a PTY so claude streams output
         # macOS and Linux have different script syntax
         if [[ "$(uname)" == "Darwin" ]]; then
             # macOS: script -q file command [args]
-            script -q "$log_file" claude "$prompt" 2>&1 || true
+            script -q "$log_file" claude --dangerously-skip-permissions "$prompt" 2>&1 || true
         elif command -v script &>/dev/null; then
             # Linux: script -q -c "command" file
-            script -q -c "claude \"$prompt\"" "$log_file" 2>&1 || true
+            script -q -c "claude --dangerously-skip-permissions \"$prompt\"" "$log_file" 2>&1 || true
         elif command -v unbuffer &>/dev/null; then
             # Fallback: unbuffer for real-time output
-            unbuffer claude "$prompt" >> "$log_file" 2>&1 || true
+            unbuffer claude --dangerously-skip-permissions "$prompt" >> "$log_file" 2>&1 || true
         else
             # Last resort: direct redirect (buffered, no real-time)
-            claude --print "$prompt" >> "$log_file" 2>&1 || true
+            claude --dangerously-skip-permissions --print "$prompt" >> "$log_file" 2>&1 || true
         fi
 
         # Mark completion
