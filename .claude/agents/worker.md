@@ -106,3 +106,11 @@ Your work is complete when:
 - [ ] Changes committed
 - [ ] PR created
 - [ ] Beads updated with `phase:pr_created` label
+
+### Phase 6: Exit
+**IMPORTANT**: After completing all steps above, you MUST exit immediately:
+```
+/exit
+```
+
+Do NOT wait for further instructions. Exit as soon as the PR is created and phase is updated.
