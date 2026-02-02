@@ -3,6 +3,9 @@
 //// Transforms the parsed AST into valid Gleam source code that uses the
 //// Lustre library to render HTML elements. Generated code is formatted
 //// to be compliant with `gleam format`.
+////
+//// This module contains both shared utilities (used by all targets) and
+//// Lustre-specific code generation (to be extracted to target/lustre.gleam).
 
 import ghtml/cache
 import ghtml/types.{
@@ -14,6 +17,11 @@ import gleam/list
 import gleam/option.{None, Some}
 import gleam/result
 import gleam/string
+
+// ============================================================
+// LUSTRE TARGET - Constants and configuration
+// (to be extracted to target/lustre.gleam)
+// ============================================================
 
 /// List of HTML void elements that cannot have children
 const void_elements = [
@@ -55,6 +63,11 @@ const boolean_attributes = [
   "disabled", "readonly", "checked", "selected", "autofocus", "required",
 ]
 
+// ============================================================
+// LUSTRE TARGET - Main generation
+// (to be extracted to target/lustre.gleam)
+// ============================================================
+
 /// Generate Gleam code from a parsed template
 pub fn generate(template: Template, source_path: String, hash: String) -> String {
   let filename = extract_filename(source_path)
@@ -65,13 +78,24 @@ pub fn generate(template: Template, source_path: String, hash: String) -> String
   header <> "\n" <> imports <> "\n\n" <> body <> "\n"
 }
 
+// ============================================================
+// SHARED UTILITIES (used by all targets)
+// These functions are target-agnostic and will be imported by
+// target-specific modules.
+// ============================================================
+
 /// Extract the filename from a full path
-fn extract_filename(path: String) -> String {
+pub fn extract_filename(path: String) -> String {
   path
   |> string.split("/")
   |> list.last()
   |> result.unwrap("unknown.ghtml")
 }
+
+// ============================================================
+// LUSTRE TARGET - Import generation
+// (to be extracted to target/lustre.gleam)
+// ============================================================
 
 /// Generate import statements for the generated module
 fn generate_imports(template: Template) -> String {
@@ -157,6 +181,11 @@ fn generate_imports(template: Template) -> String {
 
   imports
 }
+
+// ============================================================
+// LUSTRE TARGET - Template analysis
+// (to be extracted to target/lustre.gleam)
+// ============================================================
 
 /// Check if template needs `none` import (if without else)
 fn template_needs_none(nodes: List(Node)) -> Bool {
@@ -410,6 +439,11 @@ fn is_void_element(tag: String) -> Bool {
   list.contains(void_elements, tag)
 }
 
+// ============================================================
+// LUSTRE TARGET - Function and node generation
+// (to be extracted to target/lustre.gleam)
+// ============================================================
+
 /// Generate the main render function
 fn generate_function(template: Template) -> String {
   let params = generate_params(template.params)
@@ -470,6 +504,11 @@ fn generate_node_inline(node: Node) -> String {
     Fragment(children, _) -> generate_fragment_inline(children)
   }
 }
+
+// ============================================================
+// LUSTRE TARGET - Element and attribute generation
+// (to be extracted to target/lustre.gleam)
+// ============================================================
 
 /// Generate code for an HTML element (inline format)
 fn generate_element_inline(
@@ -628,7 +667,7 @@ fn generate_children_inline(children: List(Node)) -> String {
 }
 
 /// Escape special characters in a string for Gleam code
-fn escape_string(s: String) -> String {
+pub fn escape_string(s: String) -> String {
   s
   |> string.replace("\\", "\\\\")
   |> string.replace("\"", "\\\"")
@@ -639,7 +678,7 @@ fn escape_string(s: String) -> String {
 
 /// Normalize whitespace by collapsing multiple spaces/tabs to single spaces
 /// Newlines are preserved (they will be escaped later)
-fn normalize_whitespace(text: String) -> String {
+pub fn normalize_whitespace(text: String) -> String {
   text
   |> string.to_graphemes()
   |> collapse_spaces(False, [])
@@ -648,7 +687,7 @@ fn normalize_whitespace(text: String) -> String {
 }
 
 /// Helper function to collapse consecutive spaces/tabs (not newlines)
-fn collapse_spaces(
+pub fn collapse_spaces(
   chars: List(String),
   saw_space: Bool,
   acc: List(String),
@@ -673,9 +712,14 @@ fn collapse_spaces(
 }
 
 /// Check if a string is blank (empty or only whitespace)
-fn is_blank(text: String) -> Bool {
+pub fn is_blank(text: String) -> Bool {
   string.trim(text) == ""
 }
+
+// ============================================================
+// LUSTRE TARGET - Control flow generation
+// (to be extracted to target/lustre.gleam)
+// ============================================================
 
 /// Generate code for an if node (case expression with True/False branches)
 fn generate_if_node_inline(
