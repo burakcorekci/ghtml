@@ -226,6 +226,7 @@ examples/
   06_material_web/   # Material Web components integration
   07_tailwind/       # Tailwind CSS styling
   08_complete/       # Full application with all features
+  09_drag_drop/      # Drag and drop kanban board
 ```
 
 Each example is a standalone Gleam project with its own `gleam.toml` and `justfile`.

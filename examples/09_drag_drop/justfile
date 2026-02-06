@@ -1,0 +1,26 @@
+# Task Manager - Drag and Drop
+# Run `just` to see available commands
+
+# Path to the ghtml project
+gen := "../../"
+
+# Default: show help
+default:
+    @just --list
+
+# Generate Gleam files from .lustre templates
+codegen:
+    cd {{gen}} && gleam run -m ghtml -- "{{justfile_directory()}}"
+
+# Build the example
+build: codegen
+    gleam build
+
+# Start the development server
+dev: build
+    gleam run -m lustre/dev start
+
+# Clean build artifacts and generated files
+clean:
+    cd {{gen}} && gleam run -m ghtml -- clean "{{justfile_directory()}}"
+    rm -rf build
