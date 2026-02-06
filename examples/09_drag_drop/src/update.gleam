@@ -103,11 +103,6 @@ pub fn update(model: Model, msg: Msg) -> Model {
       Model(..model, tasks: updated_tasks)
     }
 
-    // Drag and drop actions
-    msg.DragStart(id) -> Model(..model, dragging_task_id: Some(id))
-
-    msg.DragEnd -> Model(..model, dragging_task_id: None)
-
     // Subtask actions
     msg.ToggleSubtask(task_id, subtask_id) -> {
       let updated_tasks =
@@ -338,6 +333,56 @@ pub fn update(model: Model, msg: Msg) -> Model {
         projects: [],
         toast: Some(#("All data cleared", model.Warning)),
       )
+
+    // Drag and drop actions
+    msg.DragStart(task_id) ->
+      Model(..model, dragging_task_id: Some(task_id))
+
+    msg.DragEnd ->
+      Model(
+        ..model,
+        dragging_task_id: None,
+        drop_target_column: None,
+      )
+
+    msg.DragOverColumn(status) ->
+      Model(..model, drop_target_column: Some(status))
+
+    msg.DragLeaveColumn ->
+      Model(..model, drop_target_column: None)
+
+    msg.DropOnColumn(target_status) ->
+      case model.dragging_task_id {
+        None -> model
+        Some(task_id) ->
+          case find_task(model.tasks, task_id) {
+            None -> model
+            Some(task) ->
+              case task.status == target_status {
+                True ->
+                  Model(
+                    ..model,
+                    dragging_task_id: None,
+                    drop_target_column: None,
+                  )
+                False -> {
+                  let updated_tasks =
+                    list.map(model.tasks, fn(t) {
+                      case t.id == task_id {
+                        True -> Task(..t, status: target_status)
+                        False -> t
+                      }
+                    })
+                  Model(
+                    ..model,
+                    tasks: updated_tasks,
+                    dragging_task_id: None,
+                    drop_target_column: None,
+                  )
+                }
+              }
+          }
+      }
 
     // Keyboard shortcuts
     msg.HandleKeyDown(key) ->

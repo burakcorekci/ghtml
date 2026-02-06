@@ -113,6 +113,7 @@ pub type Model {
     editing_subtask_id: Option(String),
     editing_subtask_text: String,
     dragging_task_id: Option(String),
+    drop_target_column: Option(TaskStatus),
   )
 }
 
@@ -147,6 +148,7 @@ pub fn initial_model() -> Model {
     editing_subtask_id: option.None,
     editing_subtask_text: "",
     dragging_task_id: option.None,
+    drop_target_column: option.None,
   )
 }
 

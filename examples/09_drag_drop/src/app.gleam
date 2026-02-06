@@ -1,13 +1,8 @@
-/// Task Manager - Complete Example Application
+/// Task Manager - Drag and Drop Example
 ///
-/// This example demonstrates a production-quality task management application
-/// built with Lustre templates. It showcases:
-/// - All template features (if/each/case, events, attributes)
-/// - Shoelace web components for UI
-/// - Tailwind CSS for styling
-/// - Responsive design (mobile, tablet, desktop)
-/// - Comprehensive state management
-/// - Component-based architecture
+/// This example extends the complete task manager with HTML5 Drag and Drop
+/// support for the kanban board view. Users can drag task cards between
+/// Todo, In Progress, and Done columns to change task status.
 
 import components/common/empty_state
 import components/common/toast
@@ -175,6 +170,10 @@ fn view_content(model: Model) -> Element(Msg) {
               fn(id) { msg.SelectTask(id) },
               fn(id) { decode.success(msg.DragStart(id)) },
               decode.success(msg.DragEnd),
+              fn(status) { decode.success(msg.DropOnColumn(status)) },
+              fn(status) { decode.success(msg.DragOverColumn(status)) },
+              decode.success(msg.DragLeaveColumn),
+              fn(status) { model.drop_target_column == Some(status) },
             )
           }
         },
