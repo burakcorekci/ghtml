@@ -1,0 +1,38 @@
+@import(model.{type View, ListView, KanbanView})
+
+@params(
+  current_view: View,
+  on_view_change: fn(View) -> msg,
+  on_add_task: fn() -> msg,
+)
+
+<nav class="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 px-4 py-2 safe-area-pb">
+  <div class="flex items-center justify-around">
+    <button class="flex flex-col items-center py-2 px-4" @click={on_view_change(ListView)}>
+      {#if current_view == ListView}
+        <span class="text-blue-600 dark:text-blue-400 text-2xl">List</span>
+        <span class="text-xs text-blue-600 dark:text-blue-400 font-medium">List</span>
+      {:else}
+        <span class="text-gray-400 text-2xl">List</span>
+        <span class="text-xs text-gray-400">List</span>
+      {/if}
+    </button>
+
+    <button
+      class="flex items-center justify-center w-14 h-14 -mt-6 bg-blue-600 dark:bg-blue-500 rounded-full shadow-lg text-white text-2xl"
+      @click={on_add_task()}
+    >
+      +
+    </button>
+
+    <button class="flex flex-col items-center py-2 px-4" @click={on_view_change(KanbanView)}>
+      {#if current_view == KanbanView}
+        <span class="text-blue-600 dark:text-blue-400 text-2xl">Board</span>
+        <span class="text-xs text-blue-600 dark:text-blue-400 font-medium">Board</span>
+      {:else}
+        <span class="text-gray-400 text-2xl">Board</span>
+        <span class="text-xs text-gray-400">Board</span>
+      {/if}
+    </button>
+  </div>
+</nav>
