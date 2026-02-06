@@ -1,0 +1,24 @@
+name = "example_09_drag_drop"
+version = "0.1.0"
+target = "javascript"
+
+[dependencies]
+lustre = "~> 5.0"
+gleam_stdlib = "~> 0.68"
+gleam_json = "~> 3.0"
+
+[dev-dependencies]
+lustre_dev_tools = "~> 2.0"
+
+[tools.lustre.html]
+title = "Task Manager - Drag and Drop"
+scripts = [
+  { type = "module", src = "https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.19.0/cdn/shoelace-autoloader.js" },
+  { src = "https://cdn.tailwindcss.com" },
+  { src = "/tailwind-config.js" }
+]
+stylesheets = [
+  { href = "https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.19.0/cdn/themes/light.css" },
+  { href = "https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.19.0/cdn/themes/dark.css" },
+  { href = "/styles.css" }
+]

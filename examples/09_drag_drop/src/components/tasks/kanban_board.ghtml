@@ -1,0 +1,87 @@
+@import(gleam/int)
+@import(gleam/list)
+@import(gleam/dynamic/decode)
+@import(model.{type Task})
+
+@params(
+  todo_tasks: List(Task),
+  in_progress_tasks: List(Task),
+  done_tasks: List(Task),
+  on_task_click: fn(String) -> msg,
+  on_drag_start: fn(String) -> decode.Decoder(msg),
+  on_drag_end: decode.Decoder(msg),
+)
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
+  <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-4">
+    <h2 class="font-semibold text-gray-700 dark:text-gray-200 mb-4 flex items-center gap-2">
+      <span class="w-3 h-3 rounded-full bg-gray-400"></span>
+      Todo
+      <span class="ml-auto text-sm font-normal text-gray-500 dark:text-gray-400">{int.to_string(list.length(todo_tasks))}</span>
+    </h2>
+    <div class="space-y-3">
+      {#each todo_tasks as task, idx}
+        <div
+          draggable="true"
+          class="bg-white dark:bg-gray-700 p-3 rounded-lg shadow-sm cursor-grab hover:shadow-md transition-shadow active:cursor-grabbing"
+          @click={on_task_click(task.id)}
+          @on:dragstart={on_drag_start(task.id)}
+          @on:dragend={on_drag_end}
+        >
+          <h3 class="font-medium text-gray-900 dark:text-white">{task.title}</h3>
+          {#if task.description != ""}
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">{task.description}</p>
+          {/if}
+        </div>
+      {/each}
+    </div>
+  </div>
+
+  <div class="bg-blue-50 dark:bg-blue-900/30 rounded-lg p-4">
+    <h2 class="font-semibold text-gray-700 dark:text-gray-200 mb-4 flex items-center gap-2">
+      <span class="w-3 h-3 rounded-full bg-blue-500"></span>
+      In Progress
+      <span class="ml-auto text-sm font-normal text-gray-500 dark:text-gray-400">{int.to_string(list.length(in_progress_tasks))}</span>
+    </h2>
+    <div class="space-y-3">
+      {#each in_progress_tasks as task, idx2}
+        <div
+          draggable="true"
+          class="bg-white dark:bg-gray-700 p-3 rounded-lg shadow-sm cursor-grab hover:shadow-md transition-shadow active:cursor-grabbing"
+          @click={on_task_click(task.id)}
+          @on:dragstart={on_drag_start(task.id)}
+          @on:dragend={on_drag_end}
+        >
+          <h3 class="font-medium text-gray-900 dark:text-white">{task.title}</h3>
+          {#if task.description != ""}
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">{task.description}</p>
+          {/if}
+        </div>
+      {/each}
+    </div>
+  </div>
+
+  <div class="bg-green-50 dark:bg-green-900/30 rounded-lg p-4">
+    <h2 class="font-semibold text-gray-700 dark:text-gray-200 mb-4 flex items-center gap-2">
+      <span class="w-3 h-3 rounded-full bg-green-500"></span>
+      Done
+      <span class="ml-auto text-sm font-normal text-gray-500 dark:text-gray-400">{int.to_string(list.length(done_tasks))}</span>
+    </h2>
+    <div class="space-y-3">
+      {#each done_tasks as task, idx3}
+        <div
+          draggable="true"
+          class="bg-white dark:bg-gray-700 p-3 rounded-lg shadow-sm cursor-grab hover:shadow-md transition-shadow active:cursor-grabbing"
+          @click={on_task_click(task.id)}
+          @on:dragstart={on_drag_start(task.id)}
+          @on:dragend={on_drag_end}
+        >
+          <h3 class="font-medium text-gray-900 dark:text-white line-through">{task.title}</h3>
+          {#if task.description != ""}
+            <p class="text-sm text-gray-400 mt-1 line-clamp-2">{task.description}</p>
+          {/if}
+        </div>
+      {/each}
+    </div>
+  </div>
+</div>
