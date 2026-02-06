@@ -27,10 +27,6 @@ pub type Msg {
   ToggleTaskStatus(String)
   SetTaskStatus(String, TaskStatus)
 
-  // Drag and drop actions
-  DragStart(String)
-  DragEnd
-
   // Subtask actions
   ToggleSubtask(String, String)
   UpdateNewSubtaskText(String)
@@ -75,6 +71,13 @@ pub type Msg {
   ExportTasks
   ImportTasks(String)
   ClearAllData
+
+  // Drag and drop actions
+  DragStart(String)
+  DragEnd
+  DragOverColumn(TaskStatus)
+  DragLeaveColumn
+  DropOnColumn(TaskStatus)
 
   // Keyboard shortcuts
   HandleKeyDown(String)
