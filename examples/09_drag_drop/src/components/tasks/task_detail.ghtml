@@ -1,0 +1,156 @@
+@import(gleam/int)
+@import(gleam/list)
+@import(gleam/option.{type Option, Some, None})
+@import(model.{type Task, Todo, InProgress, Done, High, Medium, Low, NoPriority, completed_subtasks})
+@import(gleam/dynamic/decode)
+
+@params(
+  task: Task,
+  new_subtask_text: String,
+  editing_subtask_id: Option(String),
+  editing_subtask_text: String,
+  on_edit: fn() -> msg,
+  on_delete: fn() -> msg,
+  on_toggle_status: fn() -> msg,
+  on_toggle_subtask: fn(String) -> msg,
+  on_subtask_input: decode.Decoder(msg),
+  on_add_subtask_keydown: decode.Decoder(msg),
+  on_add_subtask_click: fn() -> msg,
+  on_delete_subtask: fn(String) -> msg,
+  on_start_edit_subtask: fn(String, String) -> msg,
+  on_edit_subtask_input: decode.Decoder(msg),
+  on_save_edit_subtask: fn(String) -> msg,
+  on_cancel_edit_subtask: fn() -> msg,
+  on_close: fn() -> msg,
+)
+
+<div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+  <div class="flex items-start justify-between mb-4">
+    <div>
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-white">{task.title}</h2>
+      <div class="mt-1 flex items-center gap-2">
+        {#case task.status}
+          {:Todo}
+            <span class="px-2 py-1 text-xs rounded bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">Todo</span>
+          {:InProgress}
+            <span class="px-2 py-1 text-xs rounded bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300">In Progress</span>
+          {:Done}
+            <span class="px-2 py-1 text-xs rounded bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300">Done</span>
+        {/case}
+        {#case task.priority}
+          {:High}
+            <span class="px-2 py-1 text-xs rounded bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300">High Priority</span>
+          {:Medium}
+            <span class="px-2 py-1 text-xs rounded bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300">Medium Priority</span>
+          {:Low}
+            <span class="px-2 py-1 text-xs rounded bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300">Low Priority</span>
+          {:NoPriority}
+            <span></span>
+        {/case}
+      </div>
+    </div>
+    <button class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200" @click={on_close()}>
+      <span class="text-xl">X</span>
+    </button>
+  </div>
+
+  {#if task.description != ""}
+    <div class="mb-4">
+      <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</h3>
+      <p class="text-gray-600 dark:text-gray-400">{task.description}</p>
+    </div>
+  {/if}
+
+  {#case task.due_date}
+    {:Some(date)}
+      <div class="mb-4">
+        <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Due Date</h3>
+        <p class="text-gray-600 dark:text-gray-400">{date}</p>
+      </div>
+    {:None}
+      <span></span>
+  {/case}
+
+  <div class="mb-4">
+    <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+      Subtasks
+      {#if task.subtasks != []}
+        ({int.to_string(completed_subtasks(task))}/{int.to_string(list.length(task.subtasks))})
+      {/if}
+    </h3>
+    {#if task.subtasks != []}
+      <ul class="space-y-2 mb-3">
+        {#each task.subtasks as subtask}
+          <li class="flex items-center gap-2">
+            {#if editing_subtask_id == Some(subtask.id)}
+              <sl-input
+                size="small"
+                class="flex-1"
+                value={editing_subtask_text}
+                @on:sl-input={on_edit_subtask_input}
+                autofocus
+              ></sl-input>
+              <sl-icon-button
+                name="check"
+                label="Save"
+                class="text-green-500 hover:text-green-600"
+                @click={on_save_edit_subtask(subtask.id)}
+              ></sl-icon-button>
+              <sl-icon-button
+                name="x"
+                label="Cancel"
+                class="text-gray-400 hover:text-gray-600"
+                @click={on_cancel_edit_subtask()}
+              ></sl-icon-button>
+            {:else}
+              <input
+                type="checkbox"
+                checked={subtask.completed}
+                @click={on_toggle_subtask(subtask.id)}
+                class="rounded"
+              />
+              {#if subtask.completed}
+                <span
+                  class="flex-1 text-gray-500 dark:text-gray-400 line-through cursor-pointer"
+                  @click={on_start_edit_subtask(subtask.id, subtask.text)}
+                >{subtask.text}</span>
+              {:else}
+                <span
+                  class="flex-1 text-gray-700 dark:text-gray-300 cursor-pointer hover:text-blue-500"
+                  @click={on_start_edit_subtask(subtask.id, subtask.text)}
+                >{subtask.text}</span>
+              {/if}
+              <sl-icon-button
+                name="trash"
+                label="Delete subtask"
+                class="text-gray-400 hover:text-red-500"
+                @click={on_delete_subtask(subtask.id)}
+              ></sl-icon-button>
+            {/if}
+          </li>
+        {/each}
+      </ul>
+    {/if}
+    <div class="flex gap-2">
+      <sl-input
+        placeholder="Add a subtask..."
+        size="small"
+        class="flex-1 subtask-input"
+        value={new_subtask_text}
+        @on:sl-input={on_subtask_input}
+        @on:keydown={on_add_subtask_keydown}
+      >
+        <sl-icon name="plus-circle" slot="prefix"></sl-icon>
+      </sl-input>
+      <sl-button size="small" variant="default" @click={on_add_subtask_click()}>
+        Add
+      </sl-button>
+    </div>
+  </div>
+
+  <div class="flex items-center gap-2 pt-4 border-t border-gray-200 dark:border-gray-700">
+    <sl-button variant="primary" @click={on_edit()}>Edit</sl-button>
+    <sl-button variant="default" @click={on_toggle_status()}>Toggle Status</sl-button>
+    <sl-button variant="danger" @click={on_delete()}>Delete</sl-button>
+  </div>
+</div>
