@@ -2,6 +2,7 @@ import ghtml/types.{
   BooleanAttribute, CaseBranch, CaseNode, DynamicAttribute, EachNode, Element,
   EventAttribute, ExprNode, Fragment, IfNode, Lustre, ParseError, Position, Span,
   StaticAttribute, Template, TextNode, point_span, start_position,
+  target_from_string, valid_target_names,
 }
 import gleam/list
 import gleam/option.{None, Some}
@@ -276,4 +277,26 @@ fn is_lustre_target(target: types.Target) -> Bool {
   case target {
     Lustre -> True
   }
+}
+
+// === Target Parsing Tests ===
+
+pub fn target_from_string_lustre_test() {
+  target_from_string("lustre")
+  |> should.equal(Ok(Lustre))
+}
+
+pub fn target_from_string_invalid_test() {
+  target_from_string("react")
+  |> should.equal(Error(Nil))
+}
+
+pub fn target_from_string_empty_test() {
+  target_from_string("")
+  |> should.equal(Error(Nil))
+}
+
+pub fn valid_target_names_test() {
+  valid_target_names()
+  |> should.equal(["lustre"])
 }

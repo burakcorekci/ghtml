@@ -38,7 +38,7 @@ src/components/user_card.ghtml  →  src/components/user_card.gleam
                     ┌──────────────────────────────────────────────────────────┐
                     │                    CLI Entry Point                        │
                     │              ghtml.gleam                    │
-                    │  - Parses CLI args (force, clean, watch)                  │
+                    │  - Parses CLI args (force, clean, watch, --target)        │
                     │  - Orchestrates scanning → generation → cleanup           │
                     └───────────────────────┬──────────────────────────────────┘
                                             │
@@ -87,10 +87,11 @@ src/components/user_card.ghtml  →  src/components/user_card.gleam
 ## Module Guide
 
 ### `src/ghtml.gleam` - CLI Entry Point
-- Parses command-line arguments (force, clean, watch, root directory)
-- Coordinates the generation pipeline
-- Public: `main()`, `generate_all()`, `parse_options()`
+- Parses command-line arguments (force, clean, watch, --target, root directory)
+- Coordinates the generation pipeline, threading Target through all stages
+- Public: `main()`, `generate_all(root, force, target)`, `parse_options(args) -> Result(CliOptions, String)`
 - Supports specifying a root directory: `gleam run -m ghtml -- ./my-project`
+- Supports specifying a target: `gleam run -m ghtml -- --target=lustre`
 
 ### `src/ghtml/types.gleam` - Core Types
 All shared types are defined here:
@@ -99,6 +100,7 @@ All shared types are defined here:
 - **Attribute** - Attribute variants (StaticAttribute, DynamicAttribute, EventAttribute with modifiers: List(String), BooleanAttribute)
 - **Node** - AST nodes (Element, TextNode, ExprNode, IfNode, EachNode, CaseNode, Fragment)
 - **Template** - Final parsed result with imports, params, and body nodes
+- **Target** - Code generation target backend (currently: Lustre). Includes `target_from_string()` and `valid_target_names()`.
 
 ### `src/ghtml/lexer.gleam` - Lexer
 Tokenizes template source text into a flat list of tokens:
@@ -155,7 +157,8 @@ Lustre-specific code generation:
 - `is_generated(content) -> Bool` - Check for `// @generated` header
 
 ### `src/ghtml/watcher.gleam` - Watch Mode
-- OTP actor that polls for file changes every second
+- OTP actor that polls for file changes every 500ms
+- Accepts Target parameter and threads it through code generation
 - Tracks file modification times
 - Auto-regenerates on change, cleans up on delete
 

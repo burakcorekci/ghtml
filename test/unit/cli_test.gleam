@@ -8,6 +8,7 @@ import ghtml/cache
 import ghtml/parser
 import ghtml/scanner
 import ghtml/target/lustre
+import ghtml/types
 import gleam/list
 import gleam/string
 import gleeunit/should
@@ -37,33 +38,34 @@ fn cleanup_test_project(base: String) {
 // === Option Parsing Tests ===
 
 pub fn parse_options_default_test() {
-  let options = ghtml.parse_options([])
+  let assert Ok(options) = ghtml.parse_options([])
   should.be_false(options.force)
   should.be_false(options.clean_only)
   should.be_false(options.watch)
   should.equal(options.root, ".")
+  should.equal(options.target, types.Lustre)
 }
 
 pub fn parse_options_force_test() {
-  let options = ghtml.parse_options(["force"])
+  let assert Ok(options) = ghtml.parse_options(["force"])
   should.be_true(options.force)
   should.be_false(options.clean_only)
   should.equal(options.root, ".")
 }
 
 pub fn parse_options_clean_test() {
-  let options = ghtml.parse_options(["clean"])
+  let assert Ok(options) = ghtml.parse_options(["clean"])
   should.be_true(options.clean_only)
   should.be_false(options.force)
 }
 
 pub fn parse_options_watch_test() {
-  let options = ghtml.parse_options(["watch"])
+  let assert Ok(options) = ghtml.parse_options(["watch"])
   should.be_true(options.watch)
 }
 
 pub fn parse_options_multiple_test() {
-  let options = ghtml.parse_options(["force", "watch"])
+  let assert Ok(options) = ghtml.parse_options(["force", "watch"])
   should.be_true(options.force)
   should.be_true(options.watch)
   should.be_false(options.clean_only)
@@ -71,15 +73,63 @@ pub fn parse_options_multiple_test() {
 }
 
 pub fn parse_options_with_root_test() {
-  let options = ghtml.parse_options(["./my-project"])
+  let assert Ok(options) = ghtml.parse_options(["./my-project"])
   should.be_false(options.force)
   should.equal(options.root, "./my-project")
 }
 
 pub fn parse_options_with_root_and_flags_test() {
-  let options = ghtml.parse_options(["force", "./my-project"])
+  let assert Ok(options) = ghtml.parse_options(["force", "./my-project"])
   should.be_true(options.force)
   should.equal(options.root, "./my-project")
+}
+
+// === Target Flag Tests ===
+
+pub fn parse_options_default_target_is_lustre_test() {
+  let assert Ok(options) = ghtml.parse_options([])
+  should.equal(options.target, types.Lustre)
+}
+
+pub fn parse_options_explicit_target_lustre_test() {
+  let assert Ok(options) = ghtml.parse_options(["--target=lustre"])
+  should.equal(options.target, types.Lustre)
+}
+
+pub fn parse_options_target_with_other_flags_test() {
+  let assert Ok(options) =
+    ghtml.parse_options(["force", "--target=lustre", "watch"])
+  should.be_true(options.force)
+  should.be_true(options.watch)
+  should.equal(options.target, types.Lustre)
+  should.equal(options.root, ".")
+}
+
+pub fn parse_options_target_with_root_test() {
+  let assert Ok(options) =
+    ghtml.parse_options(["--target=lustre", "./my-project"])
+  should.equal(options.target, types.Lustre)
+  should.equal(options.root, "./my-project")
+}
+
+pub fn parse_options_invalid_target_returns_error_test() {
+  let result = ghtml.parse_options(["--target=react"])
+  should.be_error(result)
+  let assert Error(msg) = result
+  should.be_true(string.contains(msg, "Unknown target"))
+  should.be_true(string.contains(msg, "react"))
+  should.be_true(string.contains(msg, "lustre"))
+}
+
+pub fn parse_options_empty_target_returns_error_test() {
+  let result = ghtml.parse_options(["--target="])
+  should.be_error(result)
+}
+
+pub fn parse_options_target_not_confused_with_root_test() {
+  // --target= flag should not be treated as root directory
+  let assert Ok(options) = ghtml.parse_options(["--target=lustre"])
+  should.equal(options.root, ".")
 }
 
 // === File Processing Tests ===
@@ -260,8 +310,8 @@ pub fn generate_all_returns_stats_test() {
   let test_dir = ".test/cli_test_stats"
   setup_test_project(test_dir)
 
-  // Run generate_all
-  let stats = ghtml.generate_all(test_dir, False)
+  // Run generate_all with default target
+  let stats = ghtml.generate_all(test_dir, False, types.Lustre)
 
   should.equal(stats.generated, 1)
   should.equal(stats.skipped, 0)
@@ -275,10 +325,10 @@ pub fn generate_all_skips_unchanged_test() {
   setup_test_project(test_dir)
 
   // First generation
-  let _ = ghtml.generate_all(test_dir, False)
+  let _ = ghtml.generate_all(test_dir, False, types.Lustre)
 
   // Second generation should skip
-  let stats = ghtml.generate_all(test_dir, False)
+  let stats = ghtml.generate_all(test_dir, False, types.Lustre)
 
   should.equal(stats.generated, 0)
   should.equal(stats.skipped, 1)
@@ -292,10 +342,10 @@ pub fn generate_all_force_regenerates_test() {
   setup_test_project(test_dir)
 
   // First generation
-  let _ = ghtml.generate_all(test_dir, False)
+  let _ = ghtml.generate_all(test_dir, False, types.Lustre)
 
   // Force regeneration
-  let stats = ghtml.generate_all(test_dir, True)
+  let stats = ghtml.generate_all(test_dir, True, types.Lustre)
 
   should.equal(stats.generated, 1)
   should.equal(stats.skipped, 0)

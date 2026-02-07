@@ -92,6 +92,20 @@ pub type Target {
   Lustre
 }
 
+/// Parse a target name string into a Target type.
+/// Returns Error(Nil) for unrecognized target names.
+pub fn target_from_string(name: String) -> Result(Target, Nil) {
+  case name {
+    "lustre" -> Ok(Lustre)
+    _ -> Error(Nil)
+  }
+}
+
+/// List of valid target names for error messages.
+pub fn valid_target_names() -> List(String) {
+  ["lustre"]
+}
+
 /// Create a position at line 1, column 1
 pub fn start_position() -> Position {
   Position(line: 1, column: 1)

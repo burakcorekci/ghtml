@@ -7,7 +7,7 @@
 //// ## Usage
 ////
 //// ```gleam
-//// let subject = watcher.start_watching(".")
+//// let subject = watcher.start_watching(".", types.Lustre)
 //// // Later, to stop:
 //// process.send(subject, watcher.Stop)
 //// ```
@@ -16,7 +16,7 @@ import ghtml/cache
 import ghtml/codegen
 import ghtml/parser
 import ghtml/scanner
-import ghtml/types
+import ghtml/types.{type Target}
 import gleam/dict.{type Dict}
 import gleam/erlang/process.{type Subject}
 import gleam/int
@@ -42,6 +42,8 @@ pub type WatcherState {
   WatcherState(
     /// Root directory to watch
     root: String,
+    /// Code generation target
+    target: Target,
     /// Map of file paths to their modification times
     file_mtimes: Dict(String, Int),
     /// Self subject for scheduling checks (set after actor starts)
@@ -70,12 +72,17 @@ pub fn get_all_mtimes(root: String) -> Dict(String, Int) {
   |> dict.from_list()
 }
 
-/// Start the watcher actor for a given root directory.
+/// Start the watcher actor for a given root directory and target.
 /// Returns a subject that can be used to send messages to the watcher.
-pub fn start_watching(root: String) -> Subject(WatcherMessage) {
+pub fn start_watching(root: String, target: Target) -> Subject(WatcherMessage) {
   let initial_mtimes = get_all_mtimes(root)
   let initial_state =
-    WatcherState(root: root, file_mtimes: initial_mtimes, self_subject: None)
+    WatcherState(
+      root: root,
+      target: target,
+      file_mtimes: initial_mtimes,
+      self_subject: None,
+    )
 
   let assert Ok(started) =
     actor.new(initial_state)
@@ -147,7 +154,7 @@ fn check_for_changes(state: WatcherState) -> WatcherState {
     }
 
     case should_process {
-      True -> process_single_file(path)
+      True -> process_single_file(path, state.target)
       False -> Nil
     }
   })
@@ -178,7 +185,7 @@ fn check_for_changes(state: WatcherState) -> WatcherState {
 }
 
 /// Process a single template file, generating the corresponding Gleam code.
-pub fn process_single_file(source_path: String) {
+pub fn process_single_file(source_path: String, target: Target) {
   let output_path = scanner.to_output_path(source_path)
 
   case simplifile.read(source_path) {
@@ -186,8 +193,7 @@ pub fn process_single_file(source_path: String) {
       let hash = cache.hash_content(content)
       case parser.parse(content) {
         Ok(template) -> {
-          let gleam_code =
-            codegen.generate(template, source_path, hash, types.Lustre)
+          let gleam_code = codegen.generate(template, source_path, hash, target)
           case simplifile.write(output_path, gleam_code) {
             Ok(_) -> io.println("  Generated: " <> output_path)
             Error(e) -> io.println("  Error writing: " <> string.inspect(e))

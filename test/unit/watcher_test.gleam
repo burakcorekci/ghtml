@@ -1,4 +1,5 @@
 import ghtml/scanner
+import ghtml/types
 import ghtml/watcher
 import gleam/dict
 import gleam/erlang/process
@@ -84,6 +85,7 @@ pub fn detect_new_file_test() {
   let state =
     watcher.WatcherState(
       root: test_dir,
+      target: types.Lustre,
       file_mtimes: dict.new(),
       self_subject: None,
     )
@@ -159,8 +161,8 @@ pub fn process_single_file_test() {
   let output = test_dir <> "/src/component.gleam"
   let _ = simplifile.write(source, "@params(name: String)\n\n<div>{name}</div>")
 
-  // Process file
-  watcher.process_single_file(source)
+  // Process file with target
+  watcher.process_single_file(source, types.Lustre)
 
   // Check output was created
   let assert Ok(True) = simplifile.is_file(output)
@@ -182,7 +184,7 @@ pub fn process_single_file_parse_error_test() {
   let _ = simplifile.write(source, "<div><unclosed>")
 
   // Process file - should not crash, just report error
-  watcher.process_single_file(source)
+  watcher.process_single_file(source, types.Lustre)
 
   // Output should NOT be created due to parse error
   let result = simplifile.is_file(output)
@@ -222,8 +224,8 @@ pub fn watcher_starts_without_error_test() {
   // Create a file
   let _ = simplifile.write(test_dir <> "/src/test.ghtml", "<div></div>")
 
-  // Start watcher
-  let subject = watcher.start_watching(test_dir)
+  // Start watcher with target
+  let subject = watcher.start_watching(test_dir, types.Lustre)
 
   // Let it run briefly
   process.sleep(100)
@@ -241,8 +243,8 @@ pub fn watcher_detects_new_file_test() {
   let test_dir = ".test/watcher_gen_1"
   setup_test_dir(test_dir)
 
-  // Start watcher with empty directory
-  let subject = watcher.start_watching(test_dir)
+  // Start watcher with empty directory and target
+  let subject = watcher.start_watching(test_dir, types.Lustre)
 
   // Wait for first check
   process.sleep(100)
@@ -263,4 +265,17 @@ pub fn watcher_detects_new_file_test() {
   process.sleep(100)
 
   cleanup_test_dir(test_dir)
+}
+
+// === Target Threading Tests ===
+
+pub fn watcher_state_has_target_test() {
+  let state =
+    watcher.WatcherState(
+      root: ".",
+      target: types.Lustre,
+      file_mtimes: dict.new(),
+      self_subject: None,
+    )
+  should.equal(state.target, types.Lustre)
 }
