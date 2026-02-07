@@ -25,18 +25,18 @@ pub type ParseResult(a) =
   Result(a, List(ParseError))
 
 /// Attribute types for HTML elements
-pub type Attr {
-  StaticAttr(name: String, value: String)
-  DynamicAttr(name: String, expr: String)
-  EventAttr(event: String, handler: String, modifiers: List(String))
-  BooleanAttr(name: String)
+pub type Attribute {
+  StaticAttribute(name: String, value: String)
+  DynamicAttribute(name: String, expr: String)
+  EventAttribute(event: String, handler: String, modifiers: List(String))
+  BooleanAttribute(name: String)
 }
 
 /// Token types produced by the tokenizer
 pub type Token {
   Import(content: String, span: Span)
   Params(params: List(#(String, String)), span: Span)
-  HtmlOpen(tag: String, attrs: List(Attr), self_closing: Bool, span: Span)
+  HtmlOpen(tag: String, attrs: List(Attribute), self_closing: Bool, span: Span)
   HtmlClose(tag: String, span: Span)
   Text(content: String, span: Span)
   Expr(content: String, span: Span)
@@ -53,7 +53,7 @@ pub type Token {
 
 /// AST Node representing parsed template structure
 pub type Node {
-  Element(tag: String, attrs: List(Attr), children: List(Node), span: Span)
+  Element(tag: String, attrs: List(Attribute), children: List(Node), span: Span)
   TextNode(content: String, span: Span)
   ExprNode(expr: String, span: Span)
   IfNode(

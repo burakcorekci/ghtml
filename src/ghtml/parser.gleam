@@ -4,12 +4,12 @@
 //// the template structure including HTML elements, expressions, and control flow.
 
 import ghtml/types.{
-  type Attr, type CaseBranch, type Node, type ParseError, type ParseResult,
-  type Position, type Span, type Template, type Token, BooleanAttr, CaseBranch,
-  CaseEnd, CaseNode, CasePattern, CaseStart, DynamicAttr, EachEnd, EachNode,
-  EachStart, Element, Else, EventAttr, Expr, ExprNode, HtmlClose, HtmlOpen,
-  IfEnd, IfNode, IfStart, Import, Params, ParseError, Position, Span, StaticAttr,
-  Template, Text, TextNode,
+  type Attribute, type CaseBranch, type Node, type ParseError, type ParseResult,
+  type Position, type Span, type Template, type Token, BooleanAttribute,
+  CaseBranch, CaseEnd, CaseNode, CasePattern, CaseStart, DynamicAttribute,
+  EachEnd, EachNode, EachStart, Element, Else, EventAttribute, Expr, ExprNode,
+  HtmlClose, HtmlOpen, IfEnd, IfNode, IfStart, Import, Params, ParseError,
+  Position, Span, StaticAttribute, Template, Text, TextNode,
 }
 import gleam/int
 import gleam/list
@@ -19,7 +19,12 @@ import gleam/string
 
 /// Stack frame for tracking nesting during AST construction
 type StackFrame {
-  ElementFrame(tag: String, attrs: List(Attr), children: List(Node), span: Span)
+  ElementFrame(
+    tag: String,
+    attrs: List(Attribute),
+    children: List(Node),
+    span: Span,
+  )
   IfFrame(
     condition: String,
     then_nodes: List(Node),
@@ -430,8 +435,8 @@ fn is_tag_name_char(char: String) -> Bool {
 fn parse_attributes(
   input: String,
   pos: Position,
-  attrs: List(Attr),
-) -> Result(#(List(Attr), String, Position), ParseError) {
+  attrs: List(Attribute),
+) -> Result(#(List(Attribute), String, Position), ParseError) {
   let #(input, pos) = skip_whitespace(input, pos)
 
   // Check if we've reached the end of attributes
@@ -451,7 +456,7 @@ fn parse_attributes(
 fn parse_single_attribute(
   input: String,
   pos: Position,
-) -> Result(#(Attr, String, Position), ParseError) {
+) -> Result(#(Attribute, String, Position), ParseError) {
   case input {
     // Event attribute: @event={handler} or @event.prevent.stop={handler}
     "@" <> rest -> {
@@ -466,7 +471,7 @@ fn parse_single_attribute(
               case extract_expression(after, 0, "", new_pos) {
                 Ok(#(handler, remaining, end_pos)) ->
                   Ok(#(
-                    EventAttr(
+                    EventAttribute(
                       event: event_name,
                       handler: handler,
                       modifiers: modifiers,
@@ -505,7 +510,7 @@ fn parse_single_attribute(
               case extract_expression(after, 0, "", new_pos) {
                 Ok(#(expr, remaining, end_pos)) ->
                   Ok(#(
-                    DynamicAttr(name: attr_name, expr: expr),
+                    DynamicAttribute(name: attr_name, expr: expr),
                     remaining,
                     end_pos,
                   ))
@@ -519,7 +524,7 @@ fn parse_single_attribute(
               case extract_quoted_value(after, "", new_pos) {
                 Ok(#(value, remaining, end_pos)) ->
                   Ok(#(
-                    StaticAttr(name: attr_name, value: value),
+                    StaticAttribute(name: attr_name, value: value),
                     remaining,
                     end_pos,
                   ))
@@ -533,7 +538,7 @@ fn parse_single_attribute(
               case extract_single_quoted_value(after, "", new_pos) {
                 Ok(#(value, remaining, end_pos)) ->
                   Ok(#(
-                    StaticAttr(name: attr_name, value: value),
+                    StaticAttribute(name: attr_name, value: value),
                     remaining,
                     end_pos,
                   ))
@@ -542,7 +547,7 @@ fn parse_single_attribute(
             }
 
             // Boolean attribute (no value)
-            _ -> Ok(#(BooleanAttr(name: attr_name), rest, new_pos))
+            _ -> Ok(#(BooleanAttribute(name: attr_name), rest, new_pos))
           }
         }
       }

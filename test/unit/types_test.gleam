@@ -1,7 +1,7 @@
 import ghtml/types.{
-  BooleanAttr, CaseBranch, CaseNode, DynamicAttr, EachNode, Element, EventAttr,
-  ExprNode, Fragment, IfNode, ParseError, Position, Span, StaticAttr, Template,
-  TextNode, point_span, start_position,
+  BooleanAttribute, CaseBranch, CaseNode, DynamicAttribute, EachNode, Element,
+  EventAttribute, ExprNode, Fragment, IfNode, ParseError, Position, Span,
+  StaticAttribute, Template, TextNode, point_span, start_position,
 }
 import gleam/list
 import gleam/option.{None, Some}
@@ -33,60 +33,61 @@ pub fn parse_error_creation_test() {
 }
 
 pub fn static_attr_test() {
-  let attr = StaticAttr(name: "class", value: "container")
+  let attr = StaticAttribute(name: "class", value: "container")
   should.be_true(is_static_attr(attr))
-  let StaticAttr(name, value) = attr
+  let StaticAttribute(name, value) = attr
   should.equal(name, "class")
   should.equal(value, "container")
 }
 
-fn is_static_attr(attr: types.Attr) -> Bool {
+fn is_static_attr(attr: types.Attribute) -> Bool {
   case attr {
-    StaticAttr(_, _) -> True
+    StaticAttribute(_, _) -> True
     _ -> False
   }
 }
 
 pub fn dynamic_attr_test() {
-  let attr = DynamicAttr(name: "class", expr: "my_class")
+  let attr = DynamicAttribute(name: "class", expr: "my_class")
   should.be_true(is_dynamic_attr(attr))
-  let DynamicAttr(name, expr) = attr
+  let DynamicAttribute(name, expr) = attr
   should.equal(name, "class")
   should.equal(expr, "my_class")
 }
 
-fn is_dynamic_attr(attr: types.Attr) -> Bool {
+fn is_dynamic_attr(attr: types.Attribute) -> Bool {
   case attr {
-    DynamicAttr(_, _) -> True
+    DynamicAttribute(_, _) -> True
     _ -> False
   }
 }
 
 pub fn event_attr_test() {
-  let attr = EventAttr(event: "click", handler: "handle_click()", modifiers: [])
+  let attr =
+    EventAttribute(event: "click", handler: "handle_click()", modifiers: [])
   should.be_true(is_event_attr(attr))
-  let EventAttr(event, handler, _) = attr
+  let EventAttribute(event, handler, _) = attr
   should.equal(event, "click")
   should.equal(handler, "handle_click()")
 }
 
-fn is_event_attr(attr: types.Attr) -> Bool {
+fn is_event_attr(attr: types.Attribute) -> Bool {
   case attr {
-    EventAttr(_, _, _) -> True
+    EventAttribute(_, _, _) -> True
     _ -> False
   }
 }
 
 pub fn boolean_attr_test() {
-  let attr = BooleanAttr(name: "disabled")
+  let attr = BooleanAttribute(name: "disabled")
   should.be_true(is_boolean_attr(attr))
-  let BooleanAttr(name) = attr
+  let BooleanAttribute(name) = attr
   should.equal(name, "disabled")
 }
 
-fn is_boolean_attr(attr: types.Attr) -> Bool {
+fn is_boolean_attr(attr: types.Attribute) -> Bool {
   case attr {
-    BooleanAttr(_) -> True
+    BooleanAttribute(_) -> True
     _ -> False
   }
 }
@@ -126,7 +127,7 @@ pub fn element_node_test() {
   let node =
     Element(
       tag: "div",
-      attrs: [StaticAttr("class", "box")],
+      attrs: [StaticAttribute("class", "box")],
       children: [TextNode("Hello", span)],
       span: span,
     )

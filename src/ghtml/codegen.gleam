@@ -6,9 +6,9 @@
 
 import ghtml/cache
 import ghtml/types.{
-  type Attr, type CaseBranch, type Node, type Template, BooleanAttr, CaseNode,
-  DynamicAttr, EachNode, Element, EventAttr, ExprNode, Fragment, IfNode,
-  StaticAttr, TextNode,
+  type Attribute, type CaseBranch, type Node, type Template, BooleanAttribute,
+  CaseNode, DynamicAttribute, EachNode, Element, EventAttribute, ExprNode,
+  Fragment, IfNode, StaticAttribute, TextNode,
 }
 import gleam/list
 import gleam/option.{None, Some}
@@ -312,13 +312,13 @@ fn node_has_attrs(node: Node) -> Bool {
 }
 
 /// Check if attrs list contains non-event attributes
-fn has_non_event_attrs(attrs: List(Attr)) -> Bool {
+fn has_non_event_attrs(attrs: List(Attribute)) -> Bool {
   list.any(attrs, fn(attr) {
     case attr {
-      StaticAttr(_, _) -> True
-      DynamicAttr(_, _) -> True
-      BooleanAttr(_) -> True
-      EventAttr(_, _, _) -> False
+      StaticAttribute(_, _) -> True
+      DynamicAttribute(_, _) -> True
+      BooleanAttribute(_) -> True
+      EventAttribute(_, _, _) -> False
     }
   })
 }
@@ -345,10 +345,10 @@ fn node_has_events(node: Node) -> Bool {
 }
 
 /// Check if attrs list contains event attributes
-fn has_event_attrs(attrs: List(Attr)) -> Bool {
+fn has_event_attrs(attrs: List(Attribute)) -> Bool {
   list.any(attrs, fn(attr) {
     case attr {
-      EventAttr(_, _, _) -> True
+      EventAttribute(_, _, _) -> True
       _ -> False
     }
   })
@@ -474,7 +474,7 @@ fn generate_node_inline(node: Node) -> String {
 /// Generate code for an HTML element (inline format)
 fn generate_element_inline(
   tag: String,
-  attrs: List(Attr),
+  attrs: List(Attribute),
   children: List(Node),
 ) -> String {
   let is_custom = is_custom_element(tag)
@@ -506,7 +506,7 @@ fn generate_element_inline(
 }
 
 /// Generate code for a list of attributes
-fn generate_attrs(attrs: List(Attr), is_custom: Bool) -> String {
+fn generate_attrs(attrs: List(Attribute), is_custom: Bool) -> String {
   case list.is_empty(attrs) {
     True -> "[]"
     False -> {
@@ -520,13 +520,13 @@ fn generate_attrs(attrs: List(Attr), is_custom: Bool) -> String {
 }
 
 /// Generate code for a single attribute
-fn generate_attr(attr: Attr, is_custom: Bool) -> String {
+fn generate_attr(attr: Attribute, is_custom: Bool) -> String {
   case attr {
-    StaticAttr(name, value) -> generate_static_attr(name, value)
-    DynamicAttr(name, expr) -> generate_dynamic_attr(name, expr)
-    EventAttr(event, handler, modifiers) ->
+    StaticAttribute(name, value) -> generate_static_attr(name, value)
+    DynamicAttribute(name, expr) -> generate_dynamic_attr(name, expr)
+    EventAttribute(event, handler, modifiers) ->
       generate_event_attr(event, handler, modifiers)
-    BooleanAttr(name) -> generate_boolean_attr(name, is_custom)
+    BooleanAttribute(name) -> generate_boolean_attr(name, is_custom)
   }
 }
 

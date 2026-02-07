@@ -1,7 +1,7 @@
 import ghtml/codegen
 import ghtml/types.{
-  type Span, BooleanAttr, DynamicAttr, Element, EventAttr, Position, Span,
-  StaticAttr, Template,
+  type Span, BooleanAttribute, DynamicAttribute, Element, EventAttribute,
+  Position, Span, StaticAttribute, Template,
 }
 import gleam/string
 import gleeunit/should
@@ -15,7 +15,7 @@ fn test_span() -> Span {
 pub fn generate_class_attr_test() {
   let template =
     Template(imports: [], params: [], body: [
-      Element("div", [StaticAttr("class", "container")], [], test_span()),
+      Element("div", [StaticAttribute("class", "container")], [], test_span()),
     ])
 
   let code = codegen.generate(template, "test.ghtml", "abc123")
@@ -26,7 +26,7 @@ pub fn generate_class_attr_test() {
 pub fn generate_id_attr_test() {
   let template =
     Template(imports: [], params: [], body: [
-      Element("div", [StaticAttr("id", "main")], [], test_span()),
+      Element("div", [StaticAttribute("id", "main")], [], test_span()),
     ])
 
   let code = codegen.generate(template, "test.ghtml", "abc123")
@@ -37,7 +37,7 @@ pub fn generate_id_attr_test() {
 pub fn generate_href_attr_test() {
   let template =
     Template(imports: [], params: [], body: [
-      Element("a", [StaticAttr("href", "/home")], [], test_span()),
+      Element("a", [StaticAttribute("href", "/home")], [], test_span()),
     ])
 
   let code = codegen.generate(template, "test.ghtml", "abc123")
@@ -48,7 +48,7 @@ pub fn generate_href_attr_test() {
 pub fn generate_type_attr_test() {
   let template =
     Template(imports: [], params: [], body: [
-      Element("input", [StaticAttr("type", "text")], [], test_span()),
+      Element("input", [StaticAttribute("type", "text")], [], test_span()),
     ])
 
   let code = codegen.generate(template, "test.ghtml", "abc123")
@@ -60,7 +60,7 @@ pub fn generate_type_attr_test() {
 pub fn generate_unknown_attr_test() {
   let template =
     Template(imports: [], params: [], body: [
-      Element("div", [StaticAttr("data-id", "123")], [], test_span()),
+      Element("div", [StaticAttribute("data-id", "123")], [], test_span()),
     ])
 
   let code = codegen.generate(template, "test.ghtml", "abc123")
@@ -74,7 +74,12 @@ pub fn generate_unknown_attr_test() {
 pub fn generate_aria_attr_test() {
   let template =
     Template(imports: [], params: [], body: [
-      Element("button", [StaticAttr("aria-label", "Close")], [], test_span()),
+      Element(
+        "button",
+        [StaticAttribute("aria-label", "Close")],
+        [],
+        test_span(),
+      ),
     ])
 
   let code = codegen.generate(template, "test.ghtml", "abc123")
@@ -88,7 +93,7 @@ pub fn generate_aria_attr_test() {
 pub fn generate_attr_with_quotes_test() {
   let template =
     Template(imports: [], params: [], body: [
-      Element("div", [StaticAttr("title", "Say \"Hi\"")], [], test_span()),
+      Element("div", [StaticAttribute("title", "Say \"Hi\"")], [], test_span()),
     ])
 
   let code = codegen.generate(template, "test.ghtml", "abc123")
@@ -101,7 +106,7 @@ pub fn generate_attr_with_quotes_test() {
 pub fn generate_dynamic_class_test() {
   let template =
     Template(imports: [], params: [], body: [
-      Element("div", [DynamicAttr("class", "my_class")], [], test_span()),
+      Element("div", [DynamicAttribute("class", "my_class")], [], test_span()),
     ])
 
   let code = codegen.generate(template, "test.ghtml", "abc123")
@@ -112,7 +117,12 @@ pub fn generate_dynamic_class_test() {
 pub fn generate_dynamic_value_test() {
   let template =
     Template(imports: [], params: [], body: [
-      Element("input", [DynamicAttr("value", "user.email")], [], test_span()),
+      Element(
+        "input",
+        [DynamicAttribute("value", "user.email")],
+        [],
+        test_span(),
+      ),
     ])
 
   let code = codegen.generate(template, "test.ghtml", "abc123")
@@ -123,7 +133,12 @@ pub fn generate_dynamic_value_test() {
 pub fn generate_dynamic_unknown_attr_test() {
   let template =
     Template(imports: [], params: [], body: [
-      Element("div", [DynamicAttr("data-value", "some_value")], [], test_span()),
+      Element(
+        "div",
+        [DynamicAttribute("data-value", "some_value")],
+        [],
+        test_span(),
+      ),
     ])
 
   let code = codegen.generate(template, "test.ghtml", "abc123")
@@ -139,7 +154,12 @@ pub fn generate_dynamic_unknown_attr_test() {
 pub fn generate_click_handler_test() {
   let template =
     Template(imports: [], params: [], body: [
-      Element("button", [EventAttr("click", "on_click()", [])], [], test_span()),
+      Element(
+        "button",
+        [EventAttribute("click", "on_click()", [])],
+        [],
+        test_span(),
+      ),
     ])
 
   let code = codegen.generate(template, "test.ghtml", "abc123")
@@ -150,7 +170,12 @@ pub fn generate_click_handler_test() {
 pub fn generate_input_handler_test() {
   let template =
     Template(imports: [], params: [], body: [
-      Element("input", [EventAttr("input", "on_input", [])], [], test_span()),
+      Element(
+        "input",
+        [EventAttribute("input", "on_input", [])],
+        [],
+        test_span(),
+      ),
     ])
 
   let code = codegen.generate(template, "test.ghtml", "abc123")
@@ -163,7 +188,7 @@ pub fn generate_submit_handler_test() {
     Template(imports: [], params: [], body: [
       Element(
         "form",
-        [EventAttr("submit", "handle_submit", [])],
+        [EventAttribute("submit", "handle_submit", [])],
         [],
         test_span(),
       ),
@@ -179,7 +204,7 @@ pub fn generate_custom_event_handler_test() {
     Template(imports: [], params: [], body: [
       Element(
         "sl-dialog",
-        [EventAttr("sl-hide", "on_hide", [])],
+        [EventAttribute("sl-hide", "on_hide", [])],
         [],
         test_span(),
       ),
@@ -195,7 +220,7 @@ pub fn generate_handler_with_params_test() {
     Template(imports: [], params: [], body: [
       Element(
         "button",
-        [EventAttr("click", "handle_delete(item.id)", [])],
+        [EventAttribute("click", "handle_delete(item.id)", [])],
         [],
         test_span(),
       ),
@@ -211,7 +236,7 @@ pub fn generate_handler_with_params_test() {
 pub fn generate_disabled_attr_html_test() {
   let template =
     Template(imports: [], params: [], body: [
-      Element("button", [BooleanAttr("disabled")], [], test_span()),
+      Element("button", [BooleanAttribute("disabled")], [], test_span()),
     ])
 
   let code = codegen.generate(template, "test.ghtml", "abc123")
@@ -222,7 +247,7 @@ pub fn generate_disabled_attr_html_test() {
 pub fn generate_readonly_attr_html_test() {
   let template =
     Template(imports: [], params: [], body: [
-      Element("input", [BooleanAttr("readonly")], [], test_span()),
+      Element("input", [BooleanAttribute("readonly")], [], test_span()),
     ])
 
   let code = codegen.generate(template, "test.ghtml", "abc123")
@@ -233,7 +258,7 @@ pub fn generate_readonly_attr_html_test() {
 pub fn generate_checked_attr_html_test() {
   let template =
     Template(imports: [], params: [], body: [
-      Element("input", [BooleanAttr("checked")], [], test_span()),
+      Element("input", [BooleanAttribute("checked")], [], test_span()),
     ])
 
   let code = codegen.generate(template, "test.ghtml", "abc123")
@@ -244,7 +269,7 @@ pub fn generate_checked_attr_html_test() {
 pub fn generate_disabled_attr_custom_element_test() {
   let template =
     Template(imports: [], params: [], body: [
-      Element("sl-button", [BooleanAttr("disabled")], [], test_span()),
+      Element("sl-button", [BooleanAttribute("disabled")], [], test_span()),
     ])
 
   let code = codegen.generate(template, "test.ghtml", "abc123")
@@ -258,7 +283,7 @@ pub fn generate_disabled_attr_custom_element_test() {
 pub fn generate_custom_boolean_attr_test() {
   let template =
     Template(imports: [], params: [], body: [
-      Element("div", [BooleanAttr("custom-flag")], [], test_span()),
+      Element("div", [BooleanAttribute("custom-flag")], [], test_span()),
     ])
 
   let code = codegen.generate(template, "test.ghtml", "abc123")
@@ -277,11 +302,11 @@ pub fn generate_multiple_attrs_test() {
       Element(
         "input",
         [
-          StaticAttr("type", "text"),
-          StaticAttr("class", "input"),
-          DynamicAttr("value", "user.name"),
-          BooleanAttr("disabled"),
-          EventAttr("input", "on_input", []),
+          StaticAttribute("type", "text"),
+          StaticAttribute("class", "input"),
+          DynamicAttribute("value", "user.name"),
+          BooleanAttribute("disabled"),
+          EventAttribute("input", "on_input", []),
         ],
         [],
         test_span(),
@@ -313,7 +338,7 @@ pub fn generate_empty_attrs_test() {
 pub fn generate_attr_with_special_chars_test() {
   let template =
     Template(imports: [], params: [], body: [
-      Element("div", [StaticAttr("class", "a & b < c")], [], test_span()),
+      Element("div", [StaticAttribute("class", "a & b < c")], [], test_span()),
     ])
 
   let code = codegen.generate(template, "test.ghtml", "abc123")
@@ -327,7 +352,7 @@ pub fn generate_attr_with_special_chars_test() {
 pub fn generate_blur_handler_test() {
   let template =
     Template(imports: [], params: [], body: [
-      Element("input", [EventAttr("blur", "on_blur", [])], [], test_span()),
+      Element("input", [EventAttribute("blur", "on_blur", [])], [], test_span()),
     ])
 
   let code = codegen.generate(template, "test.ghtml", "abc123")
@@ -338,7 +363,12 @@ pub fn generate_blur_handler_test() {
 pub fn generate_focus_handler_test() {
   let template =
     Template(imports: [], params: [], body: [
-      Element("input", [EventAttr("focus", "on_focus", [])], [], test_span()),
+      Element(
+        "input",
+        [EventAttribute("focus", "on_focus", [])],
+        [],
+        test_span(),
+      ),
     ])
 
   let code = codegen.generate(template, "test.ghtml", "abc123")
@@ -349,7 +379,12 @@ pub fn generate_focus_handler_test() {
 pub fn generate_change_handler_test() {
   let template =
     Template(imports: [], params: [], body: [
-      Element("select", [EventAttr("change", "on_change", [])], [], test_span()),
+      Element(
+        "select",
+        [EventAttribute("change", "on_change", [])],
+        [],
+        test_span(),
+      ),
     ])
 
   let code = codegen.generate(template, "test.ghtml", "abc123")
@@ -360,7 +395,12 @@ pub fn generate_change_handler_test() {
 pub fn generate_mouse_enter_handler_test() {
   let template =
     Template(imports: [], params: [], body: [
-      Element("div", [EventAttr("mouseenter", "on_enter", [])], [], test_span()),
+      Element(
+        "div",
+        [EventAttribute("mouseenter", "on_enter", [])],
+        [],
+        test_span(),
+      ),
     ])
 
   let code = codegen.generate(template, "test.ghtml", "abc123")
@@ -371,7 +411,12 @@ pub fn generate_mouse_enter_handler_test() {
 pub fn generate_mouse_leave_handler_test() {
   let template =
     Template(imports: [], params: [], body: [
-      Element("div", [EventAttr("mouseleave", "on_leave", [])], [], test_span()),
+      Element(
+        "div",
+        [EventAttribute("mouseleave", "on_leave", [])],
+        [],
+        test_span(),
+      ),
     ])
 
   let code = codegen.generate(template, "test.ghtml", "abc123")
@@ -384,7 +429,12 @@ pub fn generate_mouse_leave_handler_test() {
 pub fn generate_src_attr_test() {
   let template =
     Template(imports: [], params: [], body: [
-      Element("img", [StaticAttr("src", "/images/logo.png")], [], test_span()),
+      Element(
+        "img",
+        [StaticAttribute("src", "/images/logo.png")],
+        [],
+        test_span(),
+      ),
     ])
 
   let code = codegen.generate(template, "test.ghtml", "abc123")
@@ -395,7 +445,7 @@ pub fn generate_src_attr_test() {
 pub fn generate_alt_attr_test() {
   let template =
     Template(imports: [], params: [], body: [
-      Element("img", [StaticAttr("alt", "Logo")], [], test_span()),
+      Element("img", [StaticAttribute("alt", "Logo")], [], test_span()),
     ])
 
   let code = codegen.generate(template, "test.ghtml", "abc123")
@@ -408,7 +458,7 @@ pub fn generate_placeholder_attr_test() {
     Template(imports: [], params: [], body: [
       Element(
         "input",
-        [StaticAttr("placeholder", "Enter name")],
+        [StaticAttribute("placeholder", "Enter name")],
         [],
         test_span(),
       ),
@@ -422,7 +472,7 @@ pub fn generate_placeholder_attr_test() {
 pub fn generate_name_attr_test() {
   let template =
     Template(imports: [], params: [], body: [
-      Element("input", [StaticAttr("name", "username")], [], test_span()),
+      Element("input", [StaticAttribute("name", "username")], [], test_span()),
     ])
 
   let code = codegen.generate(template, "test.ghtml", "abc123")
@@ -433,7 +483,7 @@ pub fn generate_name_attr_test() {
 pub fn generate_for_attr_test() {
   let template =
     Template(imports: [], params: [], body: [
-      Element("label", [StaticAttr("for", "email-input")], [], test_span()),
+      Element("label", [StaticAttribute("for", "email-input")], [], test_span()),
     ])
 
   let code = codegen.generate(template, "test.ghtml", "abc123")
@@ -444,7 +494,7 @@ pub fn generate_for_attr_test() {
 pub fn generate_target_attr_test() {
   let template =
     Template(imports: [], params: [], body: [
-      Element("a", [StaticAttr("target", "_blank")], [], test_span()),
+      Element("a", [StaticAttribute("target", "_blank")], [], test_span()),
     ])
 
   let code = codegen.generate(template, "test.ghtml", "abc123")
@@ -455,7 +505,7 @@ pub fn generate_target_attr_test() {
 pub fn generate_action_attr_test() {
   let template =
     Template(imports: [], params: [], body: [
-      Element("form", [StaticAttr("action", "/submit")], [], test_span()),
+      Element("form", [StaticAttribute("action", "/submit")], [], test_span()),
     ])
 
   let code = codegen.generate(template, "test.ghtml", "abc123")
@@ -466,7 +516,7 @@ pub fn generate_action_attr_test() {
 pub fn generate_method_attr_test() {
   let template =
     Template(imports: [], params: [], body: [
-      Element("form", [StaticAttr("method", "POST")], [], test_span()),
+      Element("form", [StaticAttribute("method", "POST")], [], test_span()),
     ])
 
   let code = codegen.generate(template, "test.ghtml", "abc123")
@@ -479,7 +529,7 @@ pub fn generate_method_attr_test() {
 pub fn generate_required_attr_test() {
   let template =
     Template(imports: [], params: [], body: [
-      Element("input", [BooleanAttr("required")], [], test_span()),
+      Element("input", [BooleanAttribute("required")], [], test_span()),
     ])
 
   let code = codegen.generate(template, "test.ghtml", "abc123")
@@ -490,7 +540,7 @@ pub fn generate_required_attr_test() {
 pub fn generate_hidden_attr_test() {
   let template =
     Template(imports: [], params: [], body: [
-      Element("div", [BooleanAttr("hidden")], [], test_span()),
+      Element("div", [BooleanAttribute("hidden")], [], test_span()),
     ])
 
   let code = codegen.generate(template, "test.ghtml", "abc123")
@@ -501,7 +551,7 @@ pub fn generate_hidden_attr_test() {
 pub fn generate_autofocus_attr_test() {
   let template =
     Template(imports: [], params: [], body: [
-      Element("input", [BooleanAttr("autofocus")], [], test_span()),
+      Element("input", [BooleanAttribute("autofocus")], [], test_span()),
     ])
 
   let code = codegen.generate(template, "test.ghtml", "abc123")
@@ -514,7 +564,7 @@ pub fn generate_autofocus_attr_test() {
 pub fn generate_imports_with_attributes_test() {
   let template =
     Template(imports: [], params: [], body: [
-      Element("button", [StaticAttr("class", "btn")], [], test_span()),
+      Element("button", [StaticAttribute("class", "btn")], [], test_span()),
     ])
 
   let code = codegen.generate(template, "test.ghtml", "abc123")
@@ -529,7 +579,7 @@ pub fn generate_prevent_default_modifier_test() {
     Template(imports: [], params: [], body: [
       Element(
         "div",
-        [EventAttr("on:dragover", "on_dragover", ["prevent"])],
+        [EventAttribute("on:dragover", "on_dragover", ["prevent"])],
         [],
         test_span(),
       ),
@@ -548,7 +598,7 @@ pub fn generate_stop_propagation_modifier_test() {
     Template(imports: [], params: [], body: [
       Element(
         "div",
-        [EventAttr("click", "on_click", ["stop"])],
+        [EventAttribute("click", "on_click", ["stop"])],
         [],
         test_span(),
       ),
@@ -567,7 +617,7 @@ pub fn generate_prevent_and_stop_modifiers_test() {
     Template(imports: [], params: [], body: [
       Element(
         "div",
-        [EventAttr("on:drop", "on_drop(Todo)", ["prevent", "stop"])],
+        [EventAttribute("on:drop", "on_drop(Todo)", ["prevent", "stop"])],
         [],
         test_span(),
       ),
@@ -584,7 +634,12 @@ pub fn generate_prevent_and_stop_modifiers_test() {
 pub fn generate_no_modifiers_unchanged_test() {
   let template =
     Template(imports: [], params: [], body: [
-      Element("button", [EventAttr("click", "handler", [])], [], test_span()),
+      Element(
+        "button",
+        [EventAttribute("click", "handler", [])],
+        [],
+        test_span(),
+      ),
     ])
 
   let code = codegen.generate(template, "test.ghtml", "abc123")
@@ -597,7 +652,12 @@ pub fn generate_no_modifiers_unchanged_test() {
 pub fn generate_imports_with_events_test() {
   let template =
     Template(imports: [], params: [], body: [
-      Element("button", [EventAttr("click", "on_click", [])], [], test_span()),
+      Element(
+        "button",
+        [EventAttribute("click", "on_click", [])],
+        [],
+        test_span(),
+      ),
     ])
 
   let code = codegen.generate(template, "test.ghtml", "abc123")

@@ -1,8 +1,8 @@
 import ghtml/parser
 import ghtml/types.{
-  BooleanAttr, CaseEnd, CasePattern, CaseStart, DynamicAttr, EachStart, Else,
-  EventAttr, Expr, HtmlClose, HtmlOpen, IfEnd, IfStart, Import, Params,
-  StaticAttr, Text,
+  BooleanAttribute, CaseEnd, CasePattern, CaseStart, DynamicAttribute, EachStart,
+  Else, EventAttribute, Expr, HtmlClose, HtmlOpen, IfEnd, IfStart, Import,
+  Params, StaticAttribute, Text,
 }
 import gleam/list
 import gleam/option.{None, Some}
@@ -148,7 +148,7 @@ pub fn tokenize_static_attr_test() {
     Ok(HtmlOpen(_, attrs, _, _)) -> {
       should.equal(list.length(attrs), 1)
       case list.first(attrs) {
-        Ok(StaticAttr(name, value)) -> {
+        Ok(StaticAttribute(name, value)) -> {
           should.equal(name, "class")
           should.equal(value, "container")
         }
@@ -166,7 +166,7 @@ pub fn tokenize_dynamic_attr_test() {
   case list.first(tokens) {
     Ok(HtmlOpen(_, attrs, _, _)) -> {
       case list.first(attrs) {
-        Ok(DynamicAttr(name, expr)) -> {
+        Ok(DynamicAttribute(name, expr)) -> {
           should.equal(name, "class")
           should.equal(expr, "my_class")
         }
@@ -184,7 +184,7 @@ pub fn tokenize_event_attr_test() {
   case list.first(tokens) {
     Ok(HtmlOpen(_, attrs, _, _)) -> {
       case list.first(attrs) {
-        Ok(EventAttr(event, handler, modifiers)) -> {
+        Ok(EventAttribute(event, handler, modifiers)) -> {
           should.equal(event, "click")
           should.equal(handler, "handle_click()")
           should.equal(modifiers, [])
@@ -203,7 +203,7 @@ pub fn tokenize_event_attr_prevent_test() {
   case list.first(tokens) {
     Ok(HtmlOpen(_, attrs, _, _)) -> {
       case list.first(attrs) {
-        Ok(EventAttr(event, handler, modifiers)) -> {
+        Ok(EventAttribute(event, handler, modifiers)) -> {
           should.equal(event, "click")
           should.equal(handler, "handle_click()")
           should.equal(modifiers, ["prevent"])
@@ -222,7 +222,7 @@ pub fn tokenize_event_attr_stop_test() {
   case list.first(tokens) {
     Ok(HtmlOpen(_, attrs, _, _)) -> {
       case list.first(attrs) {
-        Ok(EventAttr(event, handler, modifiers)) -> {
+        Ok(EventAttribute(event, handler, modifiers)) -> {
           should.equal(event, "click")
           should.equal(handler, "handle_click()")
           should.equal(modifiers, ["stop"])
@@ -241,7 +241,7 @@ pub fn tokenize_event_attr_prevent_stop_test() {
   case list.first(tokens) {
     Ok(HtmlOpen(_, attrs, _, _)) -> {
       case list.first(attrs) {
-        Ok(EventAttr(event, handler, modifiers)) -> {
+        Ok(EventAttribute(event, handler, modifiers)) -> {
           should.equal(event, "on:drop")
           should.equal(handler, "on_drop(Todo)")
           should.equal(modifiers, ["prevent", "stop"])
@@ -260,7 +260,7 @@ pub fn tokenize_event_attr_stop_prevent_order_test() {
   case list.first(tokens) {
     Ok(HtmlOpen(_, attrs, _, _)) -> {
       case list.first(attrs) {
-        Ok(EventAttr(event, handler, modifiers)) -> {
+        Ok(EventAttribute(event, handler, modifiers)) -> {
           should.equal(event, "click")
           should.equal(handler, "handler")
           should.equal(modifiers, ["stop", "prevent"])
@@ -289,7 +289,7 @@ pub fn tokenize_boolean_attr_test() {
   case list.first(tokens) {
     Ok(HtmlOpen(_, attrs, _, _)) -> {
       case list.first(attrs) {
-        Ok(BooleanAttr(name)) -> should.equal(name, "disabled")
+        Ok(BooleanAttribute(name)) -> should.equal(name, "disabled")
         _ -> should.fail()
       }
     }

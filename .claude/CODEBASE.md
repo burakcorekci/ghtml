@@ -81,7 +81,7 @@ src/components/user_card.ghtml  →  src/components/user_card.gleam
 All shared types are defined here:
 - **Position/Span** - Source locations for error reporting
 - **Token** - Lexer output (Import, Params, HtmlOpen, IfStart, etc.)
-- **Attr** - Attribute variants (StaticAttr, DynamicAttr, EventAttr with modifiers: List(String), BooleanAttr)
+- **Attribute** - Attribute variants (StaticAttribute, DynamicAttribute, EventAttribute with modifiers: List(String), BooleanAttribute)
 - **Node** - AST nodes (Element, TextNode, ExprNode, IfNode, EachNode, CaseNode, Fragment)
 - **Template** - Final parsed result with imports, params, and body nodes
 
