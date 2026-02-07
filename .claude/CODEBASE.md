@@ -6,7 +6,7 @@ This document provides context for agents working on this project. Read this fir
 
 **ghtml** (Gleam HTML Template Generator) is a Gleam preprocessor that converts `.ghtml` template files into Gleam modules with Lustre `Element(msg)` render functions.
 
-**Flow:** `.ghtml` file → Parser (tokenize + AST) → Codegen → `.gleam` file
+**Flow:** `.ghtml` file → Lexer (tokenize) → Parser (AST) → Codegen → `.gleam` file
 
 **Example:**
 ```
@@ -47,10 +47,18 @@ src/components/user_card.ghtml  →  src/components/user_card.gleam
         ▼                                   ▼                                   ▼
 ┌───────────────────┐            ┌──────────────────────┐            ┌───────────────────┐
 │     scanner       │            │       parser         │            │      watcher      │
-│  - Find .ghtml   │            │  - tokenize()        │            │  - OTP actor      │
+│  - Find .ghtml   │            │  - parse() = lex+ast │            │  - OTP actor      │
 │  - Find .gleam    │            │  - build_ast()       │            │  - Poll every 1s  │
-│  - Find orphans   │            │  - parse() = both    │            │  - Track mtimes   │
+│  - Find orphans   │            │  - format_error()    │            │  - Track mtimes   │
 └───────────────────┘            └──────────┬───────────┘            └───────────────────┘
+                                            │
+                                            ▼
+                               ┌──────────────────────┐
+                               │        lexer         │
+                               │  - tokenize()        │
+                               │  - HTML/attr parsing │
+                               │  - Brace balancing   │
+                               └──────────────────────┘
                                             │
                                             ▼
                     ┌──────────────────────────────────────────────────────────┐
@@ -85,16 +93,28 @@ All shared types are defined here:
 - **Node** - AST nodes (Element, TextNode, ExprNode, IfNode, EachNode, CaseNode, Fragment)
 - **Template** - Final parsed result with imports, params, and body nodes
 
+### `src/ghtml/lexer.gleam` - Lexer
+Tokenizes template source text into a flat list of tokens:
+- `tokenize(input) -> Result(List(Token), List(ParseError))` - Lexical analysis
+
+Handles all tokenization concerns:
+- Position tracking (line/column)
+- Import/params directive parsing
+- HTML tag parsing (open, close, self-closing, attributes)
+- Brace content parsing (expressions, control flow: if/each/case)
+- Text parsing with `{{`/`}}` escape sequences
+- HTML comment stripping
+- Brace balancing for nested expressions like `{fn({a: 1})}`
+
 ### `src/ghtml/parser.gleam` - Parser
-Two-phase parsing:
-1. `tokenize(input) -> Result(List(Token), List(ParseError))` - Lexical analysis
-2. `build_ast(tokens) -> Result(List(Node), List(ParseError))` - Tree construction
-3. `parse(input) -> Result(Template, List(ParseError))` - Combined convenience function
+Builds AST from tokens produced by the lexer:
+1. `parse(input) -> Result(Template, List(ParseError))` - Combined tokenize + AST
+2. `build_ast(tokens) -> Result(List(Node), List(ParseError))` - Tree construction from tokens
 
 Key concepts:
+- Delegates tokenization to `ghtml/lexer`
 - Uses a stack-based approach for nesting (elements, if/each/case blocks)
-- Handles brace balancing for expressions like `{fn({a: 1})}`
-- Supports `{{` and `}}` escape sequences for literal braces
+- Extracts metadata (imports, params) from token stream
 
 ### `src/ghtml/codegen.gleam` - Code Generator
 Transforms AST → Gleam source:
@@ -315,8 +335,8 @@ ParseError(span: Span, message: String)
 
 ### Adding a New Control Flow Construct
 1. Add token type in `types.gleam`
-2. Add tokenization in `parser.gleam` (`tokenize_loop`)
-3. Add stack frame type for nesting
-4. Add AST node handling in `build_ast`
+2. Add tokenization in `lexer.gleam` (`tokenize_loop`)
+3. Add stack frame type for nesting in `parser.gleam`
+4. Add AST node handling in `build_ast` in `parser.gleam`
 5. Add codegen in `codegen.gleam`
 6. Add tests in `test/unit/codegen/control_flow_test.gleam`

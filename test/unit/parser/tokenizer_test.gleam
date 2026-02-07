@@ -1,4 +1,4 @@
-import ghtml/parser
+import ghtml/lexer
 import ghtml/types.{
   BooleanAttribute, CaseEnd, CasePattern, CaseStart, DynamicAttribute, EachStart,
   Else, EventAttribute, Expr, HtmlClose, HtmlOpen, IfEnd, IfStart, Import,
@@ -12,7 +12,7 @@ import gleeunit/should
 
 pub fn tokenize_import_test() {
   let input = "@import(gleam/io)"
-  let assert Ok(tokens) = parser.tokenize(input)
+  let assert Ok(tokens) = lexer.tokenize(input)
 
   should.equal(list.length(tokens), 1)
   case list.first(tokens) {
@@ -23,7 +23,7 @@ pub fn tokenize_import_test() {
 
 pub fn tokenize_import_with_types_test() {
   let input = "@import(gleam/option.{type Option, Some, None})"
-  let assert Ok(tokens) = parser.tokenize(input)
+  let assert Ok(tokens) = lexer.tokenize(input)
 
   case list.first(tokens) {
     Ok(Import(content, _)) ->
@@ -36,7 +36,7 @@ pub fn tokenize_multiple_imports_test() {
   let input =
     "@import(gleam/io)
 @import(gleam/list)"
-  let assert Ok(tokens) = parser.tokenize(input)
+  let assert Ok(tokens) = lexer.tokenize(input)
 
   should.equal(list.length(tokens), 2)
 }
@@ -45,7 +45,7 @@ pub fn tokenize_multiple_imports_test() {
 
 pub fn tokenize_params_single_test() {
   let input = "@params(name: String)"
-  let assert Ok(tokens) = parser.tokenize(input)
+  let assert Ok(tokens) = lexer.tokenize(input)
 
   case list.first(tokens) {
     Ok(Params(params, _)) -> {
@@ -63,7 +63,7 @@ pub fn tokenize_params_multiple_test() {
   count: Int,
   active: Bool,
 )"
-  let assert Ok(tokens) = parser.tokenize(input)
+  let assert Ok(tokens) = lexer.tokenize(input)
 
   case list.first(tokens) {
     Ok(Params(params, _)) -> {
@@ -75,7 +75,7 @@ pub fn tokenize_params_multiple_test() {
 
 pub fn tokenize_params_complex_types_test() {
   let input = "@params(items: List(Item), handler: fn(String) -> msg)"
-  let assert Ok(tokens) = parser.tokenize(input)
+  let assert Ok(tokens) = lexer.tokenize(input)
 
   case list.first(tokens) {
     Ok(Params(params, _)) -> {
@@ -92,7 +92,7 @@ pub fn tokenize_params_complex_types_test() {
 
 pub fn tokenize_html_open_tag_test() {
   let input = "<div>"
-  let assert Ok(tokens) = parser.tokenize(input)
+  let assert Ok(tokens) = lexer.tokenize(input)
 
   case list.first(tokens) {
     Ok(HtmlOpen(tag, attrs, self_closing, _)) -> {
@@ -106,7 +106,7 @@ pub fn tokenize_html_open_tag_test() {
 
 pub fn tokenize_html_close_tag_test() {
   let input = "</div>"
-  let assert Ok(tokens) = parser.tokenize(input)
+  let assert Ok(tokens) = lexer.tokenize(input)
 
   case list.first(tokens) {
     Ok(HtmlClose(tag, _)) -> should.equal(tag, "div")
@@ -116,7 +116,7 @@ pub fn tokenize_html_close_tag_test() {
 
 pub fn tokenize_self_closing_tag_test() {
   let input = "<br />"
-  let assert Ok(tokens) = parser.tokenize(input)
+  let assert Ok(tokens) = lexer.tokenize(input)
 
   case list.first(tokens) {
     Ok(HtmlOpen(tag, _, self_closing, _)) -> {
@@ -129,7 +129,7 @@ pub fn tokenize_self_closing_tag_test() {
 
 pub fn tokenize_custom_element_test() {
   let input = "<sl-button></sl-button>"
-  let assert Ok(tokens) = parser.tokenize(input)
+  let assert Ok(tokens) = lexer.tokenize(input)
 
   should.equal(list.length(tokens), 2)
   case list.first(tokens) {
@@ -142,7 +142,7 @@ pub fn tokenize_custom_element_test() {
 
 pub fn tokenize_static_attr_test() {
   let input = "<div class=\"container\">"
-  let assert Ok(tokens) = parser.tokenize(input)
+  let assert Ok(tokens) = lexer.tokenize(input)
 
   case list.first(tokens) {
     Ok(HtmlOpen(_, attrs, _, _)) -> {
@@ -161,7 +161,7 @@ pub fn tokenize_static_attr_test() {
 
 pub fn tokenize_dynamic_attr_test() {
   let input = "<div class={my_class}>"
-  let assert Ok(tokens) = parser.tokenize(input)
+  let assert Ok(tokens) = lexer.tokenize(input)
 
   case list.first(tokens) {
     Ok(HtmlOpen(_, attrs, _, _)) -> {
@@ -179,7 +179,7 @@ pub fn tokenize_dynamic_attr_test() {
 
 pub fn tokenize_event_attr_test() {
   let input = "<button @click={handle_click()}>"
-  let assert Ok(tokens) = parser.tokenize(input)
+  let assert Ok(tokens) = lexer.tokenize(input)
 
   case list.first(tokens) {
     Ok(HtmlOpen(_, attrs, _, _)) -> {
@@ -198,7 +198,7 @@ pub fn tokenize_event_attr_test() {
 
 pub fn tokenize_event_attr_prevent_test() {
   let input = "<button @click.prevent={handle_click()}>"
-  let assert Ok(tokens) = parser.tokenize(input)
+  let assert Ok(tokens) = lexer.tokenize(input)
 
   case list.first(tokens) {
     Ok(HtmlOpen(_, attrs, _, _)) -> {
@@ -217,7 +217,7 @@ pub fn tokenize_event_attr_prevent_test() {
 
 pub fn tokenize_event_attr_stop_test() {
   let input = "<div @click.stop={handle_click()}>"
-  let assert Ok(tokens) = parser.tokenize(input)
+  let assert Ok(tokens) = lexer.tokenize(input)
 
   case list.first(tokens) {
     Ok(HtmlOpen(_, attrs, _, _)) -> {
@@ -236,7 +236,7 @@ pub fn tokenize_event_attr_stop_test() {
 
 pub fn tokenize_event_attr_prevent_stop_test() {
   let input = "<div @on:drop.prevent.stop={on_drop(Todo)}>"
-  let assert Ok(tokens) = parser.tokenize(input)
+  let assert Ok(tokens) = lexer.tokenize(input)
 
   case list.first(tokens) {
     Ok(HtmlOpen(_, attrs, _, _)) -> {
@@ -255,7 +255,7 @@ pub fn tokenize_event_attr_prevent_stop_test() {
 
 pub fn tokenize_event_attr_stop_prevent_order_test() {
   let input = "<div @click.stop.prevent={handler}>"
-  let assert Ok(tokens) = parser.tokenize(input)
+  let assert Ok(tokens) = lexer.tokenize(input)
 
   case list.first(tokens) {
     Ok(HtmlOpen(_, attrs, _, _)) -> {
@@ -274,7 +274,7 @@ pub fn tokenize_event_attr_stop_prevent_order_test() {
 
 pub fn tokenize_event_attr_unknown_modifier_error_test() {
   let input = "<div @click.unknown={handler}>"
-  let result = parser.tokenize(input)
+  let result = lexer.tokenize(input)
 
   case result {
     Error(errors) -> should.be_true(errors != [])
@@ -284,7 +284,7 @@ pub fn tokenize_event_attr_unknown_modifier_error_test() {
 
 pub fn tokenize_boolean_attr_test() {
   let input = "<input disabled>"
-  let assert Ok(tokens) = parser.tokenize(input)
+  let assert Ok(tokens) = lexer.tokenize(input)
 
   case list.first(tokens) {
     Ok(HtmlOpen(_, attrs, _, _)) -> {
@@ -299,7 +299,7 @@ pub fn tokenize_boolean_attr_test() {
 
 pub fn tokenize_multiple_attrs_test() {
   let input = "<input type=\"text\" class={cls} disabled @input={on_input}>"
-  let assert Ok(tokens) = parser.tokenize(input)
+  let assert Ok(tokens) = lexer.tokenize(input)
 
   case list.first(tokens) {
     Ok(HtmlOpen(_, attrs, _, _)) -> {
@@ -313,7 +313,7 @@ pub fn tokenize_multiple_attrs_test() {
 
 pub fn tokenize_text_test() {
   let input = "Hello, World!"
-  let assert Ok(tokens) = parser.tokenize(input)
+  let assert Ok(tokens) = lexer.tokenize(input)
 
   case list.first(tokens) {
     Ok(Text(content, _)) -> should.equal(content, "Hello, World!")
@@ -323,7 +323,7 @@ pub fn tokenize_text_test() {
 
 pub fn tokenize_escaped_braces_test() {
   let input = "Use {{braces}} like this"
-  let assert Ok(tokens) = parser.tokenize(input)
+  let assert Ok(tokens) = lexer.tokenize(input)
 
   case list.first(tokens) {
     Ok(Text(content, _)) -> should.equal(content, "Use {braces} like this")
@@ -335,7 +335,7 @@ pub fn tokenize_escaped_braces_test() {
 
 pub fn tokenize_expression_test() {
   let input = "{user.name}"
-  let assert Ok(tokens) = parser.tokenize(input)
+  let assert Ok(tokens) = lexer.tokenize(input)
 
   case list.first(tokens) {
     Ok(Expr(content, _)) -> should.equal(content, "user.name")
@@ -345,7 +345,7 @@ pub fn tokenize_expression_test() {
 
 pub fn tokenize_expression_with_function_call_test() {
   let input = "{int.to_string(count)}"
-  let assert Ok(tokens) = parser.tokenize(input)
+  let assert Ok(tokens) = lexer.tokenize(input)
 
   case list.first(tokens) {
     Ok(Expr(content, _)) -> should.equal(content, "int.to_string(count)")
@@ -355,7 +355,7 @@ pub fn tokenize_expression_with_function_call_test() {
 
 pub fn tokenize_expression_with_nested_braces_test() {
   let input = "{some_fn(#(a, b))}"
-  let assert Ok(tokens) = parser.tokenize(input)
+  let assert Ok(tokens) = lexer.tokenize(input)
 
   case list.first(tokens) {
     Ok(Expr(content, _)) -> should.equal(content, "some_fn(#(a, b))")
@@ -367,7 +367,7 @@ pub fn tokenize_expression_with_nested_braces_test() {
 
 pub fn tokenize_if_else_test() {
   let input = "{#if show}visible{:else}hidden{/if}"
-  let assert Ok(tokens) = parser.tokenize(input)
+  let assert Ok(tokens) = lexer.tokenize(input)
 
   should.equal(list.length(tokens), 5)
 
@@ -383,7 +383,7 @@ pub fn tokenize_if_else_test() {
 
 pub fn tokenize_if_without_else_test() {
   let input = "{#if show}visible{/if}"
-  let assert Ok(tokens) = parser.tokenize(input)
+  let assert Ok(tokens) = lexer.tokenize(input)
 
   should.equal(list.length(tokens), 3)
   case list.first(tokens) {
@@ -394,7 +394,7 @@ pub fn tokenize_if_without_else_test() {
 
 pub fn tokenize_each_test() {
   let input = "{#each items as item}content{/each}"
-  let assert Ok(tokens) = parser.tokenize(input)
+  let assert Ok(tokens) = lexer.tokenize(input)
 
   case list.first(tokens) {
     Ok(EachStart(collection, item, index, _)) -> {
@@ -408,7 +408,7 @@ pub fn tokenize_each_test() {
 
 pub fn tokenize_each_with_index_test() {
   let input = "{#each items as item, i}content{/each}"
-  let assert Ok(tokens) = parser.tokenize(input)
+  let assert Ok(tokens) = lexer.tokenize(input)
 
   case list.first(tokens) {
     Ok(EachStart(collection, item, index, _)) -> {
@@ -422,7 +422,7 @@ pub fn tokenize_each_with_index_test() {
 
 pub fn tokenize_case_test() {
   let input = "{#case result}{:Ok(x)}success{:Error(e)}error{/case}"
-  let assert Ok(tokens) = parser.tokenize(input)
+  let assert Ok(tokens) = lexer.tokenize(input)
 
   case tokens {
     [
@@ -445,7 +445,7 @@ pub fn tokenize_case_test() {
 
 pub fn tokenize_strips_html_comments_test() {
   let input = "<div><!-- comment --></div>"
-  let assert Ok(tokens) = parser.tokenize(input)
+  let assert Ok(tokens) = lexer.tokenize(input)
 
   // Comment should be stripped, leaving only open and close tags
   should.equal(list.length(tokens), 2)
@@ -463,7 +463,7 @@ pub fn tokenize_full_template_test() {
   Hello, {name}!
 </div>"
 
-  let assert Ok(tokens) = parser.tokenize(input)
+  let assert Ok(tokens) = lexer.tokenize(input)
 
   // Should have: Import, Params, HtmlOpen, Text, Expr, Text, HtmlClose
   should.be_true(list.length(tokens) >= 5)
@@ -473,7 +473,7 @@ pub fn tokenize_full_template_test() {
 
 pub fn tokenize_unclosed_expression_error_test() {
   let input = "{unclosed"
-  let result = parser.tokenize(input)
+  let result = lexer.tokenize(input)
 
   case result {
     Error(errors) -> should.be_true(errors != [])
@@ -483,7 +483,7 @@ pub fn tokenize_unclosed_expression_error_test() {
 
 pub fn tokenize_unclosed_tag_error_test() {
   let input = "<div class=\"test"
-  let result = parser.tokenize(input)
+  let result = lexer.tokenize(input)
 
   case result {
     Error(errors) -> should.be_true(errors != [])
@@ -497,7 +497,7 @@ pub fn tokenize_position_tracking_test() {
   let input =
     "line1
 <div>"
-  let assert Ok(tokens) = parser.tokenize(input)
+  let assert Ok(tokens) = lexer.tokenize(input)
 
   // The <div> should be on line 2
   case list.last(tokens) {
