@@ -87,6 +87,11 @@ pub type Template {
   )
 }
 
+/// Code generation target backend
+pub type Target {
+  Lustre
+}
+
 /// Create a position at line 1, column 1
 pub fn start_position() -> Position {
   Position(line: 1, column: 1)
