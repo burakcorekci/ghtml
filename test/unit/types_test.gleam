@@ -1,6 +1,6 @@
 import ghtml/types.{
   BooleanAttribute, CaseBranch, CaseNode, DynamicAttribute, EachNode, Element,
-  EventAttribute, ExprNode, Fragment, IfNode, ParseError, Position, Span,
+  EventAttribute, ExprNode, Fragment, IfNode, Lustre, ParseError, Position, Span,
   StaticAttribute, Template, TextNode, point_span, start_position,
 }
 import gleam/list
@@ -265,4 +265,15 @@ pub fn point_span_test() {
   let span = point_span(pos)
   should.equal(span.start, pos)
   should.equal(span.end, pos)
+}
+
+pub fn target_lustre_test() {
+  let target = Lustre
+  should.be_true(is_lustre_target(target))
+}
+
+fn is_lustre_target(target: types.Target) -> Bool {
+  case target {
+    Lustre -> True
+  }
 }
