@@ -5,7 +5,7 @@
 //// It uses shared utilities from ghtml/codegen for common operations.
 
 import ghtml/cache
-import ghtml/codegen
+import ghtml/codegen_utils
 import ghtml/types.{
   type Attribute, type CaseBranch, type Node, type Template, BooleanAttribute,
   CaseNode, DynamicAttribute, EachNode, Element, EventAttribute, ExprNode,
@@ -52,7 +52,7 @@ const boolean_attributes = [
 
 /// Generate Gleam code from a parsed template using the Lustre target
 pub fn generate(template: Template, source_path: String, hash: String) -> String {
-  let filename = codegen.extract_filename(source_path)
+  let filename = codegen_utils.extract_filename(source_path)
   let header = cache.generate_header(filename, hash)
   let imports = generate_imports(template)
   let body = generate_function(template)
@@ -62,15 +62,16 @@ pub fn generate(template: Template, source_path: String, hash: String) -> String
 
 /// Generate import statements for the generated module
 fn generate_imports(template: Template) -> String {
-  let needs_attrs = codegen.template_has_attrs(template.body)
-  let needs_events = codegen.template_has_events(template.body)
-  let needs_none = codegen.template_needs_none(template.body)
-  let needs_fragment = codegen.template_needs_fragment(template.body)
-  let needs_each = codegen.template_has_each(template.body)
-  let needs_each_index = codegen.template_has_each_with_index(template.body)
-  let needs_element = codegen.template_has_custom_elements(template.body)
-  let needs_html = codegen.template_has_html_elements(template.body)
-  let needs_text = codegen.template_needs_text(template.body)
+  let needs_attrs = codegen_utils.template_has_attrs(template.body)
+  let needs_events = codegen_utils.template_has_events(template.body)
+  let needs_none = codegen_utils.template_needs_none(template.body)
+  let needs_fragment = codegen_utils.template_needs_fragment(template.body)
+  let needs_each = codegen_utils.template_has_each(template.body)
+  let needs_each_index =
+    codegen_utils.template_has_each_with_index(template.body)
+  let needs_element = codegen_utils.template_has_custom_elements(template.body)
+  let needs_html = codegen_utils.template_has_html_elements(template.body)
+  let needs_text = codegen_utils.template_needs_text(template.body)
   let user_imports = template.imports
 
   // Build element import items list
@@ -117,7 +118,7 @@ fn generate_imports(template: Template) -> String {
 
   // Add list import if needed for each and not already imported by user
   let imports = case
-    needs_each && !codegen.has_user_import(user_imports, "gleam/list")
+    needs_each && !codegen_utils.has_user_import(user_imports, "gleam/list")
   {
     True -> imports <> "\nimport gleam/list"
     False -> imports
@@ -125,7 +126,8 @@ fn generate_imports(template: Template) -> String {
 
   // Add int import if needed for index and not already imported by user
   let imports = case
-    needs_each_index && !codegen.has_user_import(user_imports, "gleam/int")
+    needs_each_index
+    && !codegen_utils.has_user_import(user_imports, "gleam/int")
   {
     True -> imports <> "\nimport gleam/int"
     False -> imports
@@ -212,8 +214,8 @@ fn generate_element_inline(
   attrs: List(Attribute),
   children: List(Node),
 ) -> String {
-  let is_custom = codegen.is_custom_element(tag)
-  let is_void = codegen.is_void_element(tag)
+  let is_custom = codegen_utils.is_custom_element(tag)
+  let is_void = codegen_utils.is_void_element(tag)
   let attrs_code = generate_attrs(attrs, is_custom)
 
   case is_custom {
@@ -268,12 +270,12 @@ fn generate_attr(attr: Attribute, is_custom: Bool) -> String {
 /// Generate code for a static attribute
 fn generate_static_attr(name: String, value: String) -> String {
   case find_attr_function(name) {
-    Ok(func) -> func <> "(\"" <> codegen.escape_string(value) <> "\")"
+    Ok(func) -> func <> "(\"" <> codegen_utils.escape_string(value) <> "\")"
     Error(_) ->
       "attribute.attribute(\""
       <> name
       <> "\", \""
-      <> codegen.escape_string(value)
+      <> codegen_utils.escape_string(value)
       <> "\")"
   }
 }
@@ -359,10 +361,10 @@ fn find_attr_function(name: String) -> Result(String, Nil) {
 
 /// Generate code for a text node with whitespace normalization (inline)
 fn generate_text_inline(content: String) -> String {
-  let normalized = codegen.normalize_whitespace(content)
-  case codegen.is_blank(normalized) {
+  let normalized = codegen_utils.normalize_whitespace(content)
+  case codegen_utils.is_blank(normalized) {
     True -> ""
-    False -> "text(\"" <> codegen.escape_string(normalized) <> "\")"
+    False -> "text(\"" <> codegen_utils.escape_string(normalized) <> "\")"
   }
 }
 

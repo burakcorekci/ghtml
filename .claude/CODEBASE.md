@@ -62,10 +62,17 @@ src/components/user_card.ghtml  →  src/components/user_card.gleam
                                             │
                                             ▼
                     ┌──────────────────────────────────────────────────────────┐
-                    │                       codegen                             │
-                    │  - generate() → String (Gleam source code)                │
-                    │  - Smart imports based on feature usage                   │
-                    │  - Handles: elements, attrs, events, control flow         │
+                    │                 codegen (dispatcher)                       │
+                    │  - generate(template, path, hash, target) → String        │
+                    │  - Routes to target-specific backend by Target type       │
+                    └───────────────────────┬──────────────────────────────────┘
+                                            │
+                                            ▼
+                    ┌──────────────────────────────────────────────────────────┐
+                    │              target/lustre.gleam                          │
+                    │  - Lustre-specific code generation                        │
+                    │  - Smart imports, attrs, events, control flow             │
+                    │  - Uses codegen_utils for shared helpers                  │
                     └──────────────────────────────────────────────────────────┘
                                             │
                                             ▼
@@ -116,8 +123,21 @@ Key concepts:
 - Uses a stack-based approach for nesting (elements, if/each/case blocks)
 - Extracts metadata (imports, params) from token stream
 
-### `src/ghtml/codegen.gleam` - Code Generator
-Transforms AST → Gleam source:
+### `src/ghtml/codegen.gleam` - Code Generation Dispatcher
+Thin dispatcher that routes code generation to the appropriate target:
+- `generate(template, source_path, hash, target) -> String`
+- Dispatches by `Target` type (currently only `Lustre`)
+- Adding a new target: new `Target` variant, new file in `target/`, new case branch
+
+### `src/ghtml/codegen_utils.gleam` - Shared Codegen Utilities
+Target-agnostic helpers used by all code generation backends:
+- Template analysis: `template_has_each()`, `template_needs_none()`, etc.
+- String utilities: `escape_string()`, `normalize_whitespace()`, `is_blank()`
+- HTML helpers: `is_custom_element()`, `is_void_element()`
+- Import detection: `has_user_import()`, `extract_filename()`
+
+### `src/ghtml/target/lustre.gleam` - Lustre Target Backend
+Lustre-specific code generation:
 - `generate(template, source_path, hash) -> String`
 - Smart imports: only includes `gleam/list` if `{#each}` is used, etc.
 - Handles attribute mapping (class→attribute.class, @click→event.on_click)
