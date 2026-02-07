@@ -13,9 +13,10 @@
 //// ```
 
 import ghtml/cache
+import ghtml/codegen
 import ghtml/parser
 import ghtml/scanner
-import ghtml/target/lustre
+import ghtml/types
 import gleam/dict.{type Dict}
 import gleam/erlang/process.{type Subject}
 import gleam/int
@@ -185,7 +186,8 @@ pub fn process_single_file(source_path: String) {
       let hash = cache.hash_content(content)
       case parser.parse(content) {
         Ok(template) -> {
-          let gleam_code = lustre.generate(template, source_path, hash)
+          let gleam_code =
+            codegen.generate(template, source_path, hash, types.Lustre)
           case simplifile.write(output_path, gleam_code) {
             Ok(_) -> io.println("  Generated: " <> output_path)
             Error(e) -> io.println("  Error writing: " <> string.inspect(e))
