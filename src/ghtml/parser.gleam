@@ -458,8 +458,8 @@ fn parse_single_attribute(
       let pos = advance_pos(pos, "@")
       let #(event_name, rest, new_pos) = extract_attr_name(rest, "", pos)
       // Parse optional .prevent and .stop modifiers
-      case parse_event_modifiers(rest, new_pos, False, False) {
-        Ok(#(prevent_default, stop_propagation, rest, new_pos)) -> {
+      case parse_event_modifiers(rest, new_pos, []) {
+        Ok(#(modifiers, rest, new_pos)) -> {
           case rest {
             "={" <> after -> {
               let new_pos = advance_pos_str(new_pos, "={")
@@ -469,8 +469,7 @@ fn parse_single_attribute(
                     EventAttr(
                       event: event_name,
                       handler: handler,
-                      prevent_default: prevent_default,
-                      stop_propagation: stop_propagation,
+                      modifiers: modifiers,
                     ),
                     remaining,
                     end_pos,
@@ -642,17 +641,16 @@ fn is_attr_name_char(char: String) -> Bool {
 fn parse_event_modifiers(
   input: String,
   pos: Position,
-  prevent_default: Bool,
-  stop_propagation: Bool,
-) -> Result(#(Bool, Bool, String, Position), ParseError) {
+  modifiers: List(String),
+) -> Result(#(List(String), String, Position), ParseError) {
   case input {
     ".prevent" <> rest -> {
       let new_pos = advance_pos_str(pos, ".prevent")
-      parse_event_modifiers(rest, new_pos, True, stop_propagation)
+      parse_event_modifiers(rest, new_pos, list.append(modifiers, ["prevent"]))
     }
     ".stop" <> rest -> {
       let new_pos = advance_pos_str(pos, ".stop")
-      parse_event_modifiers(rest, new_pos, prevent_default, True)
+      parse_event_modifiers(rest, new_pos, list.append(modifiers, ["stop"]))
     }
     "." <> _ -> {
       Error(ParseError(
@@ -660,7 +658,7 @@ fn parse_event_modifiers(
         "Unknown event modifier (expected 'prevent' or 'stop')",
       ))
     }
-    _ -> Ok(#(prevent_default, stop_propagation, input, pos))
+    _ -> Ok(#(modifiers, input, pos))
   }
 }
 

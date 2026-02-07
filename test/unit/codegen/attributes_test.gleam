@@ -139,12 +139,7 @@ pub fn generate_dynamic_unknown_attr_test() {
 pub fn generate_click_handler_test() {
   let template =
     Template(imports: [], params: [], body: [
-      Element(
-        "button",
-        [EventAttr("click", "on_click()", False, False)],
-        [],
-        test_span(),
-      ),
+      Element("button", [EventAttr("click", "on_click()", [])], [], test_span()),
     ])
 
   let code = codegen.generate(template, "test.ghtml", "abc123")
@@ -155,12 +150,7 @@ pub fn generate_click_handler_test() {
 pub fn generate_input_handler_test() {
   let template =
     Template(imports: [], params: [], body: [
-      Element(
-        "input",
-        [EventAttr("input", "on_input", False, False)],
-        [],
-        test_span(),
-      ),
+      Element("input", [EventAttr("input", "on_input", [])], [], test_span()),
     ])
 
   let code = codegen.generate(template, "test.ghtml", "abc123")
@@ -173,7 +163,7 @@ pub fn generate_submit_handler_test() {
     Template(imports: [], params: [], body: [
       Element(
         "form",
-        [EventAttr("submit", "handle_submit", False, False)],
+        [EventAttr("submit", "handle_submit", [])],
         [],
         test_span(),
       ),
@@ -189,7 +179,7 @@ pub fn generate_custom_event_handler_test() {
     Template(imports: [], params: [], body: [
       Element(
         "sl-dialog",
-        [EventAttr("sl-hide", "on_hide", False, False)],
+        [EventAttr("sl-hide", "on_hide", [])],
         [],
         test_span(),
       ),
@@ -205,7 +195,7 @@ pub fn generate_handler_with_params_test() {
     Template(imports: [], params: [], body: [
       Element(
         "button",
-        [EventAttr("click", "handle_delete(item.id)", False, False)],
+        [EventAttr("click", "handle_delete(item.id)", [])],
         [],
         test_span(),
       ),
@@ -291,7 +281,7 @@ pub fn generate_multiple_attrs_test() {
           StaticAttr("class", "input"),
           DynamicAttr("value", "user.name"),
           BooleanAttr("disabled"),
-          EventAttr("input", "on_input", False, False),
+          EventAttr("input", "on_input", []),
         ],
         [],
         test_span(),
@@ -337,12 +327,7 @@ pub fn generate_attr_with_special_chars_test() {
 pub fn generate_blur_handler_test() {
   let template =
     Template(imports: [], params: [], body: [
-      Element(
-        "input",
-        [EventAttr("blur", "on_blur", False, False)],
-        [],
-        test_span(),
-      ),
+      Element("input", [EventAttr("blur", "on_blur", [])], [], test_span()),
     ])
 
   let code = codegen.generate(template, "test.ghtml", "abc123")
@@ -353,12 +338,7 @@ pub fn generate_blur_handler_test() {
 pub fn generate_focus_handler_test() {
   let template =
     Template(imports: [], params: [], body: [
-      Element(
-        "input",
-        [EventAttr("focus", "on_focus", False, False)],
-        [],
-        test_span(),
-      ),
+      Element("input", [EventAttr("focus", "on_focus", [])], [], test_span()),
     ])
 
   let code = codegen.generate(template, "test.ghtml", "abc123")
@@ -369,12 +349,7 @@ pub fn generate_focus_handler_test() {
 pub fn generate_change_handler_test() {
   let template =
     Template(imports: [], params: [], body: [
-      Element(
-        "select",
-        [EventAttr("change", "on_change", False, False)],
-        [],
-        test_span(),
-      ),
+      Element("select", [EventAttr("change", "on_change", [])], [], test_span()),
     ])
 
   let code = codegen.generate(template, "test.ghtml", "abc123")
@@ -385,12 +360,7 @@ pub fn generate_change_handler_test() {
 pub fn generate_mouse_enter_handler_test() {
   let template =
     Template(imports: [], params: [], body: [
-      Element(
-        "div",
-        [EventAttr("mouseenter", "on_enter", False, False)],
-        [],
-        test_span(),
-      ),
+      Element("div", [EventAttr("mouseenter", "on_enter", [])], [], test_span()),
     ])
 
   let code = codegen.generate(template, "test.ghtml", "abc123")
@@ -401,12 +371,7 @@ pub fn generate_mouse_enter_handler_test() {
 pub fn generate_mouse_leave_handler_test() {
   let template =
     Template(imports: [], params: [], body: [
-      Element(
-        "div",
-        [EventAttr("mouseleave", "on_leave", False, False)],
-        [],
-        test_span(),
-      ),
+      Element("div", [EventAttr("mouseleave", "on_leave", [])], [], test_span()),
     ])
 
   let code = codegen.generate(template, "test.ghtml", "abc123")
@@ -564,7 +529,7 @@ pub fn generate_prevent_default_modifier_test() {
     Template(imports: [], params: [], body: [
       Element(
         "div",
-        [EventAttr("on:dragover", "on_dragover", True, False)],
+        [EventAttr("on:dragover", "on_dragover", ["prevent"])],
         [],
         test_span(),
       ),
@@ -583,7 +548,7 @@ pub fn generate_stop_propagation_modifier_test() {
     Template(imports: [], params: [], body: [
       Element(
         "div",
-        [EventAttr("click", "on_click", False, True)],
+        [EventAttr("click", "on_click", ["stop"])],
         [],
         test_span(),
       ),
@@ -602,7 +567,7 @@ pub fn generate_prevent_and_stop_modifiers_test() {
     Template(imports: [], params: [], body: [
       Element(
         "div",
-        [EventAttr("on:drop", "on_drop(Todo)", True, True)],
+        [EventAttr("on:drop", "on_drop(Todo)", ["prevent", "stop"])],
         [],
         test_span(),
       ),
@@ -619,12 +584,7 @@ pub fn generate_prevent_and_stop_modifiers_test() {
 pub fn generate_no_modifiers_unchanged_test() {
   let template =
     Template(imports: [], params: [], body: [
-      Element(
-        "button",
-        [EventAttr("click", "handler", False, False)],
-        [],
-        test_span(),
-      ),
+      Element("button", [EventAttr("click", "handler", [])], [], test_span()),
     ])
 
   let code = codegen.generate(template, "test.ghtml", "abc123")
@@ -637,12 +597,7 @@ pub fn generate_no_modifiers_unchanged_test() {
 pub fn generate_imports_with_events_test() {
   let template =
     Template(imports: [], params: [], body: [
-      Element(
-        "button",
-        [EventAttr("click", "on_click", False, False)],
-        [],
-        test_span(),
-      ),
+      Element("button", [EventAttr("click", "on_click", [])], [], test_span()),
     ])
 
   let code = codegen.generate(template, "test.ghtml", "abc123")

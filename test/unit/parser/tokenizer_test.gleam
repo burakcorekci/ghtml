@@ -184,11 +184,10 @@ pub fn tokenize_event_attr_test() {
   case list.first(tokens) {
     Ok(HtmlOpen(_, attrs, _, _)) -> {
       case list.first(attrs) {
-        Ok(EventAttr(event, handler, prevent_default, stop_propagation)) -> {
+        Ok(EventAttr(event, handler, modifiers)) -> {
           should.equal(event, "click")
           should.equal(handler, "handle_click()")
-          should.be_false(prevent_default)
-          should.be_false(stop_propagation)
+          should.equal(modifiers, [])
         }
         _ -> should.fail()
       }
@@ -204,11 +203,10 @@ pub fn tokenize_event_attr_prevent_test() {
   case list.first(tokens) {
     Ok(HtmlOpen(_, attrs, _, _)) -> {
       case list.first(attrs) {
-        Ok(EventAttr(event, handler, prevent_default, stop_propagation)) -> {
+        Ok(EventAttr(event, handler, modifiers)) -> {
           should.equal(event, "click")
           should.equal(handler, "handle_click()")
-          should.be_true(prevent_default)
-          should.be_false(stop_propagation)
+          should.equal(modifiers, ["prevent"])
         }
         _ -> should.fail()
       }
@@ -224,11 +222,10 @@ pub fn tokenize_event_attr_stop_test() {
   case list.first(tokens) {
     Ok(HtmlOpen(_, attrs, _, _)) -> {
       case list.first(attrs) {
-        Ok(EventAttr(event, handler, prevent_default, stop_propagation)) -> {
+        Ok(EventAttr(event, handler, modifiers)) -> {
           should.equal(event, "click")
           should.equal(handler, "handle_click()")
-          should.be_false(prevent_default)
-          should.be_true(stop_propagation)
+          should.equal(modifiers, ["stop"])
         }
         _ -> should.fail()
       }
@@ -244,11 +241,10 @@ pub fn tokenize_event_attr_prevent_stop_test() {
   case list.first(tokens) {
     Ok(HtmlOpen(_, attrs, _, _)) -> {
       case list.first(attrs) {
-        Ok(EventAttr(event, handler, prevent_default, stop_propagation)) -> {
+        Ok(EventAttr(event, handler, modifiers)) -> {
           should.equal(event, "on:drop")
           should.equal(handler, "on_drop(Todo)")
-          should.be_true(prevent_default)
-          should.be_true(stop_propagation)
+          should.equal(modifiers, ["prevent", "stop"])
         }
         _ -> should.fail()
       }
@@ -264,11 +260,10 @@ pub fn tokenize_event_attr_stop_prevent_order_test() {
   case list.first(tokens) {
     Ok(HtmlOpen(_, attrs, _, _)) -> {
       case list.first(attrs) {
-        Ok(EventAttr(event, handler, prevent_default, stop_propagation)) -> {
+        Ok(EventAttr(event, handler, modifiers)) -> {
           should.equal(event, "click")
           should.equal(handler, "handler")
-          should.be_true(prevent_default)
-          should.be_true(stop_propagation)
+          should.equal(modifiers, ["stop", "prevent"])
         }
         _ -> should.fail()
       }
