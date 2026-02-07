@@ -122,7 +122,12 @@ pub fn generate_imports_with_each_index_test() {
 pub fn generate_imports_with_event_test() {
   let template =
     Template(imports: [], params: [], body: [
-      Element("button", [EventAttr("click", "on_click")], [], test_span()),
+      Element(
+        "button",
+        [EventAttr("click", "on_click", False, False)],
+        [],
+        test_span(),
+      ),
     ])
 
   let code = codegen.generate(template, "test.ghtml", "abc123")
@@ -228,7 +233,12 @@ pub fn generate_imports_all_features_test() {
   let template =
     Template(imports: ["app/types.{type User}"], params: [], body: [
       Element("div", [], [], test_span()),
-      Element("button", [EventAttr("click", "on_click")], [], test_span()),
+      Element(
+        "button",
+        [EventAttr("click", "on_click", False, False)],
+        [],
+        test_span(),
+      ),
       IfNode("show", [TextNode("Yes", test_span())], [], test_span()),
       EachNode(
         "items",

@@ -76,7 +76,6 @@ pub type Msg {
   DragStart(String)
   DragEnd
   DragOverColumn(TaskStatus)
-  DragLeaveColumn
   DropOnColumn(TaskStatus)
 
   // Keyboard shortcuts

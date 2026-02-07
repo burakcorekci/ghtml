@@ -348,9 +348,6 @@ pub fn update(model: Model, msg: Msg) -> Model {
     msg.DragOverColumn(status) ->
       Model(..model, drop_target_column: Some(status))
 
-    msg.DragLeaveColumn ->
-      Model(..model, drop_target_column: None)
-
     msg.DropOnColumn(target_status) ->
       case model.dragging_task_id {
         None -> model

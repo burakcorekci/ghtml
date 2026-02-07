@@ -28,7 +28,12 @@ pub type ParseResult(a) =
 pub type Attr {
   StaticAttr(name: String, value: String)
   DynamicAttr(name: String, expr: String)
-  EventAttr(event: String, handler: String)
+  EventAttr(
+    event: String,
+    handler: String,
+    prevent_default: Bool,
+    stop_propagation: Bool,
+  )
   BooleanAttr(name: String)
 }
 

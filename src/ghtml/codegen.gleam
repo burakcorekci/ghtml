@@ -318,7 +318,7 @@ fn has_non_event_attrs(attrs: List(Attr)) -> Bool {
       StaticAttr(_, _) -> True
       DynamicAttr(_, _) -> True
       BooleanAttr(_) -> True
-      EventAttr(_, _) -> False
+      EventAttr(_, _, _, _) -> False
     }
   })
 }
@@ -348,7 +348,7 @@ fn node_has_events(node: Node) -> Bool {
 fn has_event_attrs(attrs: List(Attr)) -> Bool {
   list.any(attrs, fn(attr) {
     case attr {
-      EventAttr(_, _) -> True
+      EventAttr(_, _, _, _) -> True
       _ -> False
     }
   })
@@ -524,7 +524,8 @@ fn generate_attr(attr: Attr, is_custom: Bool) -> String {
   case attr {
     StaticAttr(name, value) -> generate_static_attr(name, value)
     DynamicAttr(name, expr) -> generate_dynamic_attr(name, expr)
-    EventAttr(event, handler) -> generate_event_attr(event, handler)
+    EventAttr(event, handler, prevent_default, stop_propagation) ->
+      generate_event_attr(event, handler, prevent_default, stop_propagation)
     BooleanAttr(name) -> generate_boolean_attr(name, is_custom)
   }
 }
@@ -569,8 +570,13 @@ fn generate_boolean_attr(name: String, is_custom: Bool) -> String {
 }
 
 /// Generate code for an event handler attribute
-fn generate_event_attr(event: String, handler: String) -> String {
-  case event {
+fn generate_event_attr(
+  event: String,
+  handler: String,
+  prevent_default: Bool,
+  stop_propagation: Bool,
+) -> String {
+  let base = case event {
     "click" -> "event.on_click(" <> handler <> ")"
     "input" -> "event.on_input(" <> handler <> ")"
     "change" -> "event.on_change(" <> handler <> ")"
@@ -592,6 +598,14 @@ fn generate_event_attr(event: String, handler: String) -> String {
       }
       "event.on(\"" <> event_name <> "\", " <> handler <> ")"
     }
+  }
+  let base = case prevent_default {
+    True -> "event.prevent_default(" <> base <> ")"
+    False -> base
+  }
+  case stop_propagation {
+    True -> "event.stop_propagation(" <> base <> ")"
+    False -> base
   }
 }
 

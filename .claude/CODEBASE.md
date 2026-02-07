@@ -81,7 +81,7 @@ src/components/user_card.ghtml  →  src/components/user_card.gleam
 All shared types are defined here:
 - **Position/Span** - Source locations for error reporting
 - **Token** - Lexer output (Import, Params, HtmlOpen, IfStart, etc.)
-- **Attr** - Attribute variants (StaticAttr, DynamicAttr, EventAttr, BooleanAttr)
+- **Attr** - Attribute variants (StaticAttr, DynamicAttr, EventAttr with prevent_default/stop_propagation flags, BooleanAttr)
 - **Node** - AST nodes (Element, TextNode, ExprNode, IfNode, EachNode, CaseNode, Fragment)
 - **Template** - Final parsed result with imports, params, and body nodes
 
@@ -161,8 +161,15 @@ Utilities for E2E testing:
   {/case}
 
   <button @click={on_click()}>Click me</button>
+  <div @on:dragover.prevent={on_dragover()}>Drop here</div>
+  <div @click.stop.prevent={handle()}>No bubbling</div>
 </div>
 ```
+
+Event modifiers:
+- `.prevent` → wraps with `event.prevent_default()`
+- `.stop` → wraps with `event.stop_propagation()`
+- Can be combined: `@click.prevent.stop={handler}`
 
 ## Test Structure
 
@@ -226,6 +233,7 @@ examples/
   06_material_web/   # Material Web components integration
   07_tailwind/       # Tailwind CSS styling
   08_complete/       # Full application with all features
+  09_drag_drop/      # HTML5 drag & drop with event modifiers (.prevent, .stop)
 ```
 
 Each example is a standalone Gleam project with its own `gleam.toml` and `justfile`.

@@ -184,14 +184,106 @@ pub fn tokenize_event_attr_test() {
   case list.first(tokens) {
     Ok(HtmlOpen(_, attrs, _, _)) -> {
       case list.first(attrs) {
-        Ok(EventAttr(event, handler)) -> {
+        Ok(EventAttr(event, handler, prevent_default, stop_propagation)) -> {
           should.equal(event, "click")
           should.equal(handler, "handle_click()")
+          should.be_false(prevent_default)
+          should.be_false(stop_propagation)
         }
         _ -> should.fail()
       }
     }
     _ -> should.fail()
+  }
+}
+
+pub fn tokenize_event_attr_prevent_test() {
+  let input = "<button @click.prevent={handle_click()}>"
+  let assert Ok(tokens) = parser.tokenize(input)
+
+  case list.first(tokens) {
+    Ok(HtmlOpen(_, attrs, _, _)) -> {
+      case list.first(attrs) {
+        Ok(EventAttr(event, handler, prevent_default, stop_propagation)) -> {
+          should.equal(event, "click")
+          should.equal(handler, "handle_click()")
+          should.be_true(prevent_default)
+          should.be_false(stop_propagation)
+        }
+        _ -> should.fail()
+      }
+    }
+    _ -> should.fail()
+  }
+}
+
+pub fn tokenize_event_attr_stop_test() {
+  let input = "<div @click.stop={handle_click()}>"
+  let assert Ok(tokens) = parser.tokenize(input)
+
+  case list.first(tokens) {
+    Ok(HtmlOpen(_, attrs, _, _)) -> {
+      case list.first(attrs) {
+        Ok(EventAttr(event, handler, prevent_default, stop_propagation)) -> {
+          should.equal(event, "click")
+          should.equal(handler, "handle_click()")
+          should.be_false(prevent_default)
+          should.be_true(stop_propagation)
+        }
+        _ -> should.fail()
+      }
+    }
+    _ -> should.fail()
+  }
+}
+
+pub fn tokenize_event_attr_prevent_stop_test() {
+  let input = "<div @on:drop.prevent.stop={on_drop(Todo)}>"
+  let assert Ok(tokens) = parser.tokenize(input)
+
+  case list.first(tokens) {
+    Ok(HtmlOpen(_, attrs, _, _)) -> {
+      case list.first(attrs) {
+        Ok(EventAttr(event, handler, prevent_default, stop_propagation)) -> {
+          should.equal(event, "on:drop")
+          should.equal(handler, "on_drop(Todo)")
+          should.be_true(prevent_default)
+          should.be_true(stop_propagation)
+        }
+        _ -> should.fail()
+      }
+    }
+    _ -> should.fail()
+  }
+}
+
+pub fn tokenize_event_attr_stop_prevent_order_test() {
+  let input = "<div @click.stop.prevent={handler}>"
+  let assert Ok(tokens) = parser.tokenize(input)
+
+  case list.first(tokens) {
+    Ok(HtmlOpen(_, attrs, _, _)) -> {
+      case list.first(attrs) {
+        Ok(EventAttr(event, handler, prevent_default, stop_propagation)) -> {
+          should.equal(event, "click")
+          should.equal(handler, "handler")
+          should.be_true(prevent_default)
+          should.be_true(stop_propagation)
+        }
+        _ -> should.fail()
+      }
+    }
+    _ -> should.fail()
+  }
+}
+
+pub fn tokenize_event_attr_unknown_modifier_error_test() {
+  let input = "<div @click.unknown={handler}>"
+  let result = parser.tokenize(input)
+
+  case result {
+    Error(errors) -> should.be_true(errors != [])
+    Ok(_) -> should.fail()
   }
 }
 

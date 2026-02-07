@@ -63,16 +63,22 @@ fn is_dynamic_attr(attr: types.Attr) -> Bool {
 }
 
 pub fn event_attr_test() {
-  let attr = EventAttr(event: "click", handler: "handle_click()")
+  let attr =
+    EventAttr(
+      event: "click",
+      handler: "handle_click()",
+      prevent_default: False,
+      stop_propagation: False,
+    )
   should.be_true(is_event_attr(attr))
-  let EventAttr(event, handler) = attr
+  let EventAttr(event, handler, _, _) = attr
   should.equal(event, "click")
   should.equal(handler, "handle_click()")
 }
 
 fn is_event_attr(attr: types.Attr) -> Bool {
   case attr {
-    EventAttr(_, _) -> True
+    EventAttr(_, _, _, _) -> True
     _ -> False
   }
 }

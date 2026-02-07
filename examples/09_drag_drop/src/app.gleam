@@ -172,7 +172,6 @@ fn view_content(model: Model) -> Element(Msg) {
               decode.success(msg.DragEnd),
               fn(status) { decode.success(msg.DropOnColumn(status)) },
               fn(status) { decode.success(msg.DragOverColumn(status)) },
-              decode.success(msg.DragLeaveColumn),
               fn(status) { model.drop_target_column == Some(status) },
             )
           }

@@ -453,28 +453,39 @@ fn parse_single_attribute(
   pos: Position,
 ) -> Result(#(Attr, String, Position), ParseError) {
   case input {
-    // Event attribute: @event={handler}
+    // Event attribute: @event={handler} or @event.prevent.stop={handler}
     "@" <> rest -> {
       let pos = advance_pos(pos, "@")
       let #(event_name, rest, new_pos) = extract_attr_name(rest, "", pos)
-      case rest {
-        "={" <> after -> {
-          let new_pos = advance_pos_str(new_pos, "={")
-          case extract_expression(after, 0, "", new_pos) {
-            Ok(#(handler, remaining, end_pos)) ->
-              Ok(#(
-                EventAttr(event: event_name, handler: handler),
-                remaining,
-                end_pos,
+      // Parse optional .prevent and .stop modifiers
+      case parse_event_modifiers(rest, new_pos, False, False) {
+        Ok(#(prevent_default, stop_propagation, rest, new_pos)) -> {
+          case rest {
+            "={" <> after -> {
+              let new_pos = advance_pos_str(new_pos, "={")
+              case extract_expression(after, 0, "", new_pos) {
+                Ok(#(handler, remaining, end_pos)) ->
+                  Ok(#(
+                    EventAttr(
+                      event: event_name,
+                      handler: handler,
+                      prevent_default: prevent_default,
+                      stop_propagation: stop_propagation,
+                    ),
+                    remaining,
+                    end_pos,
+                  ))
+                Error(err) -> Error(err)
+              }
+            }
+            _ ->
+              Error(ParseError(
+                Span(start: new_pos, end: new_pos),
+                "Expected '={' after event attribute name",
               ))
-            Error(err) -> Error(err)
           }
         }
-        _ ->
-          Error(ParseError(
-            Span(start: new_pos, end: new_pos),
-            "Expected '={' after event attribute name",
-          ))
+        Error(err) -> Error(err)
       }
     }
 
@@ -624,6 +635,32 @@ fn is_attr_name_char(char: String) -> Bool {
     | "_"
     | ":" -> True
     _ -> False
+  }
+}
+
+/// Parse event modifiers like .prevent and .stop after event name
+fn parse_event_modifiers(
+  input: String,
+  pos: Position,
+  prevent_default: Bool,
+  stop_propagation: Bool,
+) -> Result(#(Bool, Bool, String, Position), ParseError) {
+  case input {
+    ".prevent" <> rest -> {
+      let new_pos = advance_pos_str(pos, ".prevent")
+      parse_event_modifiers(rest, new_pos, True, stop_propagation)
+    }
+    ".stop" <> rest -> {
+      let new_pos = advance_pos_str(pos, ".stop")
+      parse_event_modifiers(rest, new_pos, prevent_default, True)
+    }
+    "." <> _ -> {
+      Error(ParseError(
+        Span(start: pos, end: pos),
+        "Unknown event modifier (expected 'prevent' or 'stop')",
+      ))
+    }
+    _ -> Ok(#(prevent_default, stop_propagation, input, pos))
   }
 }
 

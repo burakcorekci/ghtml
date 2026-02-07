@@ -11,13 +11,12 @@
   on_drag_start: fn(String) -> decode.Decoder(msg),
   on_drag_end: decode.Decoder(msg),
   on_drop: fn(TaskStatus) -> decode.Decoder(msg),
-  on_drag_enter: fn(TaskStatus) -> decode.Decoder(msg),
-  on_drag_leave: decode.Decoder(msg),
+  on_dragover: fn(TaskStatus) -> decode.Decoder(msg),
   is_drop_target: fn(TaskStatus) -> Bool,
 )
 
 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
-  <div class={case is_drop_target(Todo) { True -> "bg-gray-100 dark:bg-gray-800 rounded-lg p-4 ring-2 ring-blue-400 ring-inset" False -> "bg-gray-100 dark:bg-gray-800 rounded-lg p-4" }} data-drop-zone="true" @on:dragenter={on_drag_enter(Todo)} @on:dragleave={on_drag_leave} @on:drop={on_drop(Todo)}>
+  <div class={case is_drop_target(Todo) { True -> "bg-gray-100 dark:bg-gray-800 rounded-lg p-4 ring-2 ring-blue-400 ring-inset" False -> "bg-gray-100 dark:bg-gray-800 rounded-lg p-4" }} data-drop-zone="true" @on:dragover.prevent={on_dragover(Todo)} @on:drop.prevent={on_drop(Todo)}>
     <h2 class="font-semibold text-gray-700 dark:text-gray-200 mb-4 flex items-center gap-2">
       <span class="w-3 h-3 rounded-full bg-gray-400"></span>
       Todo
@@ -41,7 +40,7 @@
     </div>
   </div>
 
-  <div class={case is_drop_target(InProgress) { True -> "bg-blue-50 dark:bg-blue-900/30 rounded-lg p-4 ring-2 ring-blue-400 ring-inset" False -> "bg-blue-50 dark:bg-blue-900/30 rounded-lg p-4" }} data-drop-zone="true" @on:dragenter={on_drag_enter(InProgress)} @on:dragleave={on_drag_leave} @on:drop={on_drop(InProgress)}>
+  <div class={case is_drop_target(InProgress) { True -> "bg-blue-50 dark:bg-blue-900/30 rounded-lg p-4 ring-2 ring-blue-400 ring-inset" False -> "bg-blue-50 dark:bg-blue-900/30 rounded-lg p-4" }} data-drop-zone="true" @on:dragover.prevent={on_dragover(InProgress)} @on:drop.prevent={on_drop(InProgress)}>
     <h2 class="font-semibold text-gray-700 dark:text-gray-200 mb-4 flex items-center gap-2">
       <span class="w-3 h-3 rounded-full bg-blue-500"></span>
       In Progress
@@ -65,7 +64,7 @@
     </div>
   </div>
 
-  <div class={case is_drop_target(Done) { True -> "bg-green-50 dark:bg-green-900/30 rounded-lg p-4 ring-2 ring-blue-400 ring-inset" False -> "bg-green-50 dark:bg-green-900/30 rounded-lg p-4" }} data-drop-zone="true" @on:dragenter={on_drag_enter(Done)} @on:dragleave={on_drag_leave} @on:drop={on_drop(Done)}>
+  <div class={case is_drop_target(Done) { True -> "bg-green-50 dark:bg-green-900/30 rounded-lg p-4 ring-2 ring-blue-400 ring-inset" False -> "bg-green-50 dark:bg-green-900/30 rounded-lg p-4" }} data-drop-zone="true" @on:dragover.prevent={on_dragover(Done)} @on:drop.prevent={on_drop(Done)}>
     <h2 class="font-semibold text-gray-700 dark:text-gray-200 mb-4 flex items-center gap-2">
       <span class="w-3 h-3 rounded-full bg-green-500"></span>
       Done
