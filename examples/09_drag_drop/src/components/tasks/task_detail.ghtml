@@ -11,7 +11,8 @@
   editing_subtask_text: String,
   on_edit: fn() -> msg,
   on_delete: fn() -> msg,
-  on_toggle_status: fn() -> msg,
+  on_set_status: decode.Decoder(msg),
+  on_set_priority: decode.Decoder(msg),
   on_toggle_subtask: fn(String) -> msg,
   on_subtask_input: decode.Decoder(msg),
   on_add_subtask_keydown: decode.Decoder(msg),
@@ -22,37 +23,59 @@
   on_save_edit_subtask: fn(String) -> msg,
   on_cancel_edit_subtask: fn() -> msg,
   on_close: fn() -> msg,
+  project_name: Option(String),
 )
 
 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
   <div class="flex items-start justify-between mb-4">
     <div>
       <h2 class="text-xl font-semibold text-gray-900 dark:text-white">{task.title}</h2>
-      <div class="mt-1 flex items-center gap-2">
-        {#case task.status}
-          {:Todo}
-            <span class="px-2 py-1 text-xs rounded bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">Todo</span>
-          {:InProgress}
-            <span class="px-2 py-1 text-xs rounded bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300">In Progress</span>
-          {:Done}
-            <span class="px-2 py-1 text-xs rounded bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300">Done</span>
-        {/case}
-        {#case task.priority}
-          {:High}
-            <span class="px-2 py-1 text-xs rounded bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300">High Priority</span>
-          {:Medium}
-            <span class="px-2 py-1 text-xs rounded bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300">Medium Priority</span>
-          {:Low}
-            <span class="px-2 py-1 text-xs rounded bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300">Low Priority</span>
-          {:NoPriority}
-            <span></span>
-        {/case}
+      <div class="mt-2 flex items-center gap-2">
+        <sl-select size="small" value={case task.status { Todo -> "todo" InProgress -> "in_progress" Done -> "done" }} @on:sl-change={on_set_status}>
+          {#case task.status}
+            {:Todo}
+              <span slot="prefix" class="w-2 h-2 rounded-full bg-gray-400 inline-block"></span>
+            {:InProgress}
+              <span slot="prefix" class="w-2 h-2 rounded-full bg-blue-500 inline-block"></span>
+            {:Done}
+              <span slot="prefix" class="w-2 h-2 rounded-full bg-green-500 inline-block"></span>
+          {/case}
+          <sl-option value="todo"><span slot="prefix" class="w-2 h-2 rounded-full bg-gray-400 inline-block"></span>Todo</sl-option>
+          <sl-option value="in_progress"><span slot="prefix" class="w-2 h-2 rounded-full bg-blue-500 inline-block"></span>In Progress</sl-option>
+          <sl-option value="done"><span slot="prefix" class="w-2 h-2 rounded-full bg-green-500 inline-block"></span>Done</sl-option>
+        </sl-select>
+        <sl-select size="small" value={case task.priority { High -> "high" Medium -> "medium" Low -> "low" NoPriority -> "none" }} @on:sl-change={on_set_priority}>
+          {#case task.priority}
+            {:High}
+              <span slot="prefix" class="w-2 h-2 rounded-full bg-red-500 inline-block"></span>
+            {:Medium}
+              <span slot="prefix" class="w-2 h-2 rounded-full bg-orange-500 inline-block"></span>
+            {:Low}
+              <span slot="prefix" class="w-2 h-2 rounded-full bg-purple-500 inline-block"></span>
+            {:NoPriority}
+              <span slot="prefix" class="w-2 h-2 rounded-full bg-slate-400 dark:bg-slate-500 inline-block"></span>
+          {/case}
+          <sl-option value="none"><span slot="prefix" class="w-2 h-2 rounded-full bg-slate-400 dark:bg-slate-500 inline-block"></span>No Priority</sl-option>
+          <sl-option value="low"><span slot="prefix" class="w-2 h-2 rounded-full bg-purple-500 inline-block"></span>Low</sl-option>
+          <sl-option value="medium"><span slot="prefix" class="w-2 h-2 rounded-full bg-orange-500 inline-block"></span>Medium</sl-option>
+          <sl-option value="high"><span slot="prefix" class="w-2 h-2 rounded-full bg-red-500 inline-block"></span>High</sl-option>
+        </sl-select>
       </div>
     </div>
     <button class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200" @click={on_close()}>
       <span class="text-xl">X</span>
     </button>
   </div>
+
+  {#case project_name}
+    {:Some(name)}
+      <div class="mb-4">
+        <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Project</h3>
+        <p class="text-gray-600 dark:text-gray-400">{name}</p>
+      </div>
+    {:None}
+      <span></span>
+  {/case}
 
   {#if task.description != ""}
     <div class="mb-4">
@@ -150,7 +173,6 @@
 
   <div class="flex items-center gap-2 pt-4 border-t border-gray-200 dark:border-gray-700">
     <sl-button variant="primary" @click={on_edit()}>Edit</sl-button>
-    <sl-button variant="default" @click={on_toggle_status()}>Toggle Status</sl-button>
     <sl-button variant="danger" @click={on_delete()}>Delete</sl-button>
   </div>
 </div>

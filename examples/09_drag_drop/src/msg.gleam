@@ -26,6 +26,7 @@ pub type Msg {
   DeleteTask(String)
   ToggleTaskStatus(String)
   SetTaskStatus(String, TaskStatus)
+  SetTaskPriority(String, Priority)
 
   // Subtask actions
   ToggleSubtask(String, String)

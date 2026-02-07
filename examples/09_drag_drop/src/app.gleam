@@ -240,7 +240,8 @@ fn view_task_detail(model: Model) -> Element(Msg) {
                       model.editing_subtask_text,
                       fn() { msg.OpenEditTaskDialog(t.id) },
                       fn() { msg.OpenDeleteConfirmDialog(t.id) },
-                      fn() { msg.ToggleTaskStatus(t.id) },
+                      decode_status_value(t.id),
+                      decode_priority_value(t.id),
                       fn(subtask_id) { msg.ToggleSubtask(t.id, subtask_id) },
                       decode_input_value(msg.UpdateNewSubtaskText),
                       decode_subtask_enter(t.id),
@@ -253,6 +254,7 @@ fn view_task_detail(model: Model) -> Element(Msg) {
                       fn(subtask_id) { msg.SaveEditSubtask(t.id, subtask_id) },
                       fn() { msg.CancelEditSubtask },
                       fn() { msg.DeselectTask },
+                      resolve_project_name(model, t.project_id),
                     )
                   None -> html.text("")
                 }
@@ -378,6 +380,46 @@ fn view_task_form(
           }),
           event.on("sl-input", decode_input_value(msg.UpdateFormDueDate)),
         ], []),
+      ]),
+      // Project
+      html.div([], [
+        html.label(
+          [
+            attribute.class(
+              "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1",
+            ),
+          ],
+          [html.text("Project")],
+        ),
+        element.element(
+          "sl-select",
+          [
+            attribute.attribute("value", case model.form.project_id {
+              Some(id) -> id
+              None -> ""
+            }),
+            attribute.attribute("hoist", ""),
+            attribute.attribute("clearable", ""),
+            attribute.attribute("placeholder", "No project"),
+            event.on(
+              "sl-change",
+              decode.at(["target", "value"], decode.string)
+              |> decode.map(fn(s) {
+                case s {
+                  "" -> msg.ClearFormProject
+                  id -> msg.UpdateFormProject(id)
+                }
+              }),
+            ),
+          ],
+          list.map(model.projects, fn(p) {
+            element.element(
+              "sl-option",
+              [attribute.attribute("value", p.id)],
+              [html.text(p.name)],
+            )
+          }),
+        ),
       ]),
     ]),
     // Actions
@@ -516,6 +558,41 @@ fn decode_sort_value() -> decode.Decoder(Msg) {
       "title" -> msg.SetSort(model.SortByTitle)
       _ -> msg.SetSort(model.SortByCreated)
     }
+  })
+}
+
+/// Resolve project name from project_id
+fn resolve_project_name(
+  model_data: Model,
+  project_id: Option(String),
+) -> Option(String) {
+  case project_id {
+    None -> None
+    Some(id) ->
+      list.find(model_data.projects, fn(p) { p.id == id })
+      |> option.from_result
+      |> option.map(fn(p) { p.name })
+  }
+}
+
+/// Decoder for status dropdown change
+fn decode_status_value(task_id: String) -> decode.Decoder(Msg) {
+  decode.at(["target", "value"], decode.string)
+  |> decode.map(fn(s) {
+    case s {
+      "todo" -> msg.SetTaskStatus(task_id, Todo)
+      "in_progress" -> msg.SetTaskStatus(task_id, InProgress)
+      "done" -> msg.SetTaskStatus(task_id, Done)
+      _ -> msg.NoOp
+    }
+  })
+}
+
+/// Decoder for priority dropdown change
+fn decode_priority_value(task_id: String) -> decode.Decoder(Msg) {
+  decode.at(["target", "value"], decode.string)
+  |> decode.map(fn(s) {
+    msg.SetTaskPriority(task_id, model.priority_from_string(s))
   })
 }
 

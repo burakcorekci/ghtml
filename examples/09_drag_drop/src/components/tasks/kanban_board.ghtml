@@ -1,7 +1,7 @@
 @import(gleam/int)
 @import(gleam/list)
 @import(gleam/dynamic/decode)
-@import(model.{type Task, type TaskStatus, Todo, InProgress, Done})
+@import(model.{type Task, type TaskStatus, Todo, InProgress, Done, High, Medium, Low, NoPriority})
 
 @params(
   todo_tasks: List(Task),
@@ -26,11 +26,21 @@
       {#each todo_tasks as task, idx}
         <div
           draggable="true"
-          class="bg-white dark:bg-gray-700 p-3 rounded-lg shadow-sm cursor-pointer hover:shadow-md transition-shadow"
+          class="relative bg-white dark:bg-gray-700 p-3 rounded-lg shadow-sm cursor-pointer hover:shadow-md transition-shadow"
           @click={on_task_click(task.id)}
           @dragstart={on_drag_start(task.id)}
           @dragend={on_drag_end}
         >
+          {#case task.priority}
+            {:High}
+              <span class="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-red-500"></span>
+            {:Medium}
+              <span class="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-orange-500"></span>
+            {:Low}
+              <span class="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-purple-500"></span>
+            {:NoPriority}
+              <span></span>
+          {/case}
           <h3 class="font-medium text-gray-900 dark:text-white">{task.title}</h3>
           {#if task.description != ""}
             <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">{task.description}</p>
@@ -50,11 +60,21 @@
       {#each in_progress_tasks as task, idx2}
         <div
           draggable="true"
-          class="bg-white dark:bg-gray-700 p-3 rounded-lg shadow-sm cursor-pointer hover:shadow-md transition-shadow"
+          class="relative bg-white dark:bg-gray-700 p-3 rounded-lg shadow-sm cursor-pointer hover:shadow-md transition-shadow"
           @click={on_task_click(task.id)}
           @dragstart={on_drag_start(task.id)}
           @dragend={on_drag_end}
         >
+          {#case task.priority}
+            {:High}
+              <span class="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-red-500"></span>
+            {:Medium}
+              <span class="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-orange-500"></span>
+            {:Low}
+              <span class="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-purple-500"></span>
+            {:NoPriority}
+              <span></span>
+          {/case}
           <h3 class="font-medium text-gray-900 dark:text-white">{task.title}</h3>
           {#if task.description != ""}
             <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">{task.description}</p>
@@ -74,11 +94,21 @@
       {#each done_tasks as task, idx3}
         <div
           draggable="true"
-          class="bg-white dark:bg-gray-700 p-3 rounded-lg shadow-sm cursor-pointer hover:shadow-md transition-shadow"
+          class="relative bg-white dark:bg-gray-700 p-3 rounded-lg shadow-sm cursor-pointer hover:shadow-md transition-shadow"
           @click={on_task_click(task.id)}
           @dragstart={on_drag_start(task.id)}
           @dragend={on_drag_end}
         >
+          {#case task.priority}
+            {:High}
+              <span class="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-red-500"></span>
+            {:Medium}
+              <span class="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-orange-500"></span>
+            {:Low}
+              <span class="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-purple-500"></span>
+            {:NoPriority}
+              <span></span>
+          {/case}
           <h3 class="font-medium text-gray-900 dark:text-white line-through">{task.title}</h3>
           {#if task.description != ""}
             <p class="text-sm text-gray-400 mt-1 line-clamp-2">{task.description}</p>

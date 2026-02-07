@@ -103,6 +103,17 @@ pub fn update(model: Model, msg: Msg) -> Model {
       Model(..model, tasks: updated_tasks)
     }
 
+    msg.SetTaskPriority(id, priority) -> {
+      let updated_tasks =
+        list.map(model.tasks, fn(t) {
+          case t.id == id {
+            True -> Task(..t, priority: priority)
+            False -> t
+          }
+        })
+      Model(..model, tasks: updated_tasks)
+    }
+
     // Subtask actions
     msg.ToggleSubtask(task_id, subtask_id) -> {
       let updated_tasks =
