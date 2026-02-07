@@ -11,8 +11,10 @@
 //// these tests verify the pipeline handles edge cases correctly.
 
 import ghtml/cache
+import ghtml/codegen
 import ghtml/parser
 import ghtml/target/lustre
+import ghtml/types.{Lustre}
 import gleam/int
 import gleam/io
 import gleam/list
@@ -26,6 +28,12 @@ fn generate_from_content(content: String, name: String) -> String {
   let hash = cache.hash_content(content)
   let assert Ok(template) = parser.parse(content)
   lustre.generate(template, name, hash)
+}
+
+fn generate_via_dispatcher(content: String, name: String) -> String {
+  let hash = cache.hash_content(content)
+  let assert Ok(template) = parser.parse(content)
+  codegen.generate(template, name, hash, Lustre)
 }
 
 // === Error Handling Tests ===
@@ -279,6 +287,146 @@ pub fn full_example_from_plan_test() {
   // Events
   should.be_true(string.contains(code, "event.on_input(on_email_change)"))
   should.be_true(string.contains(code, "event.on_click(on_save())"))
+}
+
+// === Target Pipeline Tests ===
+
+pub fn dispatcher_produces_identical_output_to_direct_test() {
+  // Verify that going through codegen.generate() with Lustre target
+  // produces identical output to calling lustre.generate() directly.
+  // This is the core backwards-compatibility guarantee.
+  let content =
+    "@import(gleam/int)
+
+@params(name: String, count: Int)
+
+<div class=\"card\">
+  <h1>{name}</h1>
+  <p>Count: {int.to_string(count)}</p>
+</div>"
+
+  let direct = generate_from_content(content, "test.ghtml")
+  let via_dispatcher = generate_via_dispatcher(content, "test.ghtml")
+
+  should.equal(direct, via_dispatcher)
+}
+
+pub fn dispatcher_with_complex_template_test() {
+  // Full pipeline through dispatcher with all features
+  let content =
+    "@import(gleam/int)
+
+@params(
+  show: Bool,
+  items: List(String),
+  on_click: fn() -> msg,
+)
+
+<div class=\"container\">
+  {#if show}
+    <ul>
+      {#each items as item, i}
+        <li>{int.to_string(i)}: {item}</li>
+      {/each}
+    </ul>
+  {/if}
+  <button @click={on_click()}>Click</button>
+</div>"
+
+  let code = generate_via_dispatcher(content, "complex.ghtml")
+
+  // Verify all features work through the dispatcher
+  should.be_true(string.contains(code, "case show {"))
+  should.be_true(string.contains(code, "keyed.fragment("))
+  should.be_true(string.contains(code, "event.on_click(on_click())"))
+  should.be_true(string.contains(code, "attribute.class(\"container\")"))
+}
+
+pub fn dispatcher_preserves_hash_test() {
+  let content =
+    "@params()
+
+<div>Hello</div>"
+
+  let hash = cache.hash_content(content)
+  let assert Ok(template) = parser.parse(content)
+  let code = codegen.generate(template, "test.ghtml", hash, Lustre)
+
+  let assert Ok(extracted_hash) = cache.extract_hash(code)
+  should.equal(extracted_hash, hash)
+}
+
+pub fn all_fixtures_generate_via_dispatcher_test() {
+  // Verify all fixtures produce identical output through both paths
+  let assert Ok(files) = simplifile.get_files("test/fixtures")
+
+  let ghtml_files =
+    files
+    |> list.filter(fn(f) { string.ends_with(f, ".ghtml") })
+
+  should.be_true(ghtml_files != [])
+
+  ghtml_files
+  |> list.each(fn(path) {
+    let assert Ok(content) = simplifile.read(path)
+    let result = parser.parse(content)
+    case result {
+      Ok(template) -> {
+        let hash = cache.hash_content(content)
+        let direct = lustre.generate(template, path, hash)
+        let via_dispatcher = codegen.generate(template, path, hash, Lustre)
+        should.equal(direct, via_dispatcher)
+      }
+      Error(_) -> Nil
+    }
+  })
+}
+
+// === Generic Event Modifier Pipeline Tests ===
+
+pub fn generic_event_modifier_end_to_end_test() {
+  // Test the full pipeline: template source → parse → codegen
+  // for generic events with modifiers
+  let content =
+    "@params(on_drop: fn(String) -> msg)
+
+<div @on:drop.prevent.stop={on_drop(\"item\")}>Drop here</div>"
+
+  let code = generate_via_dispatcher(content, "drag.ghtml")
+
+  should.be_true(string.contains(
+    code,
+    "event.stop_propagation(event.prevent_default(event.on(\"drop\", on_drop(\"item\"))))",
+  ))
+}
+
+pub fn generic_event_single_modifier_end_to_end_test() {
+  let content =
+    "@params(on_dragover: fn() -> msg)
+
+<div @on:dragover.prevent={on_dragover()}>Drag zone</div>"
+
+  let code = generate_via_dispatcher(content, "drag.ghtml")
+
+  should.be_true(string.contains(
+    code,
+    "event.prevent_default(event.on(\"dragover\", on_dragover()))",
+  ))
+}
+
+pub fn standard_event_modifier_end_to_end_test() {
+  // Test standard event (not @on:) with modifiers through full pipeline
+  let content =
+    "@params(handler: fn() -> msg)
+
+<button @click.stop.prevent={handler()}>Click</button>"
+
+  let code = generate_via_dispatcher(content, "event.ghtml")
+
+  should.be_true(string.contains(
+    code,
+    "event.prevent_default(event.stop_propagation(event.on_click(handler())))",
+  ))
 }
 
 // === Fixture Parsing Sanity Check ===
