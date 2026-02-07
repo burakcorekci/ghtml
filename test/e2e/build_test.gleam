@@ -10,8 +10,8 @@
 
 import e2e_helpers
 import ghtml/cache
-import ghtml/codegen
 import ghtml/parser
+import ghtml/target/lustre
 import gleam/io
 import gleam/list
 import gleam/result
@@ -49,7 +49,7 @@ fn test_fixture_compiles(fixture_rel_path: String) {
 
   let output_path = project_dir <> "/src/" <> name <> ".gleam"
   let hash = cache.hash_content(content)
-  let generated = codegen.generate(template, fixture_path, hash)
+  let generated = lustre.generate(template, fixture_path, hash)
 
   let assert Ok(Nil) = simplifile.write(output_path, generated)
 
@@ -102,7 +102,7 @@ pub fn all_fixtures_compile_test() {
     let filename = get_filename(fixture_path)
     let output_path = project_dir <> "/src/" <> filename <> ".gleam"
     let hash = cache.hash_content(content)
-    let generated = codegen.generate(template, fixture_path, hash)
+    let generated = lustre.generate(template, fixture_path, hash)
 
     let assert Ok(Nil) = simplifile.write(output_path, generated)
   })

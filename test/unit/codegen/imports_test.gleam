@@ -1,4 +1,4 @@
-import ghtml/codegen
+import ghtml/target/lustre
 import ghtml/types.{
   type Span, CaseBranch, CaseNode, EachNode, Element, EventAttribute, IfNode,
   Position, Span, StaticAttribute, Template, TextNode,
@@ -20,7 +20,7 @@ pub fn generate_minimal_imports_test() {
       Element("div", [], [TextNode("Hello", test_span())], test_span()),
     ])
 
-  let code = codegen.generate(template, "test.ghtml", "abc123")
+  let code = lustre.generate(template, "test.ghtml", "abc123")
 
   // Should have basic lustre imports
   should.be_true(string.contains(code, "import lustre/element.{"))
@@ -40,7 +40,7 @@ pub fn generate_imports_with_user_imports_test() {
       Element("div", [], [], test_span()),
     ])
 
-  let code = codegen.generate(template, "test.ghtml", "abc123")
+  let code = lustre.generate(template, "test.ghtml", "abc123")
 
   should.be_true(string.contains(code, "import gleam/io"))
   should.be_true(string.contains(code, "import app/types.{type User}"))
@@ -59,7 +59,7 @@ pub fn generate_imports_with_if_else_test() {
       ),
     ])
 
-  let code = codegen.generate(template, "test.ghtml", "abc123")
+  let code = lustre.generate(template, "test.ghtml", "abc123")
 
   // Has else, so none is NOT needed
   should.be_false(string.contains(code, "none"))
@@ -76,7 +76,7 @@ pub fn generate_imports_with_if_no_else_test() {
       ),
     ])
 
-  let code = codegen.generate(template, "test.ghtml", "abc123")
+  let code = lustre.generate(template, "test.ghtml", "abc123")
 
   // No else, so none IS needed
   should.be_true(string.contains(code, "none"))
@@ -94,7 +94,7 @@ pub fn generate_imports_with_each_test() {
       ),
     ])
 
-  let code = codegen.generate(template, "test.ghtml", "abc123")
+  let code = lustre.generate(template, "test.ghtml", "abc123")
 
   // Each requires list and keyed
   should.be_true(string.contains(code, "import gleam/list"))
@@ -113,7 +113,7 @@ pub fn generate_imports_with_each_index_test() {
       ),
     ])
 
-  let code = codegen.generate(template, "test.ghtml", "abc123")
+  let code = lustre.generate(template, "test.ghtml", "abc123")
 
   // Each with index requires gleam/int for int.to_string
   should.be_true(string.contains(code, "import gleam/int"))
@@ -130,7 +130,7 @@ pub fn generate_imports_with_event_test() {
       ),
     ])
 
-  let code = codegen.generate(template, "test.ghtml", "abc123")
+  let code = lustre.generate(template, "test.ghtml", "abc123")
 
   // Event handlers require lustre/event
   should.be_true(string.contains(code, "import lustre/event"))
@@ -142,7 +142,7 @@ pub fn generate_imports_without_event_test() {
       Element("button", [StaticAttribute("class", "btn")], [], test_span()),
     ])
 
-  let code = codegen.generate(template, "test.ghtml", "abc123")
+  let code = lustre.generate(template, "test.ghtml", "abc123")
 
   // No event handlers, no lustre/event
   should.be_false(string.contains(code, "import lustre/event"))
@@ -155,7 +155,7 @@ pub fn generate_imports_with_fragment_test() {
       Element("span", [], [], test_span()),
     ])
 
-  let code = codegen.generate(template, "test.ghtml", "abc123")
+  let code = lustre.generate(template, "test.ghtml", "abc123")
 
   // Multiple roots require fragment
   should.be_true(string.contains(code, "fragment"))
@@ -167,7 +167,7 @@ pub fn generate_imports_single_root_no_fragment_test() {
       Element("div", [], [], test_span()),
     ])
 
-  let code = codegen.generate(template, "test.ghtml", "abc123")
+  let code = lustre.generate(template, "test.ghtml", "abc123")
 
   // Single root, no fragment needed
   should.be_false(string.contains(code, "fragment"))
@@ -187,7 +187,7 @@ pub fn generate_imports_no_duplicate_list_test() {
       ),
     ])
 
-  let code = codegen.generate(template, "test.ghtml", "abc123")
+  let code = lustre.generate(template, "test.ghtml", "abc123")
 
   // Should have user's import
   should.be_true(string.contains(code, "import gleam/list.{map, filter}"))
@@ -213,7 +213,7 @@ pub fn generate_imports_no_duplicate_int_test() {
       ),
     ])
 
-  let code = codegen.generate(template, "test.ghtml", "abc123")
+  let code = lustre.generate(template, "test.ghtml", "abc123")
 
   // Should have user's import
   should.be_true(string.contains(code, "import gleam/int"))
@@ -249,7 +249,7 @@ pub fn generate_imports_all_features_test() {
       ),
     ])
 
-  let code = codegen.generate(template, "test.ghtml", "abc123")
+  let code = lustre.generate(template, "test.ghtml", "abc123")
 
   // All features should be present
   should.be_true(string.contains(code, "import gleam/list"))
@@ -275,7 +275,7 @@ pub fn generate_imports_correct_order_test() {
       ),
     ])
 
-  let code = codegen.generate(template, "test.ghtml", "abc123")
+  let code = lustre.generate(template, "test.ghtml", "abc123")
 
   // Auto imports should come before user imports
   let list_pos = string.split(code, "import gleam/list") |> list.first()
@@ -305,7 +305,7 @@ pub fn generate_imports_if_branch_multiple_children_test() {
       ),
     ])
 
-  let code = codegen.generate(template, "test.ghtml", "abc123")
+  let code = lustre.generate(template, "test.ghtml", "abc123")
 
   // Multiple children in branch require fragment
   should.be_true(string.contains(code, "fragment"))
@@ -333,7 +333,7 @@ pub fn generate_imports_case_multiple_children_test() {
       ),
     ])
 
-  let code = codegen.generate(template, "test.ghtml", "abc123")
+  let code = lustre.generate(template, "test.ghtml", "abc123")
 
   // Multiple children in branch require fragment
   should.be_true(string.contains(code, "fragment"))
@@ -359,7 +359,7 @@ pub fn generate_imports_nested_if_no_else_test() {
       ),
     ])
 
-  let code = codegen.generate(template, "test.ghtml", "abc123")
+  let code = lustre.generate(template, "test.ghtml", "abc123")
 
   // Nested if without else requires none
   should.be_true(string.contains(code, "none"))

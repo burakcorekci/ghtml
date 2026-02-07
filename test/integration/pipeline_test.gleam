@@ -11,8 +11,8 @@
 //// these tests verify the pipeline handles edge cases correctly.
 
 import ghtml/cache
-import ghtml/codegen
 import ghtml/parser
+import ghtml/target/lustre
 import gleam/int
 import gleam/io
 import gleam/list
@@ -25,7 +25,7 @@ import simplifile
 fn generate_from_content(content: String, name: String) -> String {
   let hash = cache.hash_content(content)
   let assert Ok(template) = parser.parse(content)
-  codegen.generate(template, name, hash)
+  lustre.generate(template, name, hash)
 }
 
 // === Error Handling Tests ===
@@ -162,7 +162,7 @@ pub fn generated_code_has_correct_hash_test() {
   let assert Ok(content) = simplifile.read("test/fixtures/simple/basic.ghtml")
   let hash = cache.hash_content(content)
   let assert Ok(template) = parser.parse(content)
-  let code = codegen.generate(template, "basic.ghtml", hash)
+  let code = lustre.generate(template, "basic.ghtml", hash)
 
   // Verify the hash in the generated code matches the source hash
   let assert Ok(extracted_hash) = cache.extract_hash(code)
@@ -183,7 +183,7 @@ pub fn large_template_performance_test() {
   // Should parse and generate quickly
   let hash = cache.hash_content(content)
   let assert Ok(template) = parser.parse(content)
-  let _code = codegen.generate(template, "large.ghtml", hash)
+  let _code = lustre.generate(template, "large.ghtml", hash)
 
   // If we get here without timeout, performance is acceptable
   should.be_true(True)
@@ -235,7 +235,7 @@ pub fn full_example_from_plan_test() {
 
   let hash = cache.hash_content(content)
   let assert Ok(template) = parser.parse(content)
-  let code = codegen.generate(template, "user_card.ghtml", hash)
+  let code = lustre.generate(template, "user_card.ghtml", hash)
 
   // Verify all major features
   should.be_true(string.contains(code, "// @generated from user_card.ghtml"))
