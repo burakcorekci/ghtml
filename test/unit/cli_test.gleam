@@ -5,9 +5,9 @@
 
 import ghtml
 import ghtml/cache
-import ghtml/codegen
 import ghtml/parser
 import ghtml/scanner
+import ghtml/target/lustre
 import gleam/list
 import gleam/string
 import gleeunit/should
@@ -96,7 +96,7 @@ pub fn process_simple_file_test() {
   let hash = cache.hash_content(content)
 
   let assert Ok(template) = parser.parse(content)
-  let code = codegen.generate(template, source, hash)
+  let code = lustre.generate(template, source, hash)
 
   let _ = simplifile.write(output, code)
 
@@ -126,7 +126,7 @@ pub fn cache_skip_unchanged_test() {
   let assert Ok(content) = simplifile.read(source)
   let hash = cache.hash_content(content)
   let assert Ok(template) = parser.parse(content)
-  let code = codegen.generate(template, source, hash)
+  let code = lustre.generate(template, source, hash)
   let _ = simplifile.write(output, code)
 
   // Check if regeneration is needed
@@ -146,7 +146,7 @@ pub fn cache_detect_change_test() {
   let assert Ok(content) = simplifile.read(source)
   let hash = cache.hash_content(content)
   let assert Ok(template) = parser.parse(content)
-  let code = codegen.generate(template, source, hash)
+  let code = lustre.generate(template, source, hash)
   let _ = simplifile.write(output, code)
 
   // Modify source
@@ -240,7 +240,7 @@ pub fn cleanup_orphans_keeps_files_with_source_test() {
   let assert Ok(content) = simplifile.read(source)
   let hash = cache.hash_content(content)
   let assert Ok(template) = parser.parse(content)
-  let code = codegen.generate(template, source, hash)
+  let code = lustre.generate(template, source, hash)
   let _ = simplifile.write(output, code)
 
   // Run cleanup
@@ -322,7 +322,7 @@ pub fn generated_code_has_correct_structure_test() {
   let assert Ok(content) = simplifile.read(test_dir <> "/src/template.ghtml")
   let hash = cache.hash_content(content)
   let assert Ok(template) = parser.parse(content)
-  let code = codegen.generate(template, "template.ghtml", hash)
+  let code = lustre.generate(template, "template.ghtml", hash)
   let _ = simplifile.write(test_dir <> "/src/template.gleam", code)
 
   // Verify the code looks correct

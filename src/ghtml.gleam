@@ -14,9 +14,9 @@
 
 import argv
 import ghtml/cache
-import ghtml/codegen
 import ghtml/parser
 import ghtml/scanner
+import ghtml/target/lustre
 import ghtml/watcher
 import gleam/erlang/process
 import gleam/int
@@ -130,7 +130,7 @@ fn process_file(source_path: String, output_path: String) -> Result(Nil, String)
       let hash = cache.hash_content(content)
       case parser.parse(content) {
         Ok(template) -> {
-          let gleam_code = codegen.generate(template, source_path, hash)
+          let gleam_code = lustre.generate(template, source_path, hash)
           case simplifile.write(output_path, gleam_code) {
             Ok(_) -> {
               io.println("✓ " <> source_path <> " → " <> output_path)
