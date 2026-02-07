@@ -664,3 +664,80 @@ pub fn generate_imports_with_events_test() {
 
   should.be_true(string.contains(code, "import lustre/event"))
 }
+
+// === Generic Event (on:) with Modifier Tests ===
+
+pub fn generate_generic_event_stop_only_test() {
+  let template =
+    Template(imports: [], params: [], body: [
+      Element(
+        "div",
+        [EventAttribute("on:click", "handler", ["stop"])],
+        [],
+        test_span(),
+      ),
+    ])
+
+  let code = lustre.generate(template, "test.ghtml", "abc123")
+
+  should.be_true(string.contains(
+    code,
+    "event.stop_propagation(event.on(\"click\", handler))",
+  ))
+}
+
+pub fn generate_generic_event_prevent_only_test() {
+  let template =
+    Template(imports: [], params: [], body: [
+      Element(
+        "div",
+        [EventAttribute("on:submit", "on_submit", ["prevent"])],
+        [],
+        test_span(),
+      ),
+    ])
+
+  let code = lustre.generate(template, "test.ghtml", "abc123")
+
+  should.be_true(string.contains(
+    code,
+    "event.prevent_default(event.on(\"submit\", on_submit))",
+  ))
+}
+
+pub fn generate_generic_event_both_modifiers_test() {
+  let template =
+    Template(imports: [], params: [], body: [
+      Element(
+        "div",
+        [EventAttribute("on:dragstart", "on_drag", ["prevent", "stop"])],
+        [],
+        test_span(),
+      ),
+    ])
+
+  let code = lustre.generate(template, "test.ghtml", "abc123")
+
+  should.be_true(string.contains(
+    code,
+    "event.stop_propagation(event.prevent_default(event.on(\"dragstart\", on_drag)))",
+  ))
+}
+
+pub fn generate_generic_event_no_modifiers_test() {
+  let template =
+    Template(imports: [], params: [], body: [
+      Element(
+        "sl-dialog",
+        [EventAttribute("on:sl-show", "on_show", [])],
+        [],
+        test_span(),
+      ),
+    ])
+
+  let code = lustre.generate(template, "test.ghtml", "abc123")
+
+  should.be_true(string.contains(code, "event.on(\"sl-show\", on_show)"))
+  should.be_false(string.contains(code, "prevent_default"))
+  should.be_false(string.contains(code, "stop_propagation"))
+}
