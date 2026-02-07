@@ -156,12 +156,12 @@ pub fn e2e_dir() -> String {
 ///
 /// This is a minimal Gleam project structure used as a base for E2E tests.
 pub fn project_template_dir() -> String {
-  e2e_dir() <> "/project_template"
+  e2e_dir() <> "/lustre/project_template"
 }
 
 /// Returns the path to the generated SSR test modules directory.
 ///
 /// This directory contains pre-generated modules for SSR testing.
 pub fn generated_dir() -> String {
-  e2e_dir() <> "/generated"
+  e2e_dir() <> "/lustre/generated"
 }

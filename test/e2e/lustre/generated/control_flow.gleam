@@ -2,7 +2,9 @@
 // @hash a42bb361efde13b6c904f974200e66415b79dbf4767af620895fe247916318f0
 // DO NOT EDIT - regenerate with: gleam run -m ghtml
 
-import e2e/generated/types.{type Status, type User, Active, Inactive, Pending}
+import e2e/lustre/generated/types.{
+  type Status, type User, Active, Inactive, Pending,
+}
 import gleam/int
 import gleam/list
 import lustre/attribute

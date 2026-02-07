@@ -216,7 +216,7 @@ Event modifiers:
 
 ## Test Structure
 
-Tests are organized by type (unit/integration/e2e):
+Tests are organized by type (unit/integration/e2e) with target-specific tests under `target/<name>` or `<name>/` subdirectories:
 ```
 test/
   ghtml_test.gleam                    # Test entry point (gleeunit)
@@ -227,26 +227,30 @@ test/
     cache_test.gleam                  # Cache tests
     watcher_test.gleam                # Watcher tests
     types_test.gleam                  # Type tests
-    parser/
-      tokenizer_test.gleam            # Tokenizer tests
-      ast_test.gleam                  # AST builder tests
+    lexer_test.gleam                  # Tokenizer tests
+    parser_test.gleam                 # AST builder tests
     codegen/
-      basic_test.gleam                # Basic element codegen
-      attributes_test.gleam           # Attribute handling
-      control_flow_test.gleam         # if/each/case codegen
-      imports_test.gleam              # Smart import tests
+      dispatcher_test.gleam           # Shared dispatcher tests
+    target/
+      lustre/
+        basic_test.gleam              # Basic element codegen (Lustre)
+        attributes_test.gleam         # Attribute handling (Lustre)
+        control_flow_test.gleam       # if/each/case codegen (Lustre)
+        imports_test.gleam            # Smart import tests (Lustre)
   integration/                        # Pipeline tests
-    pipeline_test.gleam               # End-to-end pipeline tests
+    lustre/
+      pipeline_test.gleam             # Lustre pipeline tests
   e2e/                                # E2E tests (slow, require build)
-    helpers_test.gleam                # Tests for e2e_helpers module
-    build_test.gleam                  # Build verification tests
-    generated_modules_test.gleam      # Generated module validation
-    lustre_dep_test.gleam             # Lustre dependency tests
-    project_template_test.gleam       # Project template tests
-    ssr_test.gleam                    # Server-side rendering tests
-    generated/                        # Pre-generated modules for SSR tests
-      basic.gleam, attributes.gleam, control_flow.gleam, etc.
-    project_template/                 # Minimal Gleam project for E2E tests
+    helpers_test.gleam                # Tests for e2e_helpers module (target-agnostic)
+    lustre/
+      build_test.gleam                # Build verification tests
+      generated_modules_test.gleam    # Generated module validation
+      lustre_dep_test.gleam           # Lustre dependency tests
+      project_template_test.gleam     # Project template tests
+      ssr_test.gleam                  # Server-side rendering tests
+      generated/                      # Pre-generated modules for SSR tests
+        basic.gleam, attributes.gleam, control_flow.gleam, etc.
+      project_template/               # Minimal Gleam project for E2E tests
   fixtures/                           # Shared test fixtures (ignored by scanner)
     simple/basic.ghtml                # Simple template fixture
     attributes/all_attrs.ghtml        # Attributes fixture
@@ -354,7 +358,7 @@ ParseError(span: Span, message: String)
 ### Adding a New Attribute
 1. Add to `known_attributes` list in `codegen.gleam`
 2. If boolean, add to `boolean_attributes` list
-3. Add tests in `test/unit/codegen/attributes_test.gleam`
+3. Add tests in `test/unit/target/lustre/attributes_test.gleam`
 
 ### Adding a New Control Flow Construct
 1. Add token type in `types.gleam`
@@ -362,4 +366,4 @@ ParseError(span: Span, message: String)
 3. Add stack frame type for nesting in `parser.gleam`
 4. Add AST node handling in `build_ast` in `parser.gleam`
 5. Add codegen in `codegen.gleam`
-6. Add tests in `test/unit/codegen/control_flow_test.gleam`
+6. Add tests in `test/unit/target/lustre/control_flow_test.gleam`

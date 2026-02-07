@@ -131,12 +131,12 @@ pub fn e2e_dir_returns_correct_path_test() {
 
 pub fn project_template_dir_returns_correct_path_test() {
   e2e_helpers.project_template_dir()
-  |> should.equal("test/e2e/project_template")
+  |> should.equal("test/e2e/lustre/project_template")
 }
 
 pub fn generated_dir_returns_correct_path_test() {
   e2e_helpers.generated_dir()
-  |> should.equal("test/e2e/generated")
+  |> should.equal("test/e2e/lustre/generated")
 }
 
 // === Shell Execution Tests ===

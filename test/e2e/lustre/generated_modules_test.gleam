@@ -2,12 +2,12 @@
 ////
 //// Verifies that all generated modules exist, compile, and have proper headers.
 
-import e2e/generated/basic as basic_template
-import e2e/generated/control_flow as control_flow_template
-import e2e/generated/custom_elements as custom_elements_template
-import e2e/generated/edge_cases as edge_cases_template
-import e2e/generated/fragments as fragments_template
-import e2e/generated/types.{Active, User}
+import e2e/lustre/generated/basic as basic_template
+import e2e/lustre/generated/control_flow as control_flow_template
+import e2e/lustre/generated/custom_elements as custom_elements_template
+import e2e/lustre/generated/edge_cases as edge_cases_template
+import e2e/lustre/generated/fragments as fragments_template
+import e2e/lustre/generated/types.{Active, User}
 import e2e_helpers
 import gleam/list
 import gleam/string

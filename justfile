@@ -407,14 +407,14 @@ e2e-regen:
     # Run generator on fixtures dir (creates .gleam files alongside .ghtml)
     gleam run -m ghtml -- test/fixtures
 
-    # Copy to e2e/generated with appropriate names
-    mkdir -p test/e2e/generated
-    cp test/fixtures/simple/basic.gleam test/e2e/generated/basic.gleam 2>/dev/null || true
-    cp test/fixtures/attributes/all_attrs.gleam test/e2e/generated/attributes.gleam 2>/dev/null || true
-    cp test/fixtures/control_flow/full.gleam test/e2e/generated/control_flow.gleam 2>/dev/null || true
-    cp test/fixtures/fragments/multiple_roots.gleam test/e2e/generated/fragments.gleam 2>/dev/null || true
-    cp test/fixtures/custom_elements/web_components.gleam test/e2e/generated/custom_elements.gleam 2>/dev/null || true
-    cp test/fixtures/edge_cases/special.gleam test/e2e/generated/edge_cases.gleam 2>/dev/null || true
+    # Copy to e2e/lustre/generated with appropriate names
+    mkdir -p test/e2e/lustre/generated
+    cp test/fixtures/simple/basic.gleam test/e2e/lustre/generated/basic.gleam 2>/dev/null || true
+    cp test/fixtures/attributes/all_attrs.gleam test/e2e/lustre/generated/attributes.gleam 2>/dev/null || true
+    cp test/fixtures/control_flow/full.gleam test/e2e/lustre/generated/control_flow.gleam 2>/dev/null || true
+    cp test/fixtures/fragments/multiple_roots.gleam test/e2e/lustre/generated/fragments.gleam 2>/dev/null || true
+    cp test/fixtures/custom_elements/web_components.gleam test/e2e/lustre/generated/custom_elements.gleam 2>/dev/null || true
+    cp test/fixtures/edge_cases/special.gleam test/e2e/lustre/generated/edge_cases.gleam 2>/dev/null || true
 
     # Clean up generated files from fixtures directory
     rm -f test/fixtures/simple/basic.gleam
@@ -424,19 +424,19 @@ e2e-regen:
     rm -f test/fixtures/custom_elements/web_components.gleam
     rm -f test/fixtures/edge_cases/special.gleam
 
-    # Fix import paths for generated modules (types -> e2e/generated/types)
+    # Fix import paths for generated modules (types -> e2e/lustre/generated/types)
     # Use platform-specific sed syntax (macOS vs Linux)
     if [[ "$(uname)" == "Darwin" ]]; then
-        sed -i '' 's/^import types\./import e2e\/generated\/types./' test/e2e/generated/control_flow.gleam
+        sed -i '' 's/^import types\./import e2e\/lustre\/generated\/types./' test/e2e/lustre/generated/control_flow.gleam
     else
-        sed -i 's/^import types\./import e2e\/generated\/types./' test/e2e/generated/control_flow.gleam
+        sed -i 's/^import types\./import e2e\/lustre\/generated\/types./' test/e2e/lustre/generated/control_flow.gleam
     fi
 
     # Format the generated files
-    gleam format test/e2e/generated/
+    gleam format test/e2e/lustre/generated/
 
     echo "Generated SSR test modules:"
-    ls -la test/e2e/generated/*.gleam
+    ls -la test/e2e/lustre/generated/*.gleam
     echo "✓ SSR test modules regenerated"
 
 # === GIF Recording ===

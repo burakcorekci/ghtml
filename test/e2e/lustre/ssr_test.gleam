@@ -4,13 +4,13 @@
 //// components produce the expected HTML output. Tests import the pre-generated
 //// modules and verify their rendered output.
 
-import e2e/generated/attributes
-import e2e/generated/basic
-import e2e/generated/control_flow
-import e2e/generated/custom_elements
-import e2e/generated/edge_cases
-import e2e/generated/fragments
-import e2e/generated/types.{Active, Inactive, User}
+import e2e/lustre/generated/attributes
+import e2e/lustre/generated/basic
+import e2e/lustre/generated/control_flow
+import e2e/lustre/generated/custom_elements
+import e2e/lustre/generated/edge_cases
+import e2e/lustre/generated/fragments
+import e2e/lustre/generated/types.{Active, Inactive, User}
 import gleam/string
 import gleeunit/should
 import lustre/element
