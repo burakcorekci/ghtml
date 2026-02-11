@@ -167,6 +167,64 @@ fn generate_element_inline(
   attrs: List(Attribute),
   children: List(Node),
 ) -> String {
+  case codegen_utils.is_component(tag) {
+    True -> generate_component_inline(tag, attrs, children)
+    False -> generate_html_element_inline(tag, attrs, children)
+  }
+}
+
+/// Generate code for a component call (PascalCase tag → module.render(...))
+fn generate_component_inline(
+  tag: String,
+  attrs: List(Attribute),
+  children: List(Node),
+) -> String {
+  let module_name = codegen_utils.pascal_to_snake(tag)
+  let args = generate_component_args(attrs, children)
+  module_name <> ".render(" <> args <> ")"
+}
+
+/// Generate labeled arguments for a component call
+fn generate_component_args(
+  attrs: List(Attribute),
+  children: List(Node),
+) -> String {
+  let attr_args =
+    attrs
+    |> list.filter_map(fn(attr) {
+      case attr {
+        StaticAttribute(name, value) ->
+          Ok(
+            codegen_utils.attr_name_to_gleam(name)
+            <> ": \""
+            <> codegen_utils.escape_string(value)
+            <> "\"",
+          )
+        DynamicAttribute(name, expr) ->
+          Ok(codegen_utils.attr_name_to_gleam(name) <> ": " <> expr)
+        BooleanAttribute(name) ->
+          Ok(codegen_utils.attr_name_to_gleam(name) <> ": True")
+        EventAttribute(_, _, _) -> Error(Nil)
+      }
+    })
+
+  let all_args = case children {
+    [] -> attr_args
+    _ -> {
+      let children_code = generate_children_inline(children)
+      list.append(attr_args, ["children: [" <> children_code <> "]"])
+    }
+  }
+
+  string.join(all_args, ", ")
+}
+
+/// Generate code for a standard HTML element (inline format)
+fn generate_html_element_inline(
+  tag: String,
+  attrs: List(Attribute),
+  children: List(Node),
+) -> String {
   let is_custom = codegen_utils.is_custom_element(tag)
   let is_void = codegen_utils.is_void_element(tag)
   // Filter out event attributes — Nakai is SSR-only

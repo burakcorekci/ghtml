@@ -167,8 +167,11 @@ pub fn template_has_attrs(nodes: List(Node)) -> Bool {
 /// Check if a node or its children have attributes
 fn node_has_attrs(node: Node) -> Bool {
   case node {
-    Element(_, attrs, children, _) ->
-      has_non_event_attrs(attrs) || list.any(children, node_has_attrs)
+    Element(tag, attrs, children, _) ->
+      case is_component(tag) {
+        True -> list.any(children, node_has_attrs)
+        False -> has_non_event_attrs(attrs) || list.any(children, node_has_attrs)
+      }
     IfNode(_, then_branch, else_branch, _) ->
       list.any(then_branch, node_has_attrs)
       || list.any(else_branch, node_has_attrs)
@@ -200,8 +203,11 @@ pub fn template_has_events(nodes: List(Node)) -> Bool {
 /// Check if a node or its children have events
 fn node_has_events(node: Node) -> Bool {
   case node {
-    Element(_, attrs, children, _) ->
-      has_event_attrs(attrs) || list.any(children, node_has_events)
+    Element(tag, attrs, children, _) ->
+      case is_component(tag) {
+        True -> list.any(children, node_has_events)
+        False -> has_event_attrs(attrs) || list.any(children, node_has_events)
+      }
     IfNode(_, then_branch, else_branch, _) ->
       list.any(then_branch, node_has_events)
       || list.any(else_branch, node_has_events)
@@ -223,9 +229,51 @@ fn has_event_attrs(attrs: List(Attribute)) -> Bool {
   })
 }
 
-/// Check if a tag is a custom element (contains a hyphen)
+/// Check if a tag is a custom element (contains a hyphen, but not a component)
 pub fn is_custom_element(tag: String) -> Bool {
-  string.contains(tag, "-")
+  string.contains(tag, "-") && !is_component(tag)
+}
+
+const uppercase_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+/// Check if a tag represents a component (PascalCase, starts with uppercase)
+pub fn is_component(tag: String) -> Bool {
+  case string.first(tag) {
+    Ok(c) -> string.contains(uppercase_chars, c)
+    Error(_) -> False
+  }
+}
+
+/// Convert PascalCase to snake_case (e.g., "KpiCard" -> "kpi_card")
+pub fn pascal_to_snake(name: String) -> String {
+  name
+  |> string.to_graphemes()
+  |> do_pascal_to_snake([], True)
+  |> list.reverse()
+  |> string.concat()
+  |> string.lowercase()
+}
+
+fn do_pascal_to_snake(
+  chars: List(String),
+  acc: List(String),
+  first: Bool,
+) -> List(String) {
+  case chars {
+    [] -> acc
+    [c, ..rest] -> {
+      case string.contains(uppercase_chars, c), first {
+        True, True -> do_pascal_to_snake(rest, [c, ..acc], False)
+        True, False -> do_pascal_to_snake(rest, [c, "_", ..acc], False)
+        _, _ -> do_pascal_to_snake(rest, [c, ..acc], False)
+      }
+    }
+  }
+}
+
+/// Convert kebab-case attribute name to snake_case for Gleam labeled args
+pub fn attr_name_to_gleam(name: String) -> String {
+  string.replace(name, "-", "_")
 }
 
 /// Check if any nodes have custom elements
@@ -237,7 +285,12 @@ pub fn template_has_custom_elements(nodes: List(Node)) -> Bool {
 fn node_has_custom_elements(node: Node) -> Bool {
   case node {
     Element(tag, _, children, _) ->
-      is_custom_element(tag) || list.any(children, node_has_custom_elements)
+      case is_component(tag) {
+        True -> list.any(children, node_has_custom_elements)
+        False ->
+          is_custom_element(tag)
+          || list.any(children, node_has_custom_elements)
+      }
     IfNode(_, then_branch, else_branch, _) ->
       list.any(then_branch, node_has_custom_elements)
       || list.any(else_branch, node_has_custom_elements)
@@ -260,7 +313,12 @@ pub fn template_has_html_elements(nodes: List(Node)) -> Bool {
 fn node_has_html_elements(node: Node) -> Bool {
   case node {
     Element(tag, _, children, _) ->
-      !is_custom_element(tag) || list.any(children, node_has_html_elements)
+      case is_component(tag) {
+        True -> list.any(children, node_has_html_elements)
+        False ->
+          !is_custom_element(tag)
+          || list.any(children, node_has_html_elements)
+      }
     IfNode(_, then_branch, else_branch, _) ->
       list.any(then_branch, node_has_html_elements)
       || list.any(else_branch, node_has_html_elements)
