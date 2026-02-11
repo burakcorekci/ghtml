@@ -7,7 +7,8 @@
 //// 3. New case branch in generate()
 
 import ghtml/target/lustre
-import ghtml/types.{type Target, type Template, Lustre}
+import ghtml/target/nakai
+import ghtml/types.{type Target, type Template, Lustre, Nakai}
 
 /// Generate Gleam code from a parsed template using the specified target.
 pub fn generate(
@@ -18,5 +19,6 @@ pub fn generate(
 ) -> String {
   case target {
     Lustre -> lustre.generate(template, source_path, hash)
+    Nakai -> nakai.generate(template, source_path, hash)
   }
 }

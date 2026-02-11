@@ -1,8 +1,8 @@
 import ghtml/types.{
   BooleanAttribute, CaseBranch, CaseNode, DynamicAttribute, EachNode, Element,
-  EventAttribute, ExprNode, Fragment, IfNode, Lustre, ParseError, Position, Span,
-  StaticAttribute, Template, TextNode, point_span, start_position,
-  target_from_string, valid_target_names,
+  EventAttribute, ExprNode, Fragment, IfNode, Lustre, Nakai, ParseError,
+  Position, Span, StaticAttribute, Template, TextNode, point_span,
+  start_position, target_from_string, valid_target_names,
 }
 import gleam/list
 import gleam/option.{None, Some}
@@ -276,6 +276,7 @@ pub fn target_lustre_test() {
 fn is_lustre_target(target: types.Target) -> Bool {
   case target {
     Lustre -> True
+    Nakai -> False
   }
 }
 
@@ -298,5 +299,15 @@ pub fn target_from_string_empty_test() {
 
 pub fn valid_target_names_test() {
   valid_target_names()
-  |> should.equal(["lustre"])
+  |> should.equal(["lustre", "nakai"])
+}
+
+pub fn target_nakai_test() {
+  let target = Nakai
+  should.be_false(is_lustre_target(target))
+}
+
+pub fn target_from_string_nakai_test() {
+  target_from_string("nakai")
+  |> should.equal(Ok(Nakai))
 }

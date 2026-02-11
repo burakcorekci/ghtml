@@ -90,6 +90,7 @@ pub type Template {
 /// Code generation target backend
 pub type Target {
   Lustre
+  Nakai
 }
 
 /// Parse a target name string into a Target type.
@@ -97,13 +98,14 @@ pub type Target {
 pub fn target_from_string(name: String) -> Result(Target, Nil) {
   case name {
     "lustre" -> Ok(Lustre)
+    "nakai" -> Ok(Nakai)
     _ -> Error(Nil)
   }
 }
 
 /// List of valid target names for error messages.
 pub fn valid_target_names() -> List(String) {
-  ["lustre"]
+  ["lustre", "nakai"]
 }
 
 /// Create a position at line 1, column 1

@@ -74,6 +74,13 @@ src/components/user_card.ghtml  →  src/components/user_card.gleam
                     │  - Smart imports, attrs, events, control flow             │
                     │  - Uses codegen_utils for shared helpers                  │
                     └──────────────────────────────────────────────────────────┘
+                    ┌──────────────────────────────────────────────────────────┐
+                    │              target/nakai.gleam                           │
+                    │  - Nakai-specific code generation (SSR-only)              │
+                    │  - Smart imports, attrs, control flow                     │
+                    │  - No event support (events silently skipped)             │
+                    │  - Uses codegen_utils for shared helpers                  │
+                    └──────────────────────────────────────────────────────────┘
                                             │
                                             ▼
                     ┌──────────────────────────────────────────────────────────┐
@@ -100,7 +107,7 @@ All shared types are defined here:
 - **Attribute** - Attribute variants (StaticAttribute, DynamicAttribute, EventAttribute with modifiers: List(String), BooleanAttribute)
 - **Node** - AST nodes (Element, TextNode, ExprNode, IfNode, EachNode, CaseNode, Fragment)
 - **Template** - Final parsed result with imports, params, and body nodes
-- **Target** - Code generation target backend (currently: Lustre). Includes `target_from_string()` and `valid_target_names()`.
+- **Target** - Code generation target backend (currently: Lustre, Nakai). Includes `target_from_string()` and `valid_target_names()`.
 
 ### `src/ghtml/lexer.gleam` - Lexer
 Tokenizes template source text into a flat list of tokens:
@@ -128,7 +135,7 @@ Key concepts:
 ### `src/ghtml/codegen.gleam` - Code Generation Dispatcher
 Thin dispatcher that routes code generation to the appropriate target:
 - `generate(template, source_path, hash, target) -> String`
-- Dispatches by `Target` type (currently only `Lustre`)
+- Dispatches by `Target` type (currently: `Lustre`, `Nakai`)
 - Adding a new target: new `Target` variant, new file in `target/`, new case branch
 
 ### `src/ghtml/codegen_utils.gleam` - Shared Codegen Utilities
@@ -144,6 +151,16 @@ Lustre-specific code generation:
 - Smart imports: only includes `gleam/list` if `{#each}` is used, etc.
 - Handles attribute mapping (class→attribute.class, @click→event.on_click)
 - Custom elements (tags with `-`) use `element("tag-name", ...)` instead of `html.tag()`
+
+### `src/ghtml/target/nakai.gleam` - Nakai Target Backend
+Nakai-specific code generation (SSR-only):
+- `generate(template, source_path, hash) -> String`
+- Smart imports: only includes `nakai/attr` if attributes are used, etc.
+- Handles attribute mapping (class→attr.class, data-x→attr.Attr("data-x", ...))
+- Custom elements use `html.Element("tag-name", ...)` / `html.LeafElement(...)` constructors
+- Event attributes are silently skipped (Nakai has no event system)
+- Uses `html.Nothing` instead of `none()`, `html.Fragment(...)` instead of `fragment(...)`
+- `{#each}` uses `html.Fragment(list.map(...))` (no keyed support)
 
 ### `src/ghtml/scanner.gleam` - File Discovery
 - `find_lustre_files(root)` - Recursively find `.ghtml` files
@@ -237,6 +254,11 @@ test/
         attributes_test.gleam         # Attribute handling (Lustre)
         control_flow_test.gleam       # if/each/case codegen (Lustre)
         imports_test.gleam            # Smart import tests (Lustre)
+      nakai/
+        basic_test.gleam              # Basic element codegen (Nakai)
+        attributes_test.gleam         # Attribute handling (Nakai)
+        control_flow_test.gleam       # if/each/case codegen (Nakai)
+        imports_test.gleam            # Smart import tests (Nakai)
   integration/                        # Pipeline tests
     lustre/
       pipeline_test.gleam             # Lustre pipeline tests
@@ -310,6 +332,7 @@ Each example is a standalone Gleam project with its own `gleam.toml` and `justfi
 | `shellout` | Shell command execution |
 | `gleeunit` | Testing (dev) |
 | `lustre` | For SSR testing (dev) |
+| `nakai` | For SSR testing (dev) |
 
 ## Beads Workflow
 

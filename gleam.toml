@@ -26,3 +26,4 @@ shellout = ">= 1.7.0 and < 2.0.0"
 [dev-dependencies]
 gleeunit = ">= 1.0.0 and < 2.0.0"
 lustre = ">= 5.0.0 and < 6.0.0"
+nakai = ">= 1.0.0 and < 2.0.0"

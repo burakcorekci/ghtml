@@ -1,4 +1,4 @@
-import ghtml/target/lustre
+import ghtml/target/nakai
 import ghtml/types.{
   type Span, Element, ExprNode, Position, Span, Template, TextNode,
 }
@@ -18,7 +18,7 @@ pub fn generate_standard_element_test() {
       Element("div", [], [], test_span()),
     ])
 
-  let code = lustre.generate(template, "test.ghtml", "abc123")
+  let code = nakai.generate(template, "test.ghtml", "abc123")
 
   should.be_true(string.contains(code, "html.div([], [])"))
 }
@@ -29,9 +29,9 @@ pub fn generate_custom_element_test() {
       Element("sl-button", [], [], test_span()),
     ])
 
-  let code = lustre.generate(template, "test.ghtml", "abc123")
+  let code = nakai.generate(template, "test.ghtml", "abc123")
 
-  should.be_true(string.contains(code, "element(\"sl-button\""))
+  should.be_true(string.contains(code, "html.Element(\"sl-button\""))
 }
 
 pub fn generate_void_element_test() {
@@ -40,7 +40,7 @@ pub fn generate_void_element_test() {
       Element("br", [], [], test_span()),
     ])
 
-  let code = lustre.generate(template, "test.ghtml", "abc123")
+  let code = nakai.generate(template, "test.ghtml", "abc123")
 
   should.be_true(string.contains(code, "html.br("))
 }
@@ -51,7 +51,7 @@ pub fn generate_nested_elements_test() {
       Element("div", [], [Element("span", [], [], test_span())], test_span()),
     ])
 
-  let code = lustre.generate(template, "test.ghtml", "abc123")
+  let code = nakai.generate(template, "test.ghtml", "abc123")
 
   should.be_true(string.contains(code, "html.div("))
   should.be_true(string.contains(code, "html.span("))
@@ -65,9 +65,9 @@ pub fn generate_text_node_test() {
       Element("div", [], [TextNode("Hello, World!", test_span())], test_span()),
     ])
 
-  let code = lustre.generate(template, "test.ghtml", "abc123")
+  let code = nakai.generate(template, "test.ghtml", "abc123")
 
-  should.be_true(string.contains(code, "text(\"Hello, World!\")"))
+  should.be_true(string.contains(code, "html.Text(\"Hello, World!\")"))
 }
 
 pub fn generate_text_with_escapes_test() {
@@ -76,7 +76,7 @@ pub fn generate_text_with_escapes_test() {
       Element("div", [], [TextNode("Line 1\nLine 2", test_span())], test_span()),
     ])
 
-  let code = lustre.generate(template, "test.ghtml", "abc123")
+  let code = nakai.generate(template, "test.ghtml", "abc123")
 
   should.be_true(string.contains(code, "\\n"))
 }
@@ -87,7 +87,7 @@ pub fn generate_text_with_quotes_test() {
       Element("div", [], [TextNode("Say \"Hello\"", test_span())], test_span()),
     ])
 
-  let code = lustre.generate(template, "test.ghtml", "abc123")
+  let code = nakai.generate(template, "test.ghtml", "abc123")
 
   should.be_true(string.contains(code, "\\\"Hello\\\""))
 }
@@ -103,12 +103,9 @@ pub fn generate_whitespace_normalization_test() {
       ),
     ])
 
-  let code = lustre.generate(template, "test.ghtml", "abc123")
+  let code = nakai.generate(template, "test.ghtml", "abc123")
 
-  // Whitespace should be collapsed in text content
-  // The original "multiple   spaces" should become "multiple spaces"
   should.be_false(string.contains(code, "multiple   spaces"))
-  // Should have the normalized version
   should.be_true(string.contains(code, "multiple spaces"))
 }
 
@@ -120,9 +117,9 @@ pub fn generate_expr_node_test() {
       Element("div", [], [ExprNode("user.name", test_span())], test_span()),
     ])
 
-  let code = lustre.generate(template, "test.ghtml", "abc123")
+  let code = nakai.generate(template, "test.ghtml", "abc123")
 
-  should.be_true(string.contains(code, "text(user.name)"))
+  should.be_true(string.contains(code, "html.Text(user.name)"))
 }
 
 pub fn generate_complex_expr_test() {
@@ -136,9 +133,9 @@ pub fn generate_complex_expr_test() {
       ),
     ])
 
-  let code = lustre.generate(template, "test.ghtml", "abc123")
+  let code = nakai.generate(template, "test.ghtml", "abc123")
 
-  should.be_true(string.contains(code, "text(int.to_string(count))"))
+  should.be_true(string.contains(code, "html.Text(int.to_string(count))"))
 }
 
 // === Function Generation Tests ===
@@ -151,12 +148,12 @@ pub fn generate_function_signature_test() {
       body: [Element("div", [], [], test_span())],
     )
 
-  let code = lustre.generate(template, "test.ghtml", "abc123")
+  let code = nakai.generate(template, "test.ghtml", "abc123")
 
   should.be_true(string.contains(code, "pub fn render("))
   should.be_true(string.contains(code, "name: String"))
   should.be_true(string.contains(code, "count: Int"))
-  should.be_true(string.contains(code, ") -> Element(msg)"))
+  should.be_true(string.contains(code, ") -> html.Node"))
 }
 
 pub fn generate_complex_param_types_test() {
@@ -167,7 +164,7 @@ pub fn generate_complex_param_types_test() {
       body: [Element("div", [], [], test_span())],
     )
 
-  let code = lustre.generate(template, "test.ghtml", "abc123")
+  let code = nakai.generate(template, "test.ghtml", "abc123")
 
   should.be_true(string.contains(code, "items: List(Item)"))
   should.be_true(string.contains(code, "handler: fn(String) -> msg"))
@@ -178,7 +175,7 @@ pub fn generate_complex_param_types_test() {
 pub fn generate_header_test() {
   let template = Template(imports: [], params: [], body: [])
 
-  let code = lustre.generate(template, "src/components/card.ghtml", "abc123")
+  let code = nakai.generate(template, "src/components/card.ghtml", "abc123")
 
   should.be_true(string.contains(code, "// @generated from card.ghtml"))
   should.be_true(string.contains(code, "// @hash abc123"))
@@ -194,16 +191,14 @@ pub fn generate_multiple_roots_fragment_test() {
       Element("span", [], [], test_span()),
     ])
 
-  let code = lustre.generate(template, "test.ghtml", "abc123")
+  let code = nakai.generate(template, "test.ghtml", "abc123")
 
-  // Multiple roots should use fragment
-  should.be_true(string.contains(code, "fragment("))
+  should.be_true(string.contains(code, "html.Fragment("))
 }
 
 // === Indentation Tests ===
 
 pub fn generate_proper_indentation_test() {
-  // Test with multiple children which forces multi-line formatting
   let template =
     Template(imports: [], params: [], body: [
       Element("div", [], [], test_span()),
@@ -211,9 +206,8 @@ pub fn generate_proper_indentation_test() {
       Element("p", [], [], test_span()),
     ])
 
-  let code = lustre.generate(template, "test.ghtml", "abc123")
+  let code = nakai.generate(template, "test.ghtml", "abc123")
 
-  // Multiple roots use fragment with proper indentation
   let lines = string.split(code, "\n")
   should.be_true(list.any(lines, fn(l) { string.starts_with(l, "    ") }))
 }
@@ -221,7 +215,6 @@ pub fn generate_proper_indentation_test() {
 // === Void Element No Children Test ===
 
 pub fn void_element_ignores_children_test() {
-  // Even if children are provided to a void element, they should be ignored
   let template =
     Template(imports: [], params: [], body: [
       Element(
@@ -232,9 +225,8 @@ pub fn void_element_ignores_children_test() {
       ),
     ])
 
-  let code = lustre.generate(template, "test.ghtml", "abc123")
+  let code = nakai.generate(template, "test.ghtml", "abc123")
 
-  // Void elements shouldn't have children in output
   should.be_false(string.contains(code, "should be ignored"))
 }
 
@@ -254,10 +246,8 @@ pub fn whitespace_only_text_skipped_test() {
       ),
     ])
 
-  let code = lustre.generate(template, "test.ghtml", "abc123")
+  let code = nakai.generate(template, "test.ghtml", "abc123")
 
-  // Whitespace-only text nodes should be skipped
-  // We should see the span but not a text node with whitespace
   should.be_true(string.contains(code, "html.span("))
 }
 
@@ -266,25 +256,46 @@ pub fn whitespace_only_text_skipped_test() {
 pub fn generate_empty_body_test() {
   let template = Template(imports: [], params: [], body: [])
 
-  let code = lustre.generate(template, "test.ghtml", "abc123")
+  let code = nakai.generate(template, "test.ghtml", "abc123")
 
-  // Empty body should generate a valid function with fragment
   should.be_true(string.contains(code, "pub fn render("))
-  should.be_true(string.contains(code, "fragment("))
+  should.be_true(string.contains(code, "html.Nothing"))
 }
 
-// === Import Generation Test ===
+// === Nakai-specific: Custom Void Element Uses LeafElement ===
 
-pub fn generate_imports_test() {
+pub fn generate_custom_void_element_test() {
   let template =
     Template(imports: [], params: [], body: [
-      Element("div", [], [], test_span()),
+      Element("my-icon", [], [], test_span()),
     ])
 
-  let code = lustre.generate(template, "test.ghtml", "abc123")
+  let code = nakai.generate(template, "test.ghtml", "abc123")
 
-  // Should have Lustre imports
-  should.be_true(string.contains(code, "import lustre/element"))
+  // Custom elements with no children should still use Element (not LeafElement)
+  // since the parser doesn't mark custom elements as void
+  should.be_true(string.contains(code, "html.Element(\"my-icon\""))
+}
+
+// === Nakai-specific: Event Attributes Skipped ===
+
+pub fn event_attributes_skipped_test() {
+  let template =
+    Template(imports: [], params: [], body: [
+      Element(
+        "button",
+        [types.EventAttribute("click", "on_click", [])],
+        [TextNode("Click me", test_span())],
+        test_span(),
+      ),
+    ])
+
+  let code = nakai.generate(template, "test.ghtml", "abc123")
+
+  // Event attributes should be silently skipped for SSR
+  should.be_false(string.contains(code, "click"))
+  should.be_false(string.contains(code, "on_click"))
+  should.be_true(string.contains(code, "html.button("))
 }
 
 // === Format Compliance Tests ===
@@ -297,9 +308,8 @@ pub fn generate_format_compliant_params_test() {
       body: [Element("div", [], [], test_span())],
     )
 
-  let code = lustre.generate(template, "test.ghtml", "abc123")
+  let code = nakai.generate(template, "test.ghtml", "abc123")
 
-  // Parameters should be on single line without trailing comma
   should.be_true(string.contains(code, "name name: String, count count: Int) ->"))
 }
 
@@ -309,10 +319,9 @@ pub fn generate_format_compliant_single_child_test() {
       Element("div", [], [TextNode("hello", test_span())], test_span()),
     ])
 
-  let code = lustre.generate(template, "test.ghtml", "abc123")
+  let code = nakai.generate(template, "test.ghtml", "abc123")
 
-  // Single child should be inline
-  should.be_true(string.contains(code, "html.div([], [text(\"hello\")])"))
+  should.be_true(string.contains(code, "html.div([], [html.Text(\"hello\")])"))
 }
 
 pub fn generate_format_compliant_nested_test() {
@@ -326,12 +335,11 @@ pub fn generate_format_compliant_nested_test() {
       ),
     ])
 
-  let code = lustre.generate(template, "test.ghtml", "abc123")
+  let code = nakai.generate(template, "test.ghtml", "abc123")
 
-  // Nested elements should be properly formatted
   should.be_true(string.contains(
     code,
-    "html.div([], [html.span([], [text(\"hi\")])])",
+    "html.div([], [html.span([], [html.Text(\"hi\")])])",
   ))
 }
 
@@ -341,8 +349,7 @@ pub fn generate_trailing_newline_test() {
       Element("div", [], [], test_span()),
     ])
 
-  let code = lustre.generate(template, "test.ghtml", "abc123")
+  let code = nakai.generate(template, "test.ghtml", "abc123")
 
-  // Generated code should end with a newline (gleam format requirement)
   should.be_true(string.ends_with(code, "\n"))
 }
